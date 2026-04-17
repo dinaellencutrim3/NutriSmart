@@ -1,0 +1,89 @@
+:root {
+    --nutri-green: #28a745; /* Verde vibrante do Dashboard */
+    --nutri-bg: #f4f7f6;    /* Cinza bem claro de fundo */
+    --nutri-text: #333333;
+    --nutri-orange: #ff851b; /* Cor do botão de equivalência */
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--nutri-bg);
+    margin: 0;
+    padding: 0;
+    color: var(--nutri-text);
+}
+
+/* Cabeçalho igual ao do Nutricionista */
+.header {
+    background-color: var(--nutri-green);
+    color: white;
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Container centralizado */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Cards Brancos com borda colorida (Padrão Dashboard) */
+.summary-card, .meal-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-top: 4px solid var(--nutri-green);
+    margin-bottom: 20px;
+}
+
+.meal-card {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.meal-time {
+    color: var(--nutri-green);
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding-top: 15px;
+}
+
+/* Botões com as cores do Dashboard */
+.btn-swap {
+    background-color: var(--nutri-green);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-swap:hover {
+    background-color: #218838;
+}
+
+.btn-logout {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid white;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}

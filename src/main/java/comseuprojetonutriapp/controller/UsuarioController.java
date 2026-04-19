@@ -40,7 +40,7 @@ public class UsuarioController {
 
             Map<String, Object> resposta = new HashMap<>();
             resposta.put("status", "sucesso");
-            resposta.put("userType", user.getTipo());
+            resposta.put("tipo", user.getTipo());
             resposta.put("nome", user.getNome());
             resposta.put("id", user.getId());
 

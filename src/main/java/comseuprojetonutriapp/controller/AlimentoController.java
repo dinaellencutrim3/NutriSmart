@@ -1,4 +1,4 @@
-package comseuprojetonutriapp.controller; // Ajuste conforme o nome do seu projeto
+package comseuprojetonutriapp.controller;
 
 import comseuprojetonutriapp.model.Alimento; // Importa o Alimento da pasta model
 import comseuprojetonutriapp.dto.SubstituicaoDTO; // Importa o DTO da pasta dto

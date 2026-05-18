@@ -1,137 +1,315 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta aname="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NutriApp - Gestão de Dietas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8">
+
+  <!-- RESPONSIVO -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>NutriApp</title>
+
+  <!-- TAILWIND -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body class="bg-gray-50 text-gray-800 font-sans">
 
+<!-- NAVBAR -->
 <nav class="bg-green-600 text-white shadow-lg p-4">
-    <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold"><i class="fa-solid fa-apple-whole mr-2"></i>NutriApp</h1>
-        <span class="text-sm">Painel do Nutricionista</span>
+  <div class="container mx-auto flex justify-between items-center">
+
+    <h1 class="text-2xl font-bold">
+      <i class="fa-solid fa-apple-whole mr-2"></i>
+      NutriApp
+    </h1>
+
+    <div class="flex items-center gap-4">
+
+      <a href="/pacientes.html"
+         class="hover:underline text-sm">
+        Pacientes
+      </a>
+
+      <a href="/alimentos.html"
+         class="hover:underline text-sm">
+        Alimentos
+      </a>
+
+      <a href="/login.html"
+         class="bg-white text-green-600 px-3 py-1 rounded font-semibold text-sm">
+        Sair
+      </a>
+
     </div>
+
+  </div>
 </nav>
 
+<!-- CONTEÚDO PRINCIPAL -->
 <div class="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
 
-    <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-green-500">
-        <h2 class="text-xl font-semibold mb-4 text-green-700 underline decoration-2 underline-offset-4">
-            <i class="fa-solid fa-user-plus mr-2"></i>Novo Paciente
-        </h2>
-        <div class="space-y-3">
-            <input id="p-nome" type="text" placeholder="Nome Completo" class="w-full p-2 border rounded focus:ring-2 focus:ring-green-400 outline-none">
-            <div class="grid grid-cols-2 gap-2">
-                <input id="p-peso" type="number" placeholder="Peso (kg)" class="p-2 border rounded outline-none">
-                <input id="p-altura" type="number" step="0.01" placeholder="Altura (m)" class="p-2 border rounded outline-none">
-            </div>
-            <button onclick="salvarPaciente()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded transition shadow">
-                Cadastrar e Calcular IMC
-            </button>
-        </div>
-        <div id="resultado-imc" class="mt-4 p-3 bg-green-50 rounded hidden">
-        </div>
+  <!-- CARD PACIENTE -->
+  <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-green-500">
+
+    <h2 class="text-xl font-semibold mb-4 text-green-700 underline decoration-2 underline-offset-4">
+      <i class="fa-solid fa-user-plus mr-2"></i>
+      Novo Paciente
+    </h2>
+
+    <div class="space-y-3">
+
+      <input id="p-nome"
+             type="text"
+             placeholder="Nome Completo"
+             class="w-full p-2 border rounded focus:ring-2 focus:ring-green-400 outline-none">
+
+      <div class="grid grid-cols-2 gap-2">
+
+        <input id="p-peso"
+               type="number"
+               placeholder="Peso (kg)"
+               class="p-2 border rounded outline-none">
+
+        <input id="p-altura"
+               type="number"
+               step="0.01"
+               placeholder="Altura (m)"
+               class="p-2 border rounded outline-none">
+
+      </div>
+
+      <button onclick="salvarPaciente()"
+              class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded transition shadow">
+
+        Cadastrar e Calcular IMC
+
+      </button>
+
     </div>
 
-    <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-orange-400">
-        <h2 class="text-xl font-semibold mb-4 text-orange-700 underline decoration-2 underline-offset-4">
-            <i class="fa-solid fa-calculator mr-2"></i>Substituição Inteligente
-        </h2>
-        <div class="space-y-3">
-            <label class="text-sm font-medium">Trocar (ID):</label>
-            <input id="id-origem" type="number" placeholder="ID do Alimento Atual" class="w-full p-2 border rounded outline-none">
-
-            <label class="text-sm font-medium">Pelo Alimento (ID):</label>
-            <input id="id-substituto" type="number" placeholder="ID do Novo Alimento" class="w-full p-2 border rounded outline-none">
-
-            <label class="text-sm font-medium">Quantidade (g):</label>
-            <input id="qtd-gramas" type="number" placeholder="Ex: 100" class="w-full p-2 border rounded outline-none">
-
-            <button onclick="calcularSubstituicao()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded transition shadow">
-                Calcular Equivalência
-            </button>
-        </div>
-        <p id="resultado-sub" class="mt-4 text-sm font-medium text-gray-700 italic"></p>
+    <div id="resultado-imc"
+         class="mt-4 p-3 bg-green-50 rounded hidden">
     </div>
+
+  </div>
+
+  <!-- CARD SUBSTITUIÇÃO -->
+  <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-orange-400">
+
+    <h2 class="text-xl font-semibold mb-4 text-orange-700 underline decoration-2 underline-offset-4">
+
+      <i class="fa-solid fa-calculator mr-2"></i>
+      Substituição Inteligente
+
+    </h2>
+
+    <div class="space-y-3">
+
+      <label class="text-sm font-medium">
+        Trocar (ID):
+      </label>
+
+      <input id="id-origem"
+             type="number"
+             placeholder="ID do Alimento Atual"
+             class="w-full p-2 border rounded outline-none">
+
+      <label class="text-sm font-medium">
+        Pelo Alimento (ID):
+      </label>
+
+      <input id="id-substituto"
+             type="number"
+             placeholder="ID do Novo Alimento"
+             class="w-full p-2 border rounded outline-none">
+
+      <label class="text-sm font-medium">
+        Quantidade (g):
+      </label>
+
+      <input id="qtd-gramas"
+             type="number"
+             placeholder="Ex: 100"
+             class="w-full p-2 border rounded outline-none">
+
+      <button onclick="calcularSubstituicao()"
+              class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded transition shadow">
+
+        Calcular Equivalência
+
+      </button>
+
+    </div>
+
+    <p id="resultado-sub"
+       class="mt-4 text-sm font-medium text-gray-700 italic">
+    </p>
+
+  </div>
 
 </div>
 
+<!-- TABELA -->
 <div class="container mx-auto px-6 mb-10">
-    <div class="bg-white p-6 rounded-xl shadow-md">
-        <h2 class="text-xl font-semibold mb-4"><i class="fa-solid fa-list mr-2"></i>Alimentos Disponíveis</h2>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                <tr class="bg-gray-100 text-gray-600 uppercase text-xs">
-                    <th class="p-3 border">ID</th>
-                    <th class="p-3 border">Nome</th>
-                    <th class="p-3 border">Calorias (100g)</th>
-                </tr>
-                </thead>
-                <tbody id="tabela-alimentos">
-                </tbody>
-            </table>
-        </div>
+
+  <div class="bg-white p-6 rounded-xl shadow-md">
+
+    <h2 class="text-xl font-semibold mb-4">
+
+      <i class="fa-solid fa-list mr-2"></i>
+      Alimentos Disponíveis
+
+    </h2>
+
+    <div class="overflow-x-auto">
+
+      <table class="w-full text-left border-collapse">
+
+        <thead>
+
+        <tr class="bg-gray-100 text-gray-600 uppercase text-xs">
+
+          <th class="p-3 border">
+            ID
+          </th>
+
+          <th class="p-3 border">
+            Nome
+          </th>
+
+          <th class="p-3 border">
+            Calorias (100g)
+          </th>
+
+        </tr>
+
+        </thead>
+
+        <tbody id="tabela-alimentos">
+        </tbody>
+
+      </table>
+
     </div>
+
+  </div>
+
 </div>
 
+<!-- JAVASCRIPT -->
 <script>
-    // Função para carregar alimentos na tabela ao abrir a página
-    async function carregarAlimentos() {
-        const response = await fetch('/alimentos');
-        const alimentos = await response.json();
-        const tbody = document.getElementById('tabela-alimentos');
-        tbody.innerHTML = alimentos.map(a => `
-                <tr class="hover:bg-gray-50">
-                    <td class="p-3 border font-bold">${a.id}</td>
-                    <td class="p-3 border">${a.nome}</td>
-                    <td class="p-3 border">${a.calorias} kcal</td>
-                </tr>
-            `).join('');
-    }
 
-    // Função para salvar paciente via API
-    async function salvarPaciente() {
-        const dados = {
-            nome: document.getElementById('p-nome').value,
-            peso: parseFloat(document.getElementById('p-peso').value),
-            altura: parseFloat(document.getElementById('p-altura').value)
-        };
+  // CARREGA TABELA
+  async function carregarAlimentos() {
 
-        const res = await fetch('/pacientes', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(dados)
-        });
-        const p = await res.json();
+    const response = await fetch('/alimentos');
 
-        const div = document.getElementById('resultado-imc');
-        div.classList.remove('hidden');
-        div.innerHTML = `<strong>${p.nome}</strong> cadastrado! IMC: <span class="text-green-700 font-bold">${p.imc.toFixed(2)}</span>`;
-    }
+    const alimentos = await response.json();
 
-    // Função para calcular substituição
-    async function calcularSubstituicao() {
-        const dados = {
-            alimentoOrigemId: parseInt(document.getElementById('id-origem').value),
-            alimentoSubstitutoId: parseInt(document.getElementById('id-substituto').value),
-            quantidadeGramas: parseFloat(document.getElementById('qtd-gramas').value)
-        };
+    const tbody = document.getElementById('tabela-alimentos');
 
-        const res = await fetch('/alimentos/substituir', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(dados)
-        });
-        const texto = await res.text();
-        document.getElementById('resultado-sub').innerText = texto;
-    }
+    tbody.innerHTML = alimentos.map(a => `
 
-    // Inicia carregando a tabela
-    carregarAlimentos();
+            <tr class="hover:bg-gray-50">
+
+                <td class="p-3 border font-bold">
+                    ${a.id}
+                </td>
+
+                <td class="p-3 border">
+                    ${a.nome}
+                </td>
+
+                <td class="p-3 border">
+                    ${a.calorias} kcal
+                </td>
+
+            </tr>
+
+        `).join('');
+  }
+
+  // SALVAR PACIENTE
+  async function salvarPaciente() {
+
+    const dados = {
+
+      nome: document.getElementById('p-nome').value,
+
+      peso: parseFloat(document.getElementById('p-peso').value),
+
+      altura: parseFloat(document.getElementById('p-altura').value)
+
+    };
+
+    const res = await fetch('/pacientes', {
+
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify(dados)
+
+    });
+
+    const p = await res.json();
+
+    const div = document.getElementById('resultado-imc');
+
+    div.classList.remove('hidden');
+
+    div.innerHTML = `
+            <strong>${p.nome}</strong>
+            cadastrado! IMC:
+            <span class="text-green-700 font-bold">
+                ${p.imc.toFixed(2)}
+            </span>
+        `;
+  }
+
+  // CALCULAR SUBSTITUIÇÃO
+  async function calcularSubstituicao() {
+
+    const dados = {
+
+      alimentoOrigemId: parseInt(document.getElementById('id-origem').value),
+
+      alimentoSubstitutoId: parseInt(document.getElementById('id-substituto').value),
+
+      quantidadeGramas: parseFloat(document.getElementById('qtd-gramas').value)
+
+    };
+
+    const res = await fetch('/alimentos/substituir', {
+
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify(dados)
+
+    });
+
+    const texto = await res.text();
+
+    document.getElementById('resultado-sub').innerText = texto;
+  }
+
+  // INICIAR
+  carregarAlimentos();
+
 </script>
+
 </body>
 </html>

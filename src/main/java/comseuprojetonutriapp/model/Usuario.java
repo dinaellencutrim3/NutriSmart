@@ -1,29 +1,63 @@
 package comseuprojetonutriapp.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
-@Table(name = "usuarios")
-@Data
+@Table(name = "usuario")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @JsonProperty("name") // Mapeia o 'name' do JS para 'nome' no banco
     private String nome;
 
-    @JsonProperty("password") // Mapeia o 'password' do JS para 'senha' no banco
+    @Column(unique = true)
+    private String email;
+
     private String senha;
 
-    @JsonProperty("type") // Mapeia o 'type' do JS para 'tipo' no banco
     private String tipo;
 
-    private String crn;
+    // GETTERS E SETTERS
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 }

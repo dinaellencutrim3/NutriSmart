@@ -1,203 +1,162 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - NutriSmart</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Fonte -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #28a745, #20c997);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    <title>Login - NutriApp</title>
 
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            width: 100%;
-            max-width: 400px;
-        }
+    <script src="https://cdn.tailwindcss.com"></script>
 
-        .login-title {
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-        .form-control {
-            border-radius: 10px;
-            padding: 12px;
-        }
-
-        .btn-main {
-            background: #28a745;
-            color: white;
-            border-radius: 30px;
-            padding: 12px;
-            width: 100%;
-            transition: 0.3s;
-        }
-
-        .btn-main:hover {
-            background: #218838;
-        }
-
-        .toggle-password {
-            cursor: pointer;
-            font-size: 14px;
-            color: #28a745;
-            text-align: right;
-            display: block;
-            margin-top: 5px;
-        }
-
-        .error {
-            color: red;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .link {
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .link a {
-            color: #28a745;
-            text-decoration: none;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
-<body>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-<div class="login-container">
+<div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
 
-    <h2 class="login-title">NutriSmart</h2>
+    <div class="text-center mb-6">
 
-    <form id="loginForm">
+        <i class="fa-solid fa-user-doctor text-4xl text-green-600"></i>
 
-        <!-- Email -->
-        <div class="mb-3">
-            <label>Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Digite seu email">
-            <div id="emailError" class="error"></div>
+        <h1 class="text-2xl font-bold mt-3">
+            Login
+        </h1>
+
+        <p class="text-gray-500 text-sm mt-2">
+            Entre na sua conta
+        </p>
+
+    </div>
+
+    <form id="formLogin">
+
+        <div class="space-y-4">
+
+            <input id="email"
+                   type="email"
+                   placeholder="E-mail"
+                   class="w-full border p-3 rounded outline-none focus:ring-2 focus:ring-green-400">
+
+            <input id="senha"
+                   type="password"
+                   placeholder="Senha"
+                   class="w-full border p-3 rounded outline-none focus:ring-2 focus:ring-green-400">
+
+            <button type="submit"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded font-bold transition">
+
+                Entrar
+
+            </button>
+
         </div>
-
-        <!-- Senha -->
-        <div class="mb-3">
-            <label>Senha</label>
-            <input type="password" class="form-control" id="password" placeholder="Digite sua senha">
-            <span class="toggle-password" onclick="togglePassword()">Mostrar senha</span>
-            <div id="passwordError" class="error"></div>
-        </div>
-
-        <!-- Tipo de usuário -->
-        <div class="mb-3">
-            <label>Tipo de usuário</label>
-            <select class="form-control" id="userType">
-                <option value="">Selecione</option>
-                <option value="paciente">Paciente</option>
-                <option value="nutricionista">Nutricionista</option>
-            </select>
-            <div id="typeError" class="error"></div>
-        </div>
-
-        <!-- CRN -->
-        <div class="mb-3" id="crnField" style="display: none;">
-            <label>CRN (Registro Profissional)</label>
-            <input type="text" class="form-control" id="crn" placeholder="Digite seu CRN">
-            <div id="crnError" class="error"></div>
-        </div>
-
-        <!-- Botão -->
-        <button type="submit" class="btn btn-main">Entrar</button>
 
     </form>
 
-    <div class="link">
-        <p>Não tem conta? <a href="cadastro.html">Criar conta</a></p>
+    <div id="mensagem"
+         class="hidden mt-4 p-3 rounded text-center font-semibold">
     </div>
+
+    <p class="text-center mt-4 text-sm">
+
+        Não possui conta?
+
+        <a href="/cadastro.html"
+           class="text-green-600 font-bold hover:underline">
+
+            Criar agora
+
+        </a>
+
+    </p>
 
 </div>
 
 <script>
-    // 1. Mostrar/Esconder Senha
-    function togglePassword() {
-        const passwordInput = document.getElementById("password");
-        const toggleText = document.querySelector(".toggle-password");
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            toggleText.innerText = "Esconder senha";
-        } else {
-            passwordInput.type = "password";
-            toggleText.innerText = "Mostrar senha";
-        }
-    }
 
-    // 2. Lógica de Login
-    document.querySelector("form").addEventListener("submit", async (e) => {
-        e.preventDefault();
+    document.getElementById("formLogin")
+        .addEventListener("submit", async function(e) {
 
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+            e.preventDefault();
 
-        try {
-            const response = await fetch("http://localhost:8080/api/usuarios/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
+            const dados = {
 
-            if (response.ok) {
-                const data = await response.json();
+                email: document.getElementById("email").value,
 
-                // Limpamos o ID para evitar erros de URL no futuro
-                const idLimpo = String(data.id).split(':')[0];
+                senha: document.getElementById("senha").value
+            };
 
-                localStorage.setItem("usuarioId", idLimpo);
-                localStorage.setItem("userType", data.tipo); // Verifique se no Java é 'tipo' ou 'userType'
-                localStorage.setItem("nomeUsuario", data.nome);
+            try {
 
-                Swal.fire({
-                    title: 'Sucesso!',
-                    text: 'Login realizado com sucesso',
-                    icon: 'success',
-                    confirmButtonColor: '#28a745'
-                }).then(() => {
-                    // Redirecionamento baseado no tipo
-                    if (data.tipo && data.tipo.toLowerCase() === "nutricionista") {
-                        window.location.href = "dashboard.html";
-                    } else {
-                        window.location.href = "home_paciente.html";
-                    }
+                const response = await fetch('/api/usuarios/login', {
+
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify(dados)
                 });
 
-            } else {
-                Swal.fire("Erro", "E-mail ou senha incorretos", "error");
+                const mensagem =
+                    document.getElementById("mensagem");
+
+                if(response.ok) {
+
+                    const usuario = await response.json();
+
+                    localStorage.setItem(
+                        "nomeUsuario",
+                        usuario.nome || "Usuário"
+                    );
+
+                    mensagem.classList.remove("hidden");
+
+                    mensagem.classList.add(
+                        "bg-green-100",
+                        "text-green-700"
+                    );
+
+                    mensagem.innerText =
+                        "Login realizado com sucesso!";
+
+                    setTimeout(() => {
+
+                        window.location.href =
+                            "/dashboard.html";
+
+                    }, 1000);
+
+                } else {
+
+                    mensagem.classList.remove("hidden");
+
+                    mensagem.classList.add(
+                        "bg-red-100",
+                        "text-red-700"
+                    );
+
+                    mensagem.innerText =
+                        "E-mail ou senha inválidos.";
+
+                }
+
+            } catch (erro) {
+
+                console.log(erro);
+
             }
 
-        } catch (error) {
-            // ESTE É O BLOCO QUE FALTAVA (CATCH)
-            console.error("Erro na requisição:", error);
-            Swal.fire("Erro", "Não foi possível conectar ao servidor", "error");
-        }
-    }); // Fechamento do EventListener
+        });
+
 </script>
 
 </body>
-
 </html>

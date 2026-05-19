@@ -1,313 +1,811 @@
+
+
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Nutricionista - NutriSmart</title>
 
-  <!-- RESPONSIVO -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <title>NutriApp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- TAILWIND -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- FONT AWESOME -->
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body>
+
+<!-- GUARD -->
+<script>
+    (function () {
+
+        const tipo = localStorage.getItem("tipoUsuario");
+
+        if (!tipo) {
+
+            window.location.href = "/login.html";
+
+        } else if (tipo !== "NUTRICIONISTA") {
+
+            window.location.href = "/home_paciente.html";
+        }
+
+    })();
+</script>
 
 <!-- NAVBAR -->
-<nav class="bg-green-600 text-white shadow-lg p-4">
-  <div class="container mx-auto flex justify-between items-center">
+<nav class="navbar">
 
-    <h1 class="text-2xl font-bold">
-      <i class="fa-solid fa-apple-whole mr-2"></i>
-      NutriApp
-    </h1>
+    <div class="navbar-logo">
 
-    <div class="flex items-center gap-4">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
 
-      <a href="/pacientes.html"
-         class="hover:underline text-sm">
-        Pacientes
-      </a>
+            <path d="M20 5C15 5 12 8 12 12C12 16 15 19 20 25C25 19 28 16 28 12C28 8 25 5 20 5Z"
+                  fill="#52B788"/>
 
-      <a href="/alimentos.html"
-         class="hover:underline text-sm">
-        Alimentos
-      </a>
+            <path d="M20 25C20 25 8 28 8 33C8 35 10 35 20 35C30 35 32 35 32 33C32 28 20 25 20 25Z"
+                  fill="#2D6A4F"/>
 
-      <a href="/login.html"
-         class="bg-white text-green-600 px-3 py-1 rounded font-semibold text-sm">
-        Sair
-      </a>
+        </svg>
+
+        <span class="navbar-logo-text">NutriSmart</span>
 
     </div>
 
-  </div>
+    <div class="navbar-menu">
+
+        <a href="/alimentos.html" class="navbar-link">
+            Alimentos
+        </a>
+
+        <a href="/dietas.html" class="navbar-link">
+            Dietas
+        </a>
+
+        <span class="navbar-name" id="nomeNutri"></span>
+
+        <button class="btn-sair" onclick="logout()">
+            Sair
+        </button>
+
+    </div>
+
 </nav>
 
-<!-- CONTEÚDO PRINCIPAL -->
-<div class="container mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- BANNER -->
+<div class="welcome-banner">
 
-  <!-- CARD PACIENTE -->
-  <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-green-500">
+    <h1 class="welcome-title" id="boasVindas">
+        Olá, Nutricionista
+    </h1>
 
-    <h2 class="text-xl font-semibold mb-4 text-green-700 underline decoration-2 underline-offset-4">
-      <i class="fa-solid fa-user-plus mr-2"></i>
-      Novo Paciente
-    </h2>
-
-    <div class="space-y-3">
-
-      <input id="p-nome"
-             type="text"
-             placeholder="Nome Completo"
-             class="w-full p-2 border rounded focus:ring-2 focus:ring-green-400 outline-none">
-
-      <div class="grid grid-cols-2 gap-2">
-
-        <input id="p-peso"
-               type="number"
-               placeholder="Peso (kg)"
-               class="p-2 border rounded outline-none">
-
-        <input id="p-altura"
-               type="number"
-               step="0.01"
-               placeholder="Altura (m)"
-               class="p-2 border rounded outline-none">
-
-      </div>
-
-      <button onclick="salvarPaciente()"
-              class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded transition shadow">
-
-        Cadastrar e Calcular IMC
-
-      </button>
-
-    </div>
-
-    <div id="resultado-imc"
-         class="mt-4 p-3 bg-green-50 rounded hidden">
-    </div>
-
-  </div>
-
-  <!-- CARD SUBSTITUIÇÃO -->
-  <div class="bg-white p-6 rounded-xl shadow-md border-t-4 border-orange-400">
-
-    <h2 class="text-xl font-semibold mb-4 text-orange-700 underline decoration-2 underline-offset-4">
-
-      <i class="fa-solid fa-calculator mr-2"></i>
-      Substituição Inteligente
-
-    </h2>
-
-    <div class="space-y-3">
-
-      <label class="text-sm font-medium">
-        Trocar (ID):
-      </label>
-
-      <input id="id-origem"
-             type="number"
-             placeholder="ID do Alimento Atual"
-             class="w-full p-2 border rounded outline-none">
-
-      <label class="text-sm font-medium">
-        Pelo Alimento (ID):
-      </label>
-
-      <input id="id-substituto"
-             type="number"
-             placeholder="ID do Novo Alimento"
-             class="w-full p-2 border rounded outline-none">
-
-      <label class="text-sm font-medium">
-        Quantidade (g):
-      </label>
-
-      <input id="qtd-gramas"
-             type="number"
-             placeholder="Ex: 100"
-             class="w-full p-2 border rounded outline-none">
-
-      <button onclick="calcularSubstituicao()"
-              class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded transition shadow">
-
-        Calcular Equivalência
-
-      </button>
-
-    </div>
-
-    <p id="resultado-sub"
-       class="mt-4 text-sm font-medium text-gray-700 italic">
+    <p class="welcome-subtitle">
+        Gerencie seus pacientes e dietas
     </p>
 
-  </div>
-
 </div>
 
-<!-- TABELA -->
-<div class="container mx-auto px-6 mb-10">
+<div class="container">
 
-  <div class="bg-white p-6 rounded-xl shadow-md">
+    <!-- MÉTRICAS -->
+    <div class="metrics-grid">
 
-    <h2 class="text-xl font-semibold mb-4">
+        <div class="metric-card">
 
-      <i class="fa-solid fa-list mr-2"></i>
-      Alimentos Disponíveis
+            <div class="metric-header">
 
-    </h2>
+                <div class="metric-icon">
 
-    <div class="overflow-x-auto">
+                    <svg class="icon icon-green"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2">
 
-      <table class="w-full text-left border-collapse">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
 
-        <thead>
+                        <circle cx="9" cy="7" r="4"></circle>
 
-        <tr class="bg-gray-100 text-gray-600 uppercase text-xs">
+                    </svg>
 
-          <th class="p-3 border">
-            ID
-          </th>
+                </div>
 
-          <th class="p-3 border">
-            Nome
-          </th>
+                <div class="metric-trend trend-up">
+                    ↑ +12%
+                </div>
 
-          <th class="p-3 border">
-            Calorias (100g)
-          </th>
+            </div>
 
-        </tr>
+            <div class="metric-value" id="totalPacientes">
+                —
+            </div>
 
-        </thead>
+            <div class="metric-label">
+                Total de Pacientes
+            </div>
 
-        <tbody id="tabela-alimentos">
-        </tbody>
+        </div>
 
-      </table>
+        <div class="metric-card">
+
+            <div class="metric-header">
+
+                <div class="metric-icon">
+
+                    <svg class="icon icon-green"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2">
+
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+
+                        <polyline points="14 2 14 8 20 8"></polyline>
+
+                    </svg>
+
+                </div>
+
+                <div class="metric-trend trend-up">
+                    ↑ +8%
+                </div>
+
+            </div>
+
+            <div class="metric-value" id="totalDietas">
+                —
+            </div>
+
+            <div class="metric-label">
+                Dietas Criadas
+            </div>
+
+        </div>
+
+        <div class="metric-card">
+
+            <div class="metric-header">
+
+                <div class="metric-icon">
+
+                    <svg class="icon icon-green"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2">
+
+                        <path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+
+                        <path d="M12 9v12"></path>
+
+                    </svg>
+
+                </div>
+
+                <div class="metric-trend trend-up">
+                    ↑ +23%
+                </div>
+
+            </div>
+
+            <div class="metric-value" id="totalAlimentos">
+                —
+            </div>
+
+            <div class="metric-label">
+                Alimentos Cadastrados
+            </div>
+
+        </div>
+
+        <div class="metric-card">
+
+            <div class="metric-header">
+
+                <div class="metric-icon">
+
+                    <svg class="icon icon-green"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2">
+
+                        <circle cx="12" cy="12" r="10"></circle>
+
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+
+                    </svg>
+
+                </div>
+
+                <div class="metric-trend trend-down">
+                    ↓ -5%
+                </div>
+
+            </div>
+
+            <div class="metric-value" id="totalSubs">
+                —
+            </div>
+
+            <div class="metric-label">
+                Substituições Pendentes
+            </div>
+
+        </div>
 
     </div>
 
-  </div>
+    <!-- FORMULÁRIOS -->
+    <div class="forms-grid">
+
+        <!-- NOVO PACIENTE -->
+        <div class="form-card">
+
+            <div class="form-card-header header-green"></div>
+
+            <div class="form-content">
+
+                <h2 class="form-title">
+                    Novo Paciente
+                </h2>
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Nome
+                    </label>
+
+                    <input type="text"
+                           class="form-input"
+                           id="p-nome"
+                           placeholder="Nome completo">
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Peso (kg)
+                        </label>
+
+                        <input type="number"
+                               class="form-input"
+                               id="p-peso"
+                               step="0.1"
+                               placeholder="70.0">
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Altura (m)
+                        </label>
+
+                        <input type="number"
+                               class="form-input"
+                               id="p-altura"
+                               step="0.01"
+                               placeholder="1.75">
+
+                    </div>
+
+                </div>
+
+                <button class="btn-submit btn-green"
+                        onclick="salvarPaciente()">
+
+                    Cadastrar e Calcular IMC
+
+                </button>
+
+                <div id="imcResult" class="imc-result">
+
+                    <div class="imc-label">
+                        Resultado do IMC
+                    </div>
+
+                    <div class="imc-value" id="imcValue">
+                        0.0
+                    </div>
+
+                    <div class="imc-classification"
+                         id="imcClass"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- SUBSTITUIÇÃO -->
+        <div class="form-card">
+
+            <div class="form-card-header header-orange"></div>
+
+            <div class="form-content">
+
+                <h2 class="form-title">
+                    Substituição Inteligente
+                </h2>
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        ID do Alimento Atual
+                    </label>
+
+                    <input type="number"
+                           class="form-input"
+                           id="id-origem"
+                           placeholder="Ex: 1">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        ID do Novo Alimento
+                    </label>
+
+                    <input type="number"
+                           class="form-input"
+                           id="id-substituto"
+                           placeholder="Ex: 4">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Quantidade (g)
+                    </label>
+
+                    <input type="number"
+                           class="form-input"
+                           id="qtd-gramas"
+                           placeholder="100">
+
+                </div>
+
+                <button class="btn-submit btn-orange"
+                        onclick="calcularSubstituicao()">
+
+                    Calcular Equivalência
+
+                </button>
+
+                <p id="resultado-sub"
+                   class="resultado-sub"></p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ALIMENTOS -->
+    <div class="section">
+
+        <div class="section-header">
+
+            <h2 class="section-title">
+                Alimentos Disponíveis
+            </h2>
+
+            <input type="text"
+                   class="search-input"
+                   id="searchAlimentos"
+                   placeholder="🔍 Buscar alimento..."
+                   onkeyup="filtrarAlimentos()">
+
+        </div>
+
+        <table>
+
+            <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Calorias (100g)</th>
+            </tr>
+
+            </thead>
+
+            <tbody id="tabelaAlimentos">
+
+            <tr>
+                <td colspan="3" class="td-vazio">
+                    Carregando...
+                </td>
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- PACIENTES -->
+    <div class="section">
+
+        <h2 class="section-title"
+            style="margin-bottom:1.5rem;">
+
+            Meus Pacientes
+
+        </h2>
+
+        <div class="patients-grid"
+             id="gridPacientes">
+
+            <p class="td-vazio">
+                Carregando...
+            </p>
+
+        </div>
+
+    </div>
 
 </div>
 
-<!-- JAVASCRIPT -->
+<!-- SCRIPT -->
 <script>
 
-  // CARREGA TABELA
-  async function carregarAlimentos() {
+    // =========================
+    // USUÁRIO
+    // =========================
 
-    const response = await fetch('/alimentos');
+    const nome =
+        localStorage.getItem("nomeUsuario")
+        || "Nutricionista";
 
-    const alimentos = await response.json();
+    document.getElementById("nomeNutri").innerText = nome;
 
-    const tbody = document.getElementById('tabela-alimentos');
+    document.getElementById("boasVindas").innerText =
+        `Olá, ${nome}`;
 
-    tbody.innerHTML = alimentos.map(a => `
+    let alimentosCache = [];
 
-            <tr class="hover:bg-gray-50">
+    // =========================
+    // ALIMENTOS
+    // =========================
 
-                <td class="p-3 border font-bold">
-                    ${a.id}
-                </td>
+    async function carregarAlimentos() {
 
-                <td class="p-3 border">
-                    ${a.nome}
-                </td>
+        try {
 
-                <td class="p-3 border">
-                    ${a.calorias} kcal
-                </td>
+            const res =
+                await fetch('/api/alimentos');
 
-            </tr>
+            alimentosCache =
+                await res.json();
 
-        `).join('');
-  }
+            document.getElementById("totalAlimentos").innerText =
+                alimentosCache.length;
 
-  // SALVAR PACIENTE
-  async function salvarPaciente() {
+            renderizarAlimentos(alimentosCache);
 
-    const dados = {
+        } catch (e) {
 
-      nome: document.getElementById('p-nome').value,
+            document.getElementById("tabelaAlimentos").innerHTML =
+                '<tr><td colspan="3" class="td-erro">Erro ao carregar</td></tr>';
+        }
+    }
 
-      peso: parseFloat(document.getElementById('p-peso').value),
+    function renderizarAlimentos(lista) {
 
-      altura: parseFloat(document.getElementById('p-altura').value)
+        if (!lista || lista.length === 0) {
 
-    };
+            document.getElementById("tabelaAlimentos").innerHTML =
+                '<tr><td colspan="3" class="td-vazio">Nenhum alimento encontrado</td></tr>';
 
-    const res = await fetch('/pacientes', {
+            return;
+        }
 
-      method: 'POST',
+        document.getElementById("tabelaAlimentos").innerHTML =
 
-      headers: {
-        'Content-Type': 'application/json'
-      },
+            lista.map(a => `
 
-      body: JSON.stringify(dados)
+                <tr>
 
-    });
+                    <td class="td-primary td-bold">
+                        ${a.id}
+                    </td>
 
-    const p = await res.json();
+                    <td class="td-primary">
+                        ${a.nome}
+                    </td>
 
-    const div = document.getElementById('resultado-imc');
+                    <td class="td-secondary">
+                        ${a.calorias} kcal
+                    </td>
 
-    div.classList.remove('hidden');
+                </tr>
 
-    div.innerHTML = `
-            <strong>${p.nome}</strong>
-            cadastrado! IMC:
-            <span class="text-green-700 font-bold">
-                ${p.imc.toFixed(2)}
-            </span>
-        `;
-  }
+            `).join('');
+    }
 
-  // CALCULAR SUBSTITUIÇÃO
-  async function calcularSubstituicao() {
+    function filtrarAlimentos() {
 
-    const dados = {
+        const termo =
+            document.getElementById("searchAlimentos")
+                .value
+                .toLowerCase();
 
-      alimentoOrigemId: parseInt(document.getElementById('id-origem').value),
+        const filtrados = alimentosCache.filter(a =>
+            a.nome.toLowerCase().includes(termo)
+        );
 
-      alimentoSubstitutoId: parseInt(document.getElementById('id-substituto').value),
+        renderizarAlimentos(filtrados);
+    }
 
-      quantidadeGramas: parseFloat(document.getElementById('qtd-gramas').value)
+    // =========================
+    // PACIENTES
+    // =========================
 
-    };
+    async function carregarPacientes() {
 
-    const res = await fetch('/alimentos/substituir', {
+        try {
 
-      method: 'POST',
+            const res =
+                await fetch('/pacientes');
 
-      headers: {
-        'Content-Type': 'application/json'
-      },
+            const pacientes =
+                await res.json();
 
-      body: JSON.stringify(dados)
+            const pacientesUnicos =
+                pacientes.filter(
+                    (paciente, index, self) =>
+                        index === self.findIndex(
+                            p => p.id === paciente.id
+                        )
+                );
 
-    });
+            document.getElementById("totalPacientes").innerText =
+                pacientesUnicos.length;
 
-    const texto = await res.text();
+            if (pacientesUnicos.length === 0) {
 
-    document.getElementById('resultado-sub').innerText = texto;
-  }
+                document.getElementById("gridPacientes").innerHTML =
+                    '<p class="td-vazio">Nenhum paciente cadastrado.</p>';
 
-  // INICIAR
-  carregarAlimentos();
+                return;
+            }
+
+            document.getElementById("gridPacientes").innerHTML =
+
+                pacientesUnicos.map(p => `
+
+                    <div class="patient-card">
+
+                        <div class="patient-avatar">
+
+                            <svg width="32"
+                                 height="32"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="#2D6A4F"
+                                 stroke-width="2">
+
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+
+                                <circle cx="9" cy="7" r="4"></circle>
+
+                            </svg>
+
+                        </div>
+
+                        <h3 class="patient-name">
+                            ${p.nome}
+                        </h3>
+
+                        <div class="patient-imc">
+
+                            IMC:
+
+                            <span style="font-weight:600;color:var(--vd)">
+
+                                ${p.imc
+                    ? p.imc.toFixed(1)
+                    : '—'}
+
+                            </span>
+
+                        </div>
+
+                        <div class="patient-status
+                            ${p.imc
+                    ? 'status-active'
+                    : 'status-inactive'}">
+
+                            ${p.imc
+                    ? 'Dieta Ativa'
+                    : 'Sem Dieta'}
+
+                        </div>
+
+                        <button class="btn-details"
+                                onclick="abrirPaciente(${p.id})">
+
+                            Ver Detalhes
+
+                        </button>
+
+                    </div>
+
+                `).join('');
+
+        } catch (e) {
+
+            document.getElementById("gridPacientes").innerHTML =
+                '<p class="td-erro">Erro ao carregar pacientes.</p>';
+        }
+    }
+
+    function abrirPaciente(id) {
+
+        localStorage.setItem("pacienteSelecionado", id);
+
+        window.location.href =
+            "/paciente_detalhes.html";
+    }
+
+    // =========================
+    // CADASTRAR PACIENTE
+    // =========================
+
+    async function salvarPaciente() {
+
+        const dados = {
+
+            nome:
+            document.getElementById('p-nome').value,
+
+            peso:
+                parseFloat(
+                    document.getElementById('p-peso').value
+                ),
+
+            altura:
+                parseFloat(
+                    document.getElementById('p-altura').value
+                )
+        };
+
+        try {
+
+            const res = await fetch('/pacientes', {
+
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify(dados)
+            });
+
+            const p = await res.json();
+
+            const imc = p.imc;
+
+            let cls = '';
+            let estilo = '';
+
+            if (imc < 18.5) {
+
+                cls = 'Abaixo do peso';
+                estilo = 'class-abaixo';
+
+            } else if (imc < 25) {
+
+                cls = 'Normal';
+                estilo = 'class-normal';
+
+            } else if (imc < 30) {
+
+                cls = 'Sobrepeso';
+                estilo = 'class-sobrepeso';
+
+            } else {
+
+                cls = 'Obesidade';
+                estilo = 'class-obesidade';
+            }
+
+            document.getElementById('imcValue').innerText =
+                imc.toFixed(1);
+
+            document.getElementById('imcClass').innerText =
+                cls;
+
+            document.getElementById('imcClass').className =
+                'imc-classification ' + estilo;
+
+            document.getElementById('imcResult').classList.add('show');
+
+            carregarPacientes();
+
+        } catch (e) {
+
+            alert('Erro ao cadastrar paciente.');
+        }
+    }
+
+    // =========================
+    // SUBSTITUIÇÃO
+    // =========================
+
+    async function calcularSubstituicao() {
+
+        const dados = {
+
+            alimentoOrigemId:
+                parseInt(
+                    document.getElementById('id-origem').value
+                ),
+
+            alimentoSubstitutoId:
+                parseInt(
+                    document.getElementById('id-substituto').value
+                ),
+
+            quantidadeGramas:
+                parseFloat(
+                    document.getElementById('qtd-gramas').value
+                )
+        };
+
+        try {
+
+            const res =
+                await fetch('/api/alimentos/substituir', {
+
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify(dados)
+                });
+
+            document.getElementById('resultado-sub').innerText =
+                await res.text();
+
+        } catch (e) {
+
+            document.getElementById('resultado-sub').innerText =
+                'Erro ao calcular.';
+        }
+    }
+
+    // =========================
+    // LOGOUT
+    // =========================
+
+    function logout() {
+
+        localStorage.clear();
+
+        window.location.href = "/login.html";
+    }
+
+    // =========================
+    // INIT
+    // =========================
+
+    carregarAlimentos();
+    carregarPacientes();
 
 </script>
 

@@ -2,28 +2,27 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home Paciente - NutriSmart</title>
-
-  <!-- FONT -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap"
-        rel="stylesheet">
-
-  <!-- ÍCONES -->
-  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"
-          defer></script>
-
-  <!-- SWEET ALERT -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <!-- CSS -->
   <link rel="stylesheet" href="/style_paciente.css">
 </head>
-
 <body>
+
+<!-- GUARD: bloqueia acesso de nutricionistas -->
+<script>
+  (function () {
+    const tipo = localStorage.getItem("tipoUsuario");
+    if (!tipo) {
+      window.location.href = "/login.html";
+    } else if (tipo !== "PACIENTE") {
+      // Nutricionista não pode acessar área do paciente
+      window.location.href = "/dashboard.html";
+    }
+  })();
+</script>
 
 <!-- HEADER -->
 <header class="header">
@@ -35,19 +34,15 @@
 
   <div class="flex gap-3">
 
-    <a href="/dashboard.html"
-       class="btn-sair"
-       style="text-decoration:none;">
-      <i class="ph ph-house"></i>
-      Dashboard
+    <!-- Paciente só vê Alimentos (sem acesso ao dashboard do nutricionista) -->
+    <a href="/alimentos.html" class="btn-sair" style="text-decoration:none;">
+      <i class="ph ph-carrot"></i>
+      Alimentos
     </a>
 
-    <button class="btn-sair"
-            onclick="logout()">
-
+    <button class="btn-sair" onclick="logout()">
       <i class="ph ph-sign-out"></i>
       Sair
-
     </button>
 
   </div>
@@ -57,49 +52,26 @@
 <!-- CONTAINER -->
 <div class="container">
 
-  <h2 id="boasVindas"
-      style="margin-top: 20px;">
-
-    Olá, Paciente!
-
-  </h2>
+  <h2 id="boasVindas" style="margin-top: 20px;">Olá, Paciente!</h2>
 
   <!-- CARDS -->
   <div class="stats-cards">
-
     <div class="stat-card">
-
       <i class="ph ph-flame"></i>
-
-      <span>
-                Meta do Dia: 2.200 kcal
-            </span>
-
+      <span>Meta do Dia: 2.200 kcal</span>
     </div>
-
     <div class="stat-card">
-
       <i class="ph ph-drop"></i>
-
-      <span>
-                Meta de Água: 2.5L
-            </span>
-
+      <span>Meta de Água: 2.5L</span>
     </div>
-
   </div>
 
   <!-- DIETAS -->
   <div id="dietaContainer">
-
     <p class="loading-msg">
-
       <i class="ph ph-circle-notch"></i>
-
       Carregando sua dieta...
-
     </p>
-
   </div>
 
 </div>
@@ -107,170 +79,87 @@
 <script>
 
   window.onload = function () {
-
     const nome = localStorage.getItem("nomeUsuario");
-
     if (nome) {
-
-      document.getElementById("boasVindas")
-              .innerText = `Olá, ${nome}!`;
+      document.getElementById("boasVindas").innerText = `Olá, ${nome}!`;
     }
-
     carregarDieta();
   };
 
-  // CARREGAR DIETA
+  // CARREGAR DIETA DO PACIENTE
   async function carregarDieta() {
-
-    const pacienteId =
-            localStorage.getItem("usuarioId")?.split(':')[0];
-
-    const container =
-            document.getElementById("dietaContainer");
+    const pacienteId = localStorage.getItem("usuarioId")?.split(':')[0];
+    const container = document.getElementById("dietaContainer");
 
     function renderizarCards(lista) {
-
       container.innerHTML = "";
 
       if (!lista || lista.length === 0) {
-
         container.innerHTML = `
-
-                    <div class="empty-state">
-
-                        <i class="ph ph-clipboard-text"></i>
-
-                        <p>
-                            Nenhuma dieta encontrada para este paciente.
-                        </p>
-
-                    </div>
-
-                `;
-
+          <div class="empty-state">
+            <i class="ph ph-clipboard-text"></i>
+            <p>Nenhuma dieta encontrada para este paciente.</p>
+          </div>
+        `;
         return;
       }
 
       lista.forEach(item => {
-
         container.innerHTML += `
-
-                    <div class="meal-card">
-
-                        <div class="meal-time">
-
-                            ${item.horario || "00:00"}
-
-                        </div>
-
-                        <div class="meal-content">
-
-                            <h3>
-
-                                <i class="ph ph-fork-knife"></i>
-
-                                ${item.refeicaoNome || "Refeição"}
-
-                            </h3>
-
-                            <p>
-
-                                ${item.descricao || "Sem descrição"}
-
-                            </p>
-
-                            <div class="meal-meta">
-
-                                <span class="meal-meta__obj">
-
-                                    <i class="ph ph-target"></i>
-
-                                    ${item.objetivo || "Objetivo não definido"}
-
-                                </span>
-
-                            </div>
-
-                            <button class="btn-swap"
-                                    onclick="abrirModalSubstituicao(${item.id})">
-
-                                <i class="ph ph-arrows-left-right"></i>
-
-                                Sugerir Substituição
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                `;
+          <div class="meal-card">
+            <div class="meal-time">${item.horario || "00:00"}</div>
+            <div class="meal-content">
+              <h3>
+                <i class="ph ph-fork-knife"></i>
+                ${item.refeicaoNome || "Refeição"}
+              </h3>
+              <p>${item.descricao || "Sem descrição"}</p>
+              <div class="meal-meta">
+                <span class="meal-meta__obj">
+                  <i class="ph ph-target"></i>
+                  ${item.objetivo || "Objetivo não definido"}
+                </span>
+              </div>
+              <button class="btn-swap" onclick="abrirModalSubstituicao(${item.id})">
+                <i class="ph ph-arrows-left-right"></i>
+                Sugerir Substituição
+              </button>
+            </div>
+          </div>
+        `;
       });
     }
 
     try {
-
-      const response =
-              await fetch(`/dietas/paciente/${pacienteId}`);
-
-      if (!response.ok)
-        throw new Error("Erro ao buscar dados");
-
+      const response = await fetch(`/dietas/paciente/${pacienteId}`);
+      if (!response.ok) throw new Error("Erro ao buscar dados");
       const dados = await response.json();
-
-      const listaDietas =
-              Array.isArray(dados) ? dados : [dados];
-
+      const listaDietas = Array.isArray(dados) ? dados : [dados];
       renderizarCards(listaDietas);
-
     } catch (error) {
-
       console.error("Erro no carregamento:", error);
-
       container.innerHTML = `
-
-                <div class="empty-state empty-state--error">
-
-                    <i class="ph ph-warning-circle"></i>
-
-                    <p>
-                        Erro ao carregar dieta.
-                        Verifique se o backend está rodando.
-                    </p>
-
-                </div>
-
-            `;
+        <div class="empty-state empty-state--error">
+          <i class="ph ph-warning-circle"></i>
+          <p>Erro ao carregar dieta. Verifique se o backend está rodando.</p>
+        </div>
+      `;
     }
   }
 
-  // MODAL
+  // MODAL DE SUBSTITUIÇÃO
   function abrirModalSubstituicao(dietaId) {
-
     Swal.fire({
-
       title: 'Sugerir Substituição',
-
       input: 'textarea',
-
-      inputLabel:
-              'O que você gostaria de alterar nesta refeição?',
-
-      inputPlaceholder:
-              'Ex: Gostaria de trocar o ovo por frango...',
-
+      inputLabel: 'O que você gostaria de alterar nesta refeição?',
+      inputPlaceholder: 'Ex: Gostaria de trocar o ovo por frango...',
       showCancelButton: true,
-
       confirmButtonText: 'Enviar para o Nutri',
-
       confirmButtonColor: '#1B4332',
-
       cancelButtonText: 'Cancelar'
-
     }).then((result) => {
-
       if (result.isConfirmed && result.value) {
-
         enviarSubstituicao(dietaId, result.value);
       }
     });
@@ -278,71 +167,35 @@
 
   // ENVIAR SUBSTITUIÇÃO
   async function enviarSubstituicao(dietaId, texto) {
-
-    const pacienteId =
-            localStorage.getItem("usuarioId")?.split(':')[0];
+    const pacienteId = localStorage.getItem("usuarioId")?.split(':')[0];
 
     const dados = {
-
       textoPedido: texto,
-
-      dieta: {
-        id: dietaId
-      },
-
-      paciente: {
-        id: parseInt(pacienteId)
-      }
+      dieta: { id: dietaId },
+      paciente: { id: parseInt(pacienteId) }
     };
 
     try {
-
-      const response =
-              await fetch("/api/substituicoes", {
-
-                method: "POST",
-
-                headers: {
-                  "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify(dados)
-              });
+      const response = await fetch("/api/substituicoes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+      });
 
       if (response.ok) {
-
-        Swal.fire(
-                'Enviado!',
-                'Sua sugestão foi enviada ao nutricionista.',
-                'success'
-        );
-
+        Swal.fire('Enviado!', 'Sua sugestão foi enviada ao nutricionista.', 'success');
       } else {
-
-        Swal.fire(
-                'Erro',
-                'Não foi possível enviar a sugestão.',
-                'error'
-        );
+        Swal.fire('Erro', 'Não foi possível enviar a sugestão.', 'error');
       }
-
     } catch (error) {
-
       console.error("Erro ao enviar:", error);
-
-      Swal.fire(
-              'Erro',
-              'Verifique sua conexão.',
-              'error'
-      );
+      Swal.fire('Erro', 'Verifique sua conexão.', 'error');
     }
   }
 
   // LOGOUT
   function logout() {
-
     localStorage.clear();
-
     window.location.href = "/login.html";
   }
 

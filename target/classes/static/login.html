@@ -2,40 +2,23 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - NutriApp</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
 <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
 
     <div class="text-center mb-6">
-
         <i class="fa-solid fa-user-doctor text-4xl text-green-600"></i>
-
-        <h1 class="text-2xl font-bold mt-3">
-            Login
-        </h1>
-
-        <p class="text-gray-500 text-sm mt-2">
-            Entre na sua conta
-        </p>
-
+        <h1 class="text-2xl font-bold mt-3">Login</h1>
+        <p class="text-gray-500 text-sm mt-2">Entre na sua conta</p>
     </div>
 
     <form id="formLogin">
-
         <div class="space-y-4">
 
             <input id="email"
@@ -50,112 +33,74 @@
 
             <button type="submit"
                     class="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded font-bold transition">
-
                 Entrar
-
             </button>
 
         </div>
-
     </form>
 
-    <div id="mensagem"
-         class="hidden mt-4 p-3 rounded text-center font-semibold">
-    </div>
+    <div id="mensagem" class="hidden mt-4 p-3 rounded text-center font-semibold"></div>
 
     <p class="text-center mt-4 text-sm">
-
         Não possui conta?
-
-        <a href="/cadastro.html"
-           class="text-green-600 font-bold hover:underline">
-
-            Criar agora
-
-        </a>
-
+        <a href="/cadastro.html" class="text-green-600 font-bold hover:underline">Criar agora</a>
     </p>
 
 </div>
 
 <script>
+    document.getElementById("formLogin").addEventListener("submit", async function(e) {
+        e.preventDefault();
 
-    document.getElementById("formLogin")
-        .addEventListener("submit", async function(e) {
+        const dados = {
+            email: document.getElementById("email").value,
+            senha: document.getElementById("senha").value
+        };
 
-            e.preventDefault();
+        try {
+            const response = await fetch('/api/usuarios/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
 
-            const dados = {
+            const mensagem = document.getElementById("mensagem");
 
-                email: document.getElementById("email").value,
+            if (response.ok) {
+                const usuario = await response.json();
 
-                senha: document.getElementById("senha").value
-            };
+                // Salva dados do usuário no localStorage
+                localStorage.setItem("nomeUsuario", usuario.nome || "Usuário");
+                localStorage.setItem("tipoUsuario", usuario.tipo || "PACIENTE");
+                localStorage.setItem("usuarioId", usuario.id || "");
 
-            try {
+                mensagem.classList.remove("hidden");
+                mensagem.classList.add("bg-green-100", "text-green-700");
+                mensagem.innerText = "Login realizado com sucesso!";
 
-                const response = await fetch('/api/usuarios/login', {
+                setTimeout(() => {
+                    // Redireciona conforme o tipo
+                    if (usuario.tipo === "NUTRICIONISTA") {
+                        window.location.href = "/dashboard.html";
+                    } else {
+                        window.location.href = "/home_paciente.html";
+                    }
+                }, 1000);
 
-                    method: 'POST',
-
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-
-                    body: JSON.stringify(dados)
-                });
-
-                const mensagem =
-                    document.getElementById("mensagem");
-
-                if(response.ok) {
-
-                    const usuario = await response.json();
-
-                    localStorage.setItem(
-                        "nomeUsuario",
-                        usuario.nome || "Usuário"
-                    );
-
-                    mensagem.classList.remove("hidden");
-
-                    mensagem.classList.add(
-                        "bg-green-100",
-                        "text-green-700"
-                    );
-
-                    mensagem.innerText =
-                        "Login realizado com sucesso!";
-
-                    setTimeout(() => {
-
-                        window.location.href =
-                            "/dashboard.html";
-
-                    }, 1000);
-
-                } else {
-
-                    mensagem.classList.remove("hidden");
-
-                    mensagem.classList.add(
-                        "bg-red-100",
-                        "text-red-700"
-                    );
-
-                    mensagem.innerText =
-                        "E-mail ou senha inválidos.";
-
-                }
-
-            } catch (erro) {
-
-                console.log(erro);
-
+            } else {
+                mensagem.classList.remove("hidden");
+                mensagem.classList.add("bg-red-100", "text-red-700");
+                mensagem.innerText = "E-mail ou senha inválidos.";
             }
 
-        });
-
+        } catch (erro) {
+            console.log(erro);
+            const mensagem = document.getElementById("mensagem");
+            mensagem.classList.remove("hidden");
+            mensagem.classList.add("bg-red-100", "text-red-700");
+            mensagem.innerText = "Erro de conexão com o servidor.";
+        }
+    });
 </script>
 
 </body>

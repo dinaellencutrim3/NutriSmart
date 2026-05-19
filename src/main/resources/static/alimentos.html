@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alimentos - NutriApp</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100">
+
+<!-- GUARD: requer login -->
+<script>
+  (function () {
+    const tipo = localStorage.getItem("tipoUsuario");
+    if (!tipo) {
+      window.location.href = "/login.html";
+    }
+  })();
+</script>
+
+<!-- HEADER -->
+<div class="header">
+
+  <h1>
+    <i class="fa-solid fa-carrot"></i>
+    Alimentos
+  </h1>
+
+  <div class="flex gap-3" id="nav-botoes">
+    <!-- Botões injetados pelo JS conforme o tipo de usuário -->
+  </div>
+
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+  <div class="summary-card">
+
+    <h2 class="text-2xl font-bold mb-5">Lista de Alimentos</h2>
+
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse">
+        <thead>
+        <tr class="bg-green-600 text-white">
+          <th class="p-3 border">ID</th>
+          <th class="p-3 border">Nome</th>
+          <th class="p-3 border">Calorias</th>
+        </tr>
+        </thead>
+        <tbody id="tabela"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+  // Renderiza navegação conforme perfil
+  const tipo = localStorage.getItem("tipoUsuario");
+  const nav = document.getElementById("nav-botoes");
+
+  if (tipo === "NUTRICIONISTA") {
+    nav.innerHTML = `
+      <a href="/dashboard.html" class="btn-logout">Dashboard</a>
+      <a href="/dietas.html" class="btn-logout">Dietas</a>
+      <a href="/pacientes.html" class="btn-logout">Pacientes</a>
+      <button onclick="logout()" class="btn-logout">Sair</button>
+    `;
+  } else {
+    // Paciente: só vê o botão de voltar para sua área e sair
+    nav.innerHTML = `
+      <a href="/home_paciente.html" class="btn-logout">Minha Área</a>
+      <button onclick="logout()" class="btn-logout">Sair</button>
+    `;
+  }
+
+  // CARREGA ALIMENTOS
+  async function carregar() {
+    const response = await fetch('/alimentos');
+    const alimentos = await response.json();
+    const tabela = document.getElementById("tabela");
+    tabela.innerHTML = alimentos.map(a => `
+      <tr class="bg-white hover:bg-gray-100 transition">
+        <td class="p-3 border text-center font-bold">${a.id}</td>
+        <td class="p-3 border">${a.nome}</td>
+        <td class="p-3 border">${a.calorias} kcal</td>
+      </tr>
+    `).join('');
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "/login.html";
+  }
+
+  carregar();
+
+</script>
+
+</body>
+</html>

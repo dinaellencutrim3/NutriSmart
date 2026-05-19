@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dietas - NutriApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100">
+
+<!-- GUARD: exclusivo para nutricionistas -->
+<script>
+    (function () {
+        const tipo = localStorage.getItem("tipoUsuario");
+        if (!tipo) {
+            window.location.href = "/login.html";
+        } else if (tipo !== "NUTRICIONISTA") {
+            // Paciente não pode acessar gestão de dietas
+            window.location.href = "/home_paciente.html";
+        }
+    })();
+</script>
+
+<!-- HEADER -->
+<div class="header">
+
+    <h1>
+        <i class="fa-solid fa-utensils"></i>
+        Dietas
+    </h1>
+
+    <div class="flex gap-3">
+        <a href="/dashboard.html" class="btn-logout">Dashboard</a>
+        <a href="/alimentos.html" class="btn-logout">Alimentos</a>
+        <button onclick="logout()" class="btn-logout">Sair</button>
+    </div>
+
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+    <div class="summary-card">
+
+        <h2 class="text-2xl font-bold mb-5">Dietas Cadastradas</h2>
+
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                <tr class="bg-green-600 text-white">
+                    <th class="p-3 border">ID</th>
+                    <th class="p-3 border">Dieta</th>
+                </tr>
+                </thead>
+                <tbody id="lista-dietas"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    async function carregarDietas() {
+        const response = await fetch('/dietas');
+        const dietas = await response.json();
+        const lista = document.getElementById("lista-dietas");
+        lista.innerHTML = dietas.map(d => `
+            <tr class="bg-white hover:bg-gray-100 transition">
+                <td class="p-3 border text-center font-bold">${d.id}</td>
+                <td class="p-3 border">Dieta cadastrada</td>
+            </tr>
+        `).join('');
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "/login.html";
+    }
+
+    carregarDietas();
+
+</script>
+
+</body>
+</html>

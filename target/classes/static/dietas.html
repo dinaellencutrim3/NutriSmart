@@ -1,80 +1,306 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dietas - NutriApp</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/css/style.css">
+    <title>Dietas - NutriSmart</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f0fdf4;
+            min-height: 100vh;
+            color: #1a3a2a;
+        }
+
+        /* ══ NAVBAR ══ */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 64px;
+            background: #fff;
+            border-bottom: 1px solid rgba(82,183,136,0.25);
+            box-shadow: 0 2px 12px rgba(45,106,79,0.07);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .navbar-logo {
+            display: flex; align-items: center; gap: 0.5rem;
+            text-decoration: none;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700; font-size: 1.2rem; color: #2D6A4F;
+        }
+        .navbar-links {
+            display: flex; align-items: center; gap: 0.25rem;
+        }
+
+        /* Botão voltar home — destaque */
+        .btn-home {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.45rem 1rem;
+            background: #f0fdf4;
+            border: 2px solid #52B788;
+            color: #2D6A4F;
+            border-radius: 8px;
+            font-size: 0.85rem; font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-right: 0.5rem;
+        }
+        .btn-home:hover { background: #52B788; color: #fff; }
+
+        /* Links de navegação internos */
+        .nav-link {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            padding: 0.45rem 0.9rem;
+            color: #4b7a62;
+            border-radius: 8px;
+            font-size: 0.875rem; font-weight: 500;
+            text-decoration: none;
+            transition: background 0.18s, color 0.18s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: #dcfce7; color: #2D6A4F;
+        }
+        .nav-link.active { font-weight: 700; }
+
+        /* Botão sair */
+        .btn-sair {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            padding: 0.45rem 0.9rem;
+            background: transparent; border: none;
+            color: #9ca3af; font-size: 0.875rem; font-weight: 500;
+            border-radius: 8px; cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+        }
+        .btn-sair:hover { background: #fee2e2; color: #dc2626; }
+
+        /* ══ CONTEÚDO ══ */
+        .page-header {
+            padding: 2rem 2rem 0;
+            max-width: 1100px; margin: 0 auto;
+        }
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem; font-weight: 700; color: #1a3a2a;
+            display: flex; align-items: center; gap: 0.6rem;
+            margin-bottom: 0.3rem;
+        }
+        .page-subtitle { color: #6b7280; font-size: 0.9rem; }
+
+        .container {
+            max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 3rem;
+        }
+
+        /* ══ CARD TABELA ══ */
+        .table-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid rgba(82,183,136,0.18);
+            box-shadow: 0 4px 24px rgba(45,106,79,0.08);
+            overflow: hidden;
+        }
+        .table-card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #f0fdf4;
+        }
+        .table-card-title {
+            font-size: 1.05rem; font-weight: 700; color: #1a3a2a;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .badge-count {
+            background: #dcfce7; color: #2D6A4F;
+            font-size: 0.75rem; font-weight: 700;
+            padding: 0.15rem 0.6rem; border-radius: 999px;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background: #f0fdf4; }
+        th {
+            padding: 0.85rem 1.25rem;
+            text-align: left;
+            font-size: 0.75rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            color: #4b7a62;
+            border-bottom: 1px solid #dcfce7;
+        }
+        tbody tr {
+            border-bottom: 1px solid #f0fdf4;
+            transition: background 0.15s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #f9fefb; }
+        td { padding: 1rem 1.25rem; font-size: 0.9rem; color: #374151; }
+        td.td-id { font-weight: 700; color: #2D6A4F; width: 80px; }
+        td.td-nome { color: #1a3a2a; font-weight: 500; }
+        td.td-paciente { color: #6b7280; }
+        td.td-data { color: #9ca3af; font-size: 0.82rem; }
+
+        .pill {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px; font-size: 0.78rem; font-weight: 600;
+        }
+        .pill-green { background: #d1fae5; color: #065f46; }
+        .pill-gray  { background: #f3f4f6; color: #6b7280; }
+
+        .empty-state {
+            text-align: center; padding: 3rem; color: #9ca3af;
+        }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; color: #d1fae5; }
+
+        /* ══ LOADING ══ */
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+        .loading-row td { animation: pulse 1.2s infinite; }
+    </style>
 </head>
+<body>
 
-<body class="bg-gray-100">
-
-<!-- GUARD: exclusivo para nutricionistas -->
+<!-- GUARD -->
 <script>
     (function () {
         const tipo = localStorage.getItem("tipoUsuario");
         if (!tipo) {
             window.location.href = "/login.html";
         } else if (tipo !== "NUTRICIONISTA") {
-            // Paciente não pode acessar gestão de dietas
             window.location.href = "/home_paciente.html";
         }
     })();
 </script>
 
-<!-- HEADER -->
-<div class="header">
+<!-- NAVBAR HARMÔNICA -->
+<nav class="navbar">
+    <a href="/index.html" class="navbar-logo">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+            <path d="M16 2C16 2 8 6 8 16C8 20 10 24 16 28C22 24 24 20 24 16C24 6 16 2 16 2Z" fill="#52B788"/>
+            <path d="M16 8C13 10 12 13 12 16C12 18 13 20 16 22C19 20 20 18 20 16C20 13 19 10 16 8Z" fill="#2D6A4F"/>
+        </svg>
+        NutriSmart
+    </a>
 
-    <h1>
-        <i class="fa-solid fa-utensils"></i>
+    <div class="navbar-links">
+        <!-- Botão Voltar à Home Principal -->
+        <a href="/index.html" class="btn-home">
+            <i class="fa-solid fa-house"></i>
+            Página Principal
+        </a>
+
+        <a href="/dashboard.html" class="nav-link">
+            <i class="fa-solid fa-gauge"></i>
+            Dashboard
+        </a>
+        <a href="/alimentos.html" class="nav-link">
+            <i class="fa-solid fa-carrot"></i>
+            Alimentos
+        </a>
+        <a href="/dietas.html" class="nav-link active">
+            <i class="fa-solid fa-utensils"></i>
+            Dietas
+        </a>
+
+        <button onclick="logout()" class="btn-sair">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Sair
+        </button>
+    </div>
+</nav>
+
+<!-- TÍTULO DA PÁGINA -->
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="fa-solid fa-utensils" style="color:#52B788"></i>
         Dietas
     </h1>
-
-    <div class="flex gap-3">
-        <a href="/dashboard.html" class="btn-logout">Dashboard</a>
-        <a href="/alimentos.html" class="btn-logout">Alimentos</a>
-        <button onclick="logout()" class="btn-logout">Sair</button>
-    </div>
-
+    <p class="page-subtitle">Gerencie e visualize todas as dietas dos seus pacientes</p>
 </div>
 
-<!-- CONTAINER -->
+<!-- CONTEÚDO -->
 <div class="container">
-
-    <div class="summary-card">
-
-        <h2 class="text-2xl font-bold mb-5">Dietas Cadastradas</h2>
-
-        <div class="overflow-x-auto">
-            <table class="w-full border-collapse">
-                <thead>
-                <tr class="bg-green-600 text-white">
-                    <th class="p-3 border">ID</th>
-                    <th class="p-3 border">Dieta</th>
-                </tr>
-                </thead>
-                <tbody id="lista-dietas"></tbody>
-            </table>
+    <div class="table-card">
+        <div class="table-card-header">
+            <span class="table-card-title">
+                <i class="fa-solid fa-list-ul" style="color:#52B788"></i>
+                Dietas Cadastradas
+                <span class="badge-count" id="countDietas">—</span>
+            </span>
         </div>
 
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Refeição</th>
+                <th>Paciente</th>
+                <th>Objetivo</th>
+                <th>Horário</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody id="lista-dietas">
+            <tr class="loading-row">
+                <td colspan="6" style="text-align:center;color:#9ca3af;padding:2rem">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:.5rem"></i>
+                    Carregando dietas...
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-
 </div>
 
 <script>
-
     async function carregarDietas() {
-        const response = await fetch('/dietas');
-        const dietas = await response.json();
-        const lista = document.getElementById("lista-dietas");
-        lista.innerHTML = dietas.map(d => `
-            <tr class="bg-white hover:bg-gray-100 transition">
-                <td class="p-3 border text-center font-bold">${d.id}</td>
-                <td class="p-3 border">Dieta cadastrada</td>
-            </tr>
-        `).join('');
+        try {
+            const response = await fetch('/dietas');
+            if (!response.ok) throw new Error();
+            const dietas = await response.json();
+            const lista = document.getElementById("lista-dietas");
+            document.getElementById("countDietas").innerText = dietas.length;
+
+            if (!dietas.length) {
+                lista.innerHTML = `
+                    <tr><td colspan="6">
+                        <div class="empty-state">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            <p>Nenhuma dieta cadastrada ainda.</p>
+                        </div>
+                    </td></tr>`;
+                return;
+            }
+
+            lista.innerHTML = dietas.map(d => `
+                <tr>
+                    <td class="td-id">#${d.id}</td>
+                    <td class="td-nome">${d.refeicaoNome || d.nome || 'Refeição'}</td>
+                    <td class="td-paciente">
+                        ${d.paciente?.nome || d.pacienteNome || '—'}
+                    </td>
+                    <td class="td-paciente">${d.objetivo || '—'}</td>
+                    <td class="td-data">${d.horario || '—'}</td>
+                    <td>
+                        <span class="pill pill-green">
+                            <i class="fa-solid fa-circle" style="font-size:.5rem"></i>
+                            Ativa
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+
+        } catch (e) {
+            document.getElementById("lista-dietas").innerHTML = `
+                <tr><td colspan="6">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#fca5a5"></i>
+                        <p style="color:#dc2626">Erro ao carregar dietas. Verifique o backend.</p>
+                    </div>
+                </td></tr>`;
+        }
     }
 
     function logout() {
@@ -83,8 +309,6 @@
     }
 
     carregarDietas();
-
 </script>
-
 </body>
 </html>

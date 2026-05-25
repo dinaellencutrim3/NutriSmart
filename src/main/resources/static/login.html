@@ -3,104 +3,561 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - NutriApp</title>
+    <title>Login - NutriSmart</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'DM Sans',sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            background:
+                    linear-gradient(
+                            135deg,
+                            #f0fdf4 0%,
+                            #dcfce7 45%,
+                            #bbf7d0 100%
+                    );
+            overflow-x:hidden;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .top-nav{
+            width:100%;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+
+            padding:1rem 2rem;
+
+            background:rgba(255,255,255,0.88);
+            backdrop-filter:blur(14px);
+
+            border-bottom:1px solid rgba(82,183,136,0.18);
+
+            position:sticky;
+            top:0;
+            z-index:999;
+        }
+
+        .nav-logo{
+            display:flex;
+            align-items:center;
+            gap:.7rem;
+
+            text-decoration:none;
+
+            font-family:'Playfair Display',serif;
+            font-weight:800;
+            font-size:1.35rem;
+
+            color:#2D6A4F;
+        }
+
+        .btn-voltar-home{
+            display:flex;
+            align-items:center;
+            gap:.45rem;
+
+            text-decoration:none;
+
+            padding:.65rem 1.1rem;
+
+            border-radius:10px;
+
+            border:2px solid #52B788;
+
+            color:#2D6A4F;
+            font-size:.9rem;
+            font-weight:700;
+
+            transition:.2s;
+        }
+
+        .btn-voltar-home:hover{
+            background:#52B788;
+            color:#fff;
+            transform:translateY(-1px);
+        }
+
+        /* ================= CONTAINER ================= */
+
+        .page{
+            min-height:calc(100vh - 80px);
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            padding:2rem;
+        }
+
+        /* ================= CARD ================= */
+
+        .card{
+            width:100%;
+            max-width:440px;
+
+            background:#fff;
+
+            border-radius:26px;
+
+            padding:2.7rem;
+
+            box-shadow:
+                    0 20px 50px rgba(45,106,79,.10),
+                    0 8px 20px rgba(0,0,0,.06);
+
+            border:1px solid rgba(82,183,136,.12);
+
+            animation:fadeUp .5s ease;
+        }
+
+        @keyframes fadeUp{
+            from{
+                opacity:0;
+                transform:translateY(20px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        .card-icon{
+            width:74px;
+            height:74px;
+
+            margin:0 auto 1.4rem;
+
+            border-radius:20px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #52B788,
+                            #2D6A4F
+                    );
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+
+            color:#fff;
+            font-size:2rem;
+
+            box-shadow:0 10px 25px rgba(82,183,136,.25);
+        }
+
+        .title{
+            font-family:'Playfair Display',serif;
+            font-size:2rem;
+            font-weight:800;
+
+            color:#1a3a2a;
+
+            text-align:center;
+
+            margin-bottom:.4rem;
+        }
+
+        .subtitle{
+            text-align:center;
+            color:#6b7280;
+            font-size:.95rem;
+
+            margin-bottom:2rem;
+        }
+
+        /* ================= FORM ================= */
+
+        .form-group{
+            margin-bottom:1.15rem;
+        }
+
+        .form-label{
+            display:block;
+
+            margin-bottom:.45rem;
+
+            font-size:.78rem;
+            font-weight:700;
+
+            color:#374151;
+
+            text-transform:uppercase;
+            letter-spacing:.06em;
+        }
+
+        .input-wrapper{
+            position:relative;
+        }
+
+        .input-icon{
+            position:absolute;
+            top:50%;
+            left:1rem;
+
+            transform:translateY(-50%);
+
+            color:#9ca3af;
+            font-size:.9rem;
+        }
+
+        .form-input{
+            width:100%;
+
+            padding:.9rem 1rem .9rem 2.8rem;
+
+            border-radius:12px;
+
+            border:2px solid #e5e7eb;
+
+            font-size:.95rem;
+
+            outline:none;
+
+            transition:.2s;
+        }
+
+        .form-input:focus{
+            border-color:#52B788;
+            box-shadow:0 0 0 4px rgba(82,183,136,.12);
+        }
+
+        /* ================= BUTTON ================= */
+
+        .btn-submit{
+            width:100%;
+
+            border:none;
+
+            margin-top:.6rem;
+
+            padding:1rem;
+
+            border-radius:12px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #52B788,
+                            #2D6A4F
+                    );
+
+            color:#fff;
+
+            font-size:1rem;
+            font-weight:700;
+
+            cursor:pointer;
+
+            transition:.2s;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:.5rem;
+        }
+
+        .btn-submit:hover{
+            transform:translateY(-2px);
+            opacity:.95;
+        }
+
+        /* ================= MESSAGE ================= */
+
+        .msg{
+            display:none;
+
+            margin-top:1rem;
+
+            padding:.9rem 1rem;
+
+            border-radius:12px;
+
+            font-size:.9rem;
+            font-weight:700;
+
+            text-align:center;
+        }
+
+        .success{
+            background:#d1fae5;
+            color:#065f46;
+        }
+
+        .error{
+            background:#fee2e2;
+            color:#991b1b;
+        }
+
+        /* ================= FOOTER ================= */
+
+        .divider{
+            margin-top:1.5rem;
+            text-align:center;
+
+            color:#6b7280;
+            font-size:.92rem;
+        }
+
+        .link-cadastro{
+            color:#2D6A4F;
+            font-weight:700;
+            text-decoration:none;
+        }
+
+        .link-cadastro:hover{
+            text-decoration:underline;
+        }
+
+        /* ================= RESPONSIVO ================= */
+
+        @media(max-width:600px){
+
+            .top-nav{
+                padding:1rem;
+            }
+
+            .btn-voltar-home span{
+                display:none;
+            }
+
+            .card{
+                padding:2rem 1.4rem;
+            }
+
+            .title{
+                font-size:1.7rem;
+            }
+
+        }
+
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-<div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+<body>
 
-    <div class="text-center mb-6">
-        <i class="fa-solid fa-user-doctor text-4xl text-green-600"></i>
-        <h1 class="text-2xl font-bold mt-3">Login</h1>
-        <p class="text-gray-500 text-sm mt-2">Entre na sua conta</p>
-    </div>
+<!-- NAVBAR -->
+<nav class="top-nav">
 
-    <form id="formLogin">
-        <div class="space-y-4">
+    <a href="/index.html" class="nav-logo">
 
-            <input id="email"
-                   type="email"
-                   placeholder="E-mail"
-                   class="w-full border p-3 rounded outline-none focus:ring-2 focus:ring-green-400">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <path d="M16 2C16 2 8 6 8 16C8 20 10 24 16 28C22 24 24 20 24 16C24 6 16 2 16 2Z"
+                  fill="#52B788"/>
 
-            <input id="senha"
-                   type="password"
-                   placeholder="Senha"
-                   class="w-full border p-3 rounded outline-none focus:ring-2 focus:ring-green-400">
+            <path d="M16 8C13 10 12 13 12 16C12 18 13 20 16 22C19 20 20 18 20 16C20 13 19 10 16 8Z"
+                  fill="#2D6A4F"/>
+        </svg>
 
-            <button type="submit"
-                    class="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded font-bold transition">
+        NutriSmart
+    </a>
+
+    <a href="/index.html" class="btn-voltar-home">
+        <i class="fa-solid fa-house"></i>
+        <span>Página Principal</span>
+    </a>
+
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+    <div class="card">
+
+        <div class="card-icon">
+            <i class="fa-solid fa-leaf"></i>
+        </div>
+
+        <h1 class="title">Bem-vindo de volta</h1>
+
+        <p class="subtitle">
+            Entre na sua conta e continue cuidando da sua saúde.
+        </p>
+
+        <!-- FORM -->
+        <form id="formLogin">
+
+            <div class="form-group">
+
+                <label class="form-label">E-mail</label>
+
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-envelope input-icon"></i>
+
+                    <input
+                            id="email"
+                            type="email"
+                            class="form-input"
+                            placeholder="Digite seu e-mail"
+                            required
+                    >
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label class="form-label">Senha</label>
+
+                <div class="input-wrapper">
+
+                    <i class="fa-solid fa-lock input-icon"></i>
+
+                    <input
+                            id="senha"
+                            type="password"
+                            class="form-input"
+                            placeholder="Digite sua senha"
+                            required
+                    >
+
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn-submit">
+
+                <i class="fa-solid fa-right-to-bracket"></i>
+
                 Entrar
+
             </button>
 
-        </div>
-    </form>
+        </form>
 
-    <div id="mensagem" class="hidden mt-4 p-3 rounded text-center font-semibold"></div>
+        <!-- MESSAGE -->
+        <div id="mensagem" class="msg"></div>
 
-    <p class="text-center mt-4 text-sm">
-        Não possui conta?
-        <a href="/cadastro.html" class="text-green-600 font-bold hover:underline">Criar agora</a>
-    </p>
+        <!-- FOOTER -->
+        <p class="divider">
+            Não possui uma conta?
+            <a href="/cadastro.html" class="link-cadastro">
+                Cadastre-se gratuitamente
+            </a>
+        </p>
+
+    </div>
 
 </div>
 
 <script>
-    document.getElementById("formLogin").addEventListener("submit", async function(e) {
-        e.preventDefault();
 
-        const dados = {
-            email: document.getElementById("email").value,
-            senha: document.getElementById("senha").value
-        };
+    // ================= LOGIN =================
 
-        try {
-            const response = await fetch('/api/usuarios/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dados)
-            });
+    document
+        .getElementById("formLogin")
+        .addEventListener("submit", async function(e){
 
-            const mensagem = document.getElementById("mensagem");
+            e.preventDefault();
 
-            if (response.ok) {
-                const usuario = await response.json();
+            const msg = document.getElementById("mensagem");
 
-                // Salva dados do usuário no localStorage
-                localStorage.setItem("nomeUsuario", usuario.nome || "Usuário");
-                localStorage.setItem("tipoUsuario", usuario.tipo || "PACIENTE");
-                localStorage.setItem("usuarioId", usuario.id || "");
+            msg.style.display = "none";
 
-                mensagem.classList.remove("hidden");
-                mensagem.classList.add("bg-green-100", "text-green-700");
-                mensagem.innerText = "Login realizado com sucesso!";
+            const usuario = {
 
-                setTimeout(() => {
-                    // Redireciona conforme o tipo
-                    if (usuario.tipo === "NUTRICIONISTA") {
-                        window.location.href = "/dashboard.html";
-                    } else {
-                        window.location.href = "/home_paciente.html";
-                    }
-                }, 1000);
+                email:
+                    document.getElementById("email").value.trim(),
 
-            } else {
-                mensagem.classList.remove("hidden");
-                mensagem.classList.add("bg-red-100", "text-red-700");
-                mensagem.innerText = "E-mail ou senha inválidos.";
+                senha:
+                document.getElementById("senha").value
+
+            };
+
+            try{
+
+                const response = await fetch('/api/usuarios/login', {
+
+                    method:'POST',
+
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+
+                    body:JSON.stringify(usuario)
+
+                });
+
+                const data = await response.json();
+
+                if(response.ok){
+
+                    // SALVA DADOS
+                    localStorage.setItem("nomeUsuario", data.nome);
+                    localStorage.setItem("tipoUsuario", data.tipo);
+                    localStorage.setItem("usuarioId", data.id);
+
+                    // MSG
+                    msg.className = "msg success";
+                    msg.style.display = "block";
+
+                    msg.innerHTML = `
+                        <i class="fa-solid fa-circle-check"></i>
+                        Bem-vindo, ${data.nome}!
+                    `;
+
+                    // REDIRECIONAMENTO
+                    setTimeout(()=>{
+
+                        if(data.tipo === "NUTRICIONISTA"){
+
+                            window.location.href = "/dashboard.html";
+
+                        }else{
+
+                            window.location.href = "/home_paciente.html";
+
+                        }
+
+                    },1200);
+
+                }else{
+
+                    msg.className = "msg error";
+                    msg.style.display = "block";
+
+                    msg.innerHTML = `
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        ${data.erro || "E-mail ou senha incorretos."}
+                    `;
+
+                }
+
+            }catch(error){
+
+                console.error(error);
+
+                msg.className = "msg error";
+                msg.style.display = "block";
+
+                msg.innerHTML = `
+                    <i class="fa-solid fa-wifi"></i>
+                    Erro de conexão com o servidor.
+                `;
+
             }
 
-        } catch (erro) {
-            console.log(erro);
-            const mensagem = document.getElementById("mensagem");
-            mensagem.classList.remove("hidden");
-            mensagem.classList.add("bg-red-100", "text-red-700");
-            mensagem.innerText = "Erro de conexão com o servidor.";
-        }
-    });
+        });
+
 </script>
 
 </body>

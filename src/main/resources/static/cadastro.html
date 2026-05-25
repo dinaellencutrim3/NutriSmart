@@ -2,211 +2,284 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Cadastro - NutriApp</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - NutriSmart</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { font-family: 'DM Sans', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+            min-height: 100vh;
+        }
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        /* ── NAVBAR ── */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(82,183,136,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #2D6A4F;
+        }
+        .btn-voltar-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1.1rem;
+            background: transparent;
+            border: 2px solid #52B788;
+            color: #2D6A4F;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-voltar-home:hover {
+            background: #52B788;
+            color: #fff;
+        }
 
-    <link rel="stylesheet" href="/css/style.css">
+        /* ── CARD ── */
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(45,106,79,0.12), 0 4px 16px rgba(0,0,0,0.06);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 440px;
+            margin: 2.5rem auto;
+        }
+        .card-icon {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #52B788, #2D6A4F);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.25rem;
+            font-size: 1.75rem;
+            color: #fff;
+        }
+        .card h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a3a2a;
+            text-align: center;
+            margin-bottom: 0.25rem;
+        }
+        .card p { text-align: center; color: #6b7280; font-size: 0.9rem; margin-bottom: 1.75rem; }
+
+        /* ── FORM ── */
+        .form-group { margin-bottom: 1rem; }
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            color: #111;
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+            background: #fff;
+        }
+        .form-input:focus, .form-select:focus { border-color: #52B788; }
+
+        /* Tipo badge selector */
+        .tipo-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .tipo-option {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 0.85rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        .tipo-option:hover { border-color: #52B788; color: #2D6A4F; }
+        .tipo-option.selected {
+            border-color: #2D6A4F;
+            background: #f0fdf4;
+            color: #2D6A4F;
+        }
+        .tipo-option i { display: block; font-size: 1.5rem; margin-bottom: 0.3rem; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, #52B788, #2D6A4F);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.25rem;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .btn-submit:hover { opacity: 0.92; transform: translateY(-1px); }
+
+        .msg { display: none; margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 10px; text-align: center; font-weight: 600; font-size: 0.9rem; }
+        .msg.success { background: #d1fae5; color: #065f46; }
+        .msg.error   { background: #fee2e2; color: #991b1b; }
+
+        .divider { text-align: center; margin: 1.25rem 0 0; color: #9ca3af; font-size: 0.875rem; }
+        .link-login { color: #2D6A4F; font-weight: 700; text-decoration: none; }
+        .link-login:hover { text-decoration: underline; }
+    </style>
 </head>
+<body>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<!-- NAVBAR COM BOTÃO VOLTAR À HOME -->
+<nav class="top-nav">
+    <a href="/index.html" class="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+            <path d="M16 2C16 2 8 6 8 16C8 20 10 24 16 28C22 24 24 20 24 16C24 6 16 2 16 2Z" fill="#52B788"/>
+            <path d="M16 8C13 10 12 13 12 16C12 18 13 20 16 22C19 20 20 18 20 16C20 13 19 10 16 8Z" fill="#2D6A4F"/>
+        </svg>
+        NutriSmart
+    </a>
+    <a href="/index.html" class="btn-voltar-home">
+        <i class="fa-solid fa-arrow-left"></i>
+        Página Principal
+    </a>
+</nav>
 
-<div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-
-    <div class="text-center mb-6">
-
-        <i class="fa-solid fa-user-plus text-4xl text-green-600"></i>
-
-        <h1 class="text-2xl font-bold mt-3">
-            Cadastro
-        </h1>
-
-        <p class="text-gray-500 text-sm mt-2">
-            Crie sua conta no NutriApp
-        </p>
-
+<!-- CARD DE CADASTRO -->
+<div class="card">
+    <div class="card-icon">
+        <i class="fa-solid fa-user-plus"></i>
     </div>
+    <h1>Criar conta</h1>
+    <p>Junte-se ao NutriSmart gratuitamente</p>
 
     <form id="formCadastro">
 
-        <div class="space-y-4">
-
-            <input id="nome"
-                   type="text"
-                   placeholder="Nome Completo"
-                   class="w-full border p-3 rounded outline-none focus:ring-2 focus:ring-green-400"
-                   required>
-
-            <input id="email"
-                   type="email"
-                   placeholder="E-mail"
-                   class="w-full border p-3 rounded outline-none focus:ring-2 focus:ring-green-400"
-                   required>
-
-            <input id="senha"
-                   type="password"
-                   placeholder="Senha"
-                   class="w-full border p-3 rounded outline-none focus:ring-2 focus:ring-green-400"
-                   required>
-
-            <!-- TIPO -->
-            <select id="tipo"
-                    class="w-full border p-3 rounded outline-none focus:ring-2 focus:ring-green-400">
-
-                <option value="PACIENTE">
-                    Paciente
-                </option>
-
-                <option value="NUTRICIONISTA">
-                    Nutricionista
-                </option>
-
-            </select>
-
-            <button type="submit"
-                    class="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded font-bold transition">
-
-                Cadastrar
-
-            </button>
-
+        <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input id="nome" type="text" class="form-input" placeholder="Seu nome completo" required>
         </div>
 
+        <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input id="email" type="email" class="form-input" placeholder="seu@email.com" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Senha</label>
+            <input id="senha" type="password" class="form-input" placeholder="Mínimo 6 caracteres" required>
+        </div>
+
+        <!-- SELETOR VISUAL DE TIPO -->
+        <div class="form-group">
+            <label class="form-label">Tipo de conta</label>
+            <div class="tipo-selector">
+                <div class="tipo-option selected" data-valor="PACIENTE" onclick="selecionarTipo(this)">
+                    <i class="fa-solid fa-person-walking"></i>
+                    Paciente
+                </div>
+                <div class="tipo-option" data-valor="NUTRICIONISTA" onclick="selecionarTipo(this)">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    Nutricionista
+                </div>
+            </div>
+            <input type="hidden" id="tipo" value="PACIENTE">
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <i class="fa-solid fa-check" style="margin-right:0.4rem"></i>
+            Criar minha conta
+        </button>
     </form>
 
-    <div id="mensagem"
-         class="hidden mt-4 p-3 rounded text-center font-semibold">
-    </div>
+    <div id="mensagem" class="msg"></div>
 
-    <p class="text-center mt-4 text-sm">
-
-        Já possui conta?
-
-        <a href="/login.html"
-           class="text-green-600 font-bold hover:underline">
-
-            Fazer login
-
-        </a>
-
+    <p class="divider">Já tem uma conta?
+        <a href="/login.html" class="link-login">Fazer login</a>
     </p>
-
 </div>
 
 <script>
+    function selecionarTipo(el) {
+        document.querySelectorAll('.tipo-option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('tipo').value = el.dataset.valor;
+    }
 
-    document.getElementById("formCadastro")
-        .addEventListener("submit", async function(e) {
+    document.getElementById("formCadastro").addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-            e.preventDefault();
+        const usuario = {
+            nome:  document.getElementById("nome").value,
+            email: document.getElementById("email").value,
+            senha: document.getElementById("senha").value,
+            tipo:  document.getElementById("tipo").value
+        };
 
-            const usuario = {
+        const msg = document.getElementById("mensagem");
 
-                nome: document.getElementById("nome").value,
+        try {
+            const response = await fetch('/api/usuarios/cadastro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(usuario)
+            });
 
-                email: document.getElementById("email").value,
+            if (response.ok) {
+                const resposta = await response.json();
+                msg.className = "msg success";
+                msg.style.display = "block";
+                msg.innerText = resposta.mensagem || "Conta criada com sucesso!";
+                setTimeout(() => { window.location.href = "/login.html"; }, 1500);
 
-                senha: document.getElementById("senha").value,
-
-                tipo: document.getElementById("tipo").value
-            };
-
-            try {
-
-                const response =
-                    await fetch('/api/usuarios/cadastro', {
-
-                        method: 'POST',
-
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-
-                        body: JSON.stringify(usuario)
-                    });
-
-                const mensagem =
-                    document.getElementById("mensagem");
-
-                if(response.ok) {
-
-                    const resposta =
-                        await response.json();
-
-                    mensagem.classList.remove("hidden");
-
-                    mensagem.classList.remove(
-                        "bg-red-100",
-                        "text-red-700"
-                    );
-
-                    mensagem.classList.add(
-                        "bg-green-100",
-                        "text-green-700"
-                    );
-
-                    mensagem.innerText =
-                        resposta.mensagem ||
-                        "Usuário cadastrado com sucesso!";
-
-                    setTimeout(() => {
-
-                        window.location.href =
-                            "/login.html";
-
-                    }, 1500);
-
-                } else {
-
-                    const erro =
-                        await response.json();
-
-                    mensagem.classList.remove("hidden");
-
-                    mensagem.classList.remove(
-                        "bg-green-100",
-                        "text-green-700"
-                    );
-
-                    mensagem.classList.add(
-                        "bg-red-100",
-                        "text-red-700"
-                    );
-
-                    mensagem.innerText =
-                        erro.erro ||
-                        "Erro ao cadastrar usuário.";
-
-                }
-
-            } catch (erro) {
-
-                console.error(erro);
-
-                const mensagem =
-                    document.getElementById("mensagem");
-
-                mensagem.classList.remove("hidden");
-
-                mensagem.classList.add(
-                    "bg-red-100",
-                    "text-red-700"
-                );
-
-                mensagem.innerText =
-                    "Erro de conexão com o servidor.";
+            } else {
+                const erro = await response.json();
+                msg.className = "msg error";
+                msg.style.display = "block";
+                msg.innerText = erro.erro || "Erro ao criar conta.";
             }
 
-        });
-
+        } catch (err) {
+            console.error(err);
+            msg.className = "msg error";
+            msg.style.display = "block";
+            msg.innerText = "Erro de conexão com o servidor.";
+        }
+    });
 </script>
-
 </body>
 </html>

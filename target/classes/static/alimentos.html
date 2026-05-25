@@ -1,17 +1,173 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alimentos - NutriApp</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Alimentos - NutriSmart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f0fdf4;
+      min-height: 100vh;
+      color: #1a3a2a;
+    }
+
+    /* ══ NAVBAR ══ */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid rgba(82,183,136,0.25);
+      box-shadow: 0 2px 12px rgba(45,106,79,0.07);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .navbar-logo {
+      display: flex; align-items: center; gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; font-size: 1.2rem; color: #2D6A4F;
+    }
+    .navbar-links { display: flex; align-items: center; gap: 0.25rem; }
+
+    .btn-home {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.45rem 1rem;
+      background: #f0fdf4;
+      border: 2px solid #52B788;
+      color: #2D6A4F;
+      border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      margin-right: 0.5rem;
+    }
+    .btn-home:hover { background: #52B788; color: #fff; }
+
+    .nav-link {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      color: #4b7a62;
+      border-radius: 8px;
+      font-size: 0.875rem; font-weight: 500;
+      text-decoration: none;
+      transition: background 0.18s, color 0.18s;
+    }
+    .nav-link:hover, .nav-link.active { background: #dcfce7; color: #2D6A4F; }
+    .nav-link.active { font-weight: 700; }
+
+    .btn-sair {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      background: transparent; border: none;
+      color: #9ca3af; font-size: 0.875rem; font-weight: 500;
+      border-radius: 8px; cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .btn-sair:hover { background: #fee2e2; color: #dc2626; }
+
+    /* ══ CONTEÚDO ══ */
+    .page-header {
+      padding: 2rem 2rem 0;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem; font-weight: 700; color: #1a3a2a;
+      display: flex; align-items: center; gap: 0.6rem;
+      margin-bottom: 0.3rem;
+    }
+    .page-subtitle { color: #6b7280; font-size: 0.9rem; }
+
+    .container {
+      max-width: 1100px; margin: 0 auto; padding: 1.5rem 2rem 3rem;
+    }
+
+    /* ══ BUSCA ══ */
+    .search-wrapper {
+      position: relative; margin-bottom: 1.25rem;
+    }
+    .search-icon {
+      position: absolute; left: 1rem; top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af; font-size: 0.9rem;
+    }
+    .search-input {
+      width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px; font-size: 0.9rem;
+      outline: none; background: #fff;
+      transition: border-color 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .search-input:focus { border-color: #52B788; }
+
+    /* ══ TABELA ══ */
+    .table-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid rgba(82,183,136,0.18);
+      box-shadow: 0 4px 24px rgba(45,106,79,0.08);
+      overflow: hidden;
+    }
+    .table-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #f0fdf4;
+    }
+    .table-card-title {
+      font-size: 1.05rem; font-weight: 700; color: #1a3a2a;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .badge-count {
+      background: #dcfce7; color: #2D6A4F;
+      font-size: 0.75rem; font-weight: 700;
+      padding: 0.15rem 0.6rem; border-radius: 999px;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #f0fdf4; }
+    th {
+      padding: 0.85rem 1.25rem;
+      text-align: left;
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: #4b7a62;
+      border-bottom: 1px solid #dcfce7;
+    }
+    tbody tr { border-bottom: 1px solid #f0fdf4; transition: background 0.15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f9fefb; }
+    td { padding: 1rem 1.25rem; font-size: 0.9rem; }
+    td.td-id { font-weight: 700; color: #2D6A4F; width: 80px; }
+    td.td-nome { color: #1a3a2a; font-weight: 500; }
+    td.td-cal { color: #6b7280; }
+
+    /* Barra de calorias visual */
+    .cal-bar-wrap { display: flex; align-items: center; gap: 0.75rem; }
+    .cal-bar {
+      flex: 1; height: 6px; background: #dcfce7; border-radius: 999px; overflow: hidden;
+    }
+    .cal-fill { height: 100%; background: linear-gradient(90deg, #52B788, #2D6A4F); border-radius: 999px; }
+    .cal-text { font-weight: 600; color: #2D6A4F; white-space: nowrap; font-size: 0.875rem; }
+
+    .empty-state { text-align: center; padding: 3rem; color: #9ca3af; }
+    .empty-state i { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; color: #d1fae5; }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .loading-cell { animation: pulse 1.2s infinite; }
+  </style>
 </head>
+<body>
 
-<body class="bg-gray-100">
-
-<!-- GUARD: requer login -->
+<!-- GUARD -->
 <script>
   (function () {
     const tipo = localStorage.getItem("tipoUsuario");
@@ -21,78 +177,174 @@
   })();
 </script>
 
-<!-- HEADER -->
-<div class="header">
+<!-- NAVBAR HARMÔNICA (muda conforme o tipo de usuário) -->
+<nav class="navbar">
+  <a href="/index.html" class="navbar-logo">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+      <path d="M16 2C16 2 8 6 8 16C8 20 10 24 16 28C22 24 24 20 24 16C24 6 16 2 16 2Z" fill="#52B788"/>
+      <path d="M16 8C13 10 12 13 12 16C12 18 13 20 16 22C19 20 20 18 20 16C20 13 19 10 16 8Z" fill="#2D6A4F"/>
+    </svg>
+    NutriSmart
+  </a>
 
-  <h1>
-    <i class="fa-solid fa-carrot"></i>
+  <div class="navbar-links" id="navLinks">
+    <!-- Injetado pelo JS conforme perfil -->
+  </div>
+</nav>
+
+<!-- TÍTULO -->
+<div class="page-header">
+  <h1 class="page-title">
+    <i class="fa-solid fa-carrot" style="color:#52B788"></i>
     Alimentos
   </h1>
-
-  <div class="flex gap-3" id="nav-botoes">
-    <!-- Botões injetados pelo JS conforme o tipo de usuário -->
-  </div>
-
+  <p class="page-subtitle">Consulte a base completa de alimentos e informações nutricionais</p>
 </div>
 
-<!-- CONTAINER -->
+<!-- CONTEÚDO -->
 <div class="container">
 
-  <div class="summary-card">
+  <div class="search-wrapper">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" class="search-input" id="searchInput" placeholder="Buscar alimento por nome...">
+  </div>
 
-    <h2 class="text-2xl font-bold mb-5">Lista de Alimentos</h2>
-
-    <div class="overflow-x-auto">
-      <table class="w-full border-collapse">
-        <thead>
-        <tr class="bg-green-600 text-white">
-          <th class="p-3 border">ID</th>
-          <th class="p-3 border">Nome</th>
-          <th class="p-3 border">Calorias</th>
-        </tr>
-        </thead>
-        <tbody id="tabela"></tbody>
-      </table>
+  <div class="table-card">
+    <div class="table-card-header">
+            <span class="table-card-title">
+                <i class="fa-solid fa-list-ul" style="color:#52B788"></i>
+                Lista de Alimentos
+                <span class="badge-count" id="countAlimentos">—</span>
+            </span>
     </div>
 
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Calorias por 100g</th>
+      </tr>
+      </thead>
+      <tbody id="tabela">
+      <tr>
+        <td colspan="3" class="loading-cell" style="text-align:center;color:#9ca3af;padding:2rem">
+          <i class="fa-solid fa-circle-notch fa-spin" style="margin-right:.5rem"></i>
+          Carregando alimentos...
+        </td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 
 </div>
 
 <script>
-
-  // Renderiza navegação conforme perfil
+  // ── Injetar navbar conforme perfil ──
   const tipo = localStorage.getItem("tipoUsuario");
-  const nav = document.getElementById("nav-botoes");
+  const navLinks = document.getElementById("navLinks");
 
   if (tipo === "NUTRICIONISTA") {
-    nav.innerHTML = `
-      <a href="/dashboard.html" class="btn-logout">Dashboard</a>
-      <a href="/dietas.html" class="btn-logout">Dietas</a>
-      <a href="/pacientes.html" class="btn-logout">Pacientes</a>
-      <button onclick="logout()" class="btn-logout">Sair</button>
-    `;
+    navLinks.innerHTML = `
+            <a href="/index.html" class="btn-home">
+                <i class="fa-solid fa-house"></i>
+                Página Principal
+            </a>
+            <a href="/dashboard.html" class="nav-link">
+                <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <a href="/dietas.html" class="nav-link">
+                <i class="fa-solid fa-utensils"></i> Dietas
+            </a>
+            <a href="/alimentos.html" class="nav-link active">
+                <i class="fa-solid fa-carrot"></i> Alimentos
+            </a>
+            <button onclick="logout()" class="btn-sair">
+                <i class="fa-solid fa-right-from-bracket"></i> Sair
+            </button>
+        `;
   } else {
-    // Paciente: só vê o botão de voltar para sua área e sair
-    nav.innerHTML = `
-      <a href="/home_paciente.html" class="btn-logout">Minha Área</a>
-      <button onclick="logout()" class="btn-logout">Sair</button>
-    `;
+    navLinks.innerHTML = `
+            <a href="/index.html" class="btn-home">
+                <i class="fa-solid fa-house"></i>
+                Página Principal
+            </a>
+            <a href="/home_paciente.html" class="nav-link">
+                <i class="fa-solid fa-house-medical"></i> Minha Área
+            </a>
+            <a href="/alimentos.html" class="nav-link active">
+                <i class="fa-solid fa-carrot"></i> Alimentos
+            </a>
+            <button onclick="logout()" class="btn-sair">
+                <i class="fa-solid fa-right-from-bracket"></i> Sair
+            </button>
+        `;
   }
 
-  // CARREGA ALIMENTOS
+  // ── Carregar alimentos ──
+  let todosAlimentos = [];
+
   async function carregar() {
-    const response = await fetch('/alimentos');
-    const alimentos = await response.json();
-    const tabela = document.getElementById("tabela");
-    tabela.innerHTML = alimentos.map(a => `
-      <tr class="bg-white hover:bg-gray-100 transition">
-        <td class="p-3 border text-center font-bold">${a.id}</td>
-        <td class="p-3 border">${a.nome}</td>
-        <td class="p-3 border">${a.calorias} kcal</td>
-      </tr>
-    `).join('');
+    try {
+      // Tenta /api/alimentos primeiro, depois /alimentos
+      let response = await fetch('/api/alimentos');
+      if (!response.ok) response = await fetch('/alimentos');
+      todosAlimentos = await response.json();
+      document.getElementById("countAlimentos").innerText = todosAlimentos.length;
+      renderizar(todosAlimentos);
+    } catch (e) {
+      document.getElementById("tabela").innerHTML = `
+                <tr><td colspan="3">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#fca5a5"></i>
+                        <p style="color:#dc2626">Erro ao carregar alimentos. Verifique o backend.</p>
+                    </div>
+                </td></tr>`;
+    }
   }
+
+  function renderizar(lista) {
+    const tabela = document.getElementById("tabela");
+    if (!lista.length) {
+      tabela.innerHTML = `
+                <tr><td colspan="3">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-carrot"></i>
+                        <p>Nenhum alimento encontrado.</p>
+                    </div>
+                </td></tr>`;
+      return;
+    }
+
+    // Calcula máximo de calorias para barra proporcional
+    const maxCal = Math.max(...lista.map(a => a.calorias || 0), 1);
+
+    tabela.innerHTML = lista.map(a => {
+      const pct = Math.min(((a.calorias || 0) / maxCal) * 100, 100).toFixed(1);
+      return `
+                <tr>
+                    <td class="td-id">#${a.id}</td>
+                    <td class="td-nome">${a.nome}</td>
+                    <td class="td-cal">
+                        <div class="cal-bar-wrap">
+                            <div class="cal-bar">
+                                <div class="cal-fill" style="width:${pct}%"></div>
+                            </div>
+                            <span class="cal-text">${a.calorias} kcal</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+    }).join('');
+  }
+
+  // ── Filtro de busca ──
+  document.getElementById("searchInput").addEventListener("input", function () {
+    const termo = this.value.toLowerCase().trim();
+    const filtrados = todosAlimentos.filter(a => a.nome.toLowerCase().includes(termo));
+    document.getElementById("countAlimentos").innerText = filtrados.length;
+    renderizar(filtrados);
+  });
 
   function logout() {
     localStorage.clear();
@@ -100,8 +352,6 @@
   }
 
   carregar();
-
 </script>
-
 </body>
 </html>

@@ -22,11 +22,17 @@ public class Paciente {
     private Double peso;
     private Double altura;
 
-    // Este campo não será uma coluna no banco, será calculado na hora
+    @Column(unique = true)
+    private String email;
+
+    private String sexo;
+    private String restricoes;
+    private String observacoes;
+    private String objetivo;
+
     @Transient
     private Double imc;
 
-    // Método que calcula o IMC automaticamente quando chamado
     public Double getImc() {
         if (altura != null && altura > 0 && peso != null) {
             return peso / (altura * altura);

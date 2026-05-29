@@ -1,6 +1,7 @@
 package comseuprojetonutriapp.controller;
 
 import comseuprojetonutriapp.model.Paciente;
+import comseuprojetonutriapp.repository.PacienteRepository;
 import comseuprojetonutriapp.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,30 +18,52 @@ public class PacienteController {
     @Autowired
     private PacienteService service;
 
-    /**
-     * Cadastra um novo paciente.
-     * Retorna 400 com mensagem de erro se o nome já estiver cadastrado.
-     */
+    @Autowired
+    private PacienteRepository repository;
+
     @PostMapping
     public ResponseEntity<?> cadastrar(@RequestBody Paciente paciente) {
         try {
-            Paciente salvo = service.salvar(paciente);
-            return ResponseEntity.ok(salvo);
+            return ResponseEntity.ok(service.salvar(paciente));
         } catch (IllegalArgumentException e) {
-            // Duplicação de nome detectada no service
-            return ResponseEntity.badRequest()
-                    .body(Map.of("erro", e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(Map.of("erro", "Erro ao cadastrar paciente: " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(Map.of("erro", "Erro ao cadastrar: " + e.getMessage()));
         }
     }
 
-    /**
-     * Lista todos os pacientes sem duplicatas.
-     */
     @GetMapping
     public List<Paciente> listar() {
         return service.listarTodos();
+    }
+
+    @GetMapping("/por-email")
+    public ResponseEntity<?> buscarPorEmail(@RequestParam String email) {
+        return repository.findByEmailIgnoreCase(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Paciente dados) {
+        try {
+            return ResponseEntity.ok(service.atualizar(id, dados));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("erro", "Erro ao atualizar: " + e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletar(@PathVariable Long id) {
+        try {
+            service.deletar(id);
+            return ResponseEntity.ok(Map.of("mensagem", "Paciente removido com sucesso."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("erro", "Erro ao remover: " + e.getMessage()));
+        }
     }
 }

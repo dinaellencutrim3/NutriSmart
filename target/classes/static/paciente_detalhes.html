@@ -4,734 +4,587 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Paciente - NutriSmart</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background: #f0fdf4; color: #1a3a2a; }
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
+        .navbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; height: 64px; background: #fff;
+            border-bottom: 1px solid rgba(82,183,136,0.25);
+            box-shadow: 0 2px 12px rgba(45,106,79,0.07);
+            position: sticky; top: 0; z-index: 100;
         }
-
-        body{
-            font-family:'DM Sans',sans-serif;
-            background:#f0fdf4;
-            color:#1a3a2a;
+        .navbar-logo {
+            font-family: 'Playfair Display', serif; font-size: 1.2rem;
+            font-weight: 700; color: #2D6A4F; text-decoration: none;
+            display: flex; align-items: center; gap: 0.5rem;
         }
-
-        .navbar{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            padding:0 2rem;
-            height:72px;
-            background:#ffffff;
-            border-bottom:1px solid rgba(82,183,136,0.15);
-            box-shadow:0 2px 12px rgba(45,106,79,0.05);
-            position:sticky;
-            top:0;
-            z-index:100;
+        .navbar-menu { display: flex; align-items: center; gap: 0.75rem; }
+        .btn-nav {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.45rem 1rem; background: #f0fdf4; border: 2px solid #52B788;
+            color: #2D6A4F; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+            text-decoration: none; transition: all 0.2s; cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
         }
-
-        .navbar-logo{
-            display:flex;
-            align-items:center;
-            gap:.7rem;
+        .btn-nav:hover { background: #52B788; color: #fff; }
+        .btn-sair {
+            border: none; background: transparent; color: #dc2626; font-weight: 600;
+            cursor: pointer; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem;
+            display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'DM Sans', sans-serif;
         }
+        .btn-sair:hover { background: #fee2e2; }
 
-        .navbar-logo-text{
-            font-family:'Playfair Display',serif;
-            font-size:1.5rem;
-            font-weight:700;
-            color:#2D6A4F;
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+
+        .breadcrumb {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 1.5rem; font-size: 0.85rem; color: #6b7280;
         }
+        .breadcrumb a { color: #2D6A4F; text-decoration: none; font-weight: 600; }
+        .breadcrumb a:hover { text-decoration: underline; }
 
-        .btn-logout{
-            background:#fee2e2;
-            color:#dc2626;
-            border:none;
-            padding:.75rem 1rem;
-            border-radius:12px;
-            cursor:pointer;
-            font-weight:700;
-            transition:.2s;
+        /* ── HEADER PACIENTE ── */
+        .patient-header {
+            background: #fff; border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(45,106,79,0.08);
+            overflow: hidden; margin-bottom: 1.5rem;
         }
-
-        .btn-logout:hover{
-            transform:translateY(-2px);
+        .patient-header-bar { height: 5px; background: linear-gradient(90deg, #2D6A4F, #52B788); }
+        .patient-header-body {
+            padding: 1.8rem 2rem; display: flex;
+            align-items: flex-start; gap: 1.5rem; flex-wrap: wrap;
         }
-
-        .container{
-            max-width:1250px;
-            margin:auto;
-            padding:2rem;
+        .patient-avatar-lg {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: #f0fdf4; border: 3px solid #52B788;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-
-        .back-btn{
-            display:inline-flex;
-            align-items:center;
-            gap:.5rem;
-            text-decoration:none;
-            color:#2D6A4F;
-            font-weight:700;
-            margin-bottom:2rem;
+        .patient-main { flex: 1; min-width: 200px; }
+        .patient-nome {
+            font-family: 'Playfair Display', serif; font-size: 1.8rem;
+            font-weight: 700; color: #1a3a2a; margin-bottom: 0.3rem;
         }
-
-        .icon-sm{
-            width:18px;
-            height:18px;
-            stroke:currentColor;
-            fill:none;
-            stroke-width:2;
+        .patient-email { font-size: 0.88rem; color: #6b7280; margin-bottom: 0.7rem; }
+        .patient-objetivo {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            background: #d1fae5; color: #065f46; padding: 0.3rem 0.85rem;
+            border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem;
         }
-
-        .patient-header{
-            background:#ffffff;
-            border-radius:24px;
-            padding:2rem;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:2rem;
-            margin-bottom:2rem;
-            box-shadow:0 4px 20px rgba(45,106,79,0.06);
-            border:1px solid rgba(82,183,136,0.08);
+        .info-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem;
         }
-
-        .patient-avatar-large{
-            width:95px;
-            height:95px;
-            border-radius:50%;
-            background:#dcfce7;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            flex-shrink:0;
+        .info-box {
+            background: #f7fdf9; border: 1px solid #dcfce7; border-radius: 12px; padding: 0.85rem 1rem;
         }
+        .info-label { font-size: 0.72rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; font-weight: 600; }
+        .info-value { font-weight: 700; color: #1a3a2a; font-size: 1rem; }
+        .imc-badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; margin-left: 0.35rem; }
+        .imc-normal    { background: #d1fae5; color: #065f46; }
+        .imc-sobrepeso { background: #fef3c7; color: #d97706; }
+        .imc-obesidade { background: #fee2e2; color: #dc2626; }
+        .imc-baixo     { background: #dbeafe; color: #1e40af; }
 
-        .icon-lg{
-            width:42px;
-            height:42px;
-            stroke:#2D6A4F;
-            fill:none;
-            stroke-width:2;
+        .extra-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.75rem; }
+        .extra-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 0.85rem 1rem; }
+        .extra-label { font-size: 0.72rem; color: #9ca3af; text-transform: uppercase; font-weight: 600; margin-bottom: 0.3rem; }
+        .extra-value { color: #374151; font-size: 0.9rem; font-weight: 500; }
+
+        /* ── AÇÕES ── */
+        .actions-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .btn-action {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            padding: 0.7rem 1.3rem; border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+            font-weight: 700; cursor: pointer; transition: 0.2s; border: none; text-decoration: none;
         }
+        .btn-primary { background: linear-gradient(135deg, #2D6A4F, #52B788); color: #fff; }
+        .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-outline { background: #fff; border: 2px solid #52B788; color: #2D6A4F; }
+        .btn-outline:hover { background: #52B788; color: #fff; }
+        .btn-warning { background: #fff; border: 2px solid #f59e0b; color: #d97706; }
+        .btn-warning:hover { background: #fef3c7; }
+        .btn-danger { background: #fff; border: 2px solid #ef4444; color: #dc2626; }
+        .btn-danger:hover { background: #fee2e2; }
 
-        .patient-info{
-            flex:1;
+        /* ── MODAL EDITAR ── */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 500; display: none; align-items: center; justify-content: center; padding: 1rem;
         }
-
-        .patient-name-large{
-            font-family:'Playfair Display',serif;
-            font-size:2rem;
-            margin-bottom:1rem;
-            color:#1a3a2a;
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #fff; border-radius: 20px; width: 100%; max-width: 580px;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: fadeIn .25s ease;
         }
-
-        .patient-meta{
-            display:flex;
-            flex-wrap:wrap;
-            gap:1rem;
-            margin-bottom:1rem;
+        @keyframes fadeIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header {
+            padding: 1.3rem 1.5rem; border-bottom: 1px solid #f0fdf4;
+            display: flex; align-items: center; justify-content: space-between;
         }
-
-        .meta-item{
-            background:#f7fdf9;
-            border:1px solid #dcfce7;
-            padding:.9rem 1rem;
-            border-radius:14px;
-            min-width:140px;
+        .modal-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #1a3a2a; }
+        .modal-close {
+            background: #f0fdf4; border: none; color: #2D6A4F; width: 32px; height: 32px;
+            border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
-
-        .meta-label{
-            display:block;
-            font-size:.72rem;
-            color:#6b7280;
-            margin-bottom:.35rem;
-            text-transform:uppercase;
-            letter-spacing:.05em;
+        .modal-body { padding: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-label { display: block; margin-bottom: 0.4rem; font-size: 0.78rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.04em; }
+        .form-input {
+            width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb;
+            border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s;
         }
-
-        .meta-value{
-            font-weight:700;
-            color:#1a3a2a;
-            font-size:.95rem;
+        .form-input:focus { border-color: #52B788; }
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid #f0fdf4; display: flex; gap: 0.75rem; justify-content: flex-end; }
+        .btn-save {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 8px;
+            background: linear-gradient(135deg, #2D6A4F, #52B788); color: #fff;
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s;
+            font-family: 'DM Sans', sans-serif;
         }
-
-        .patient-status-badge{
-            background:#d1fae5;
-            color:#065f46;
-            padding:.55rem 1rem;
-            border-radius:999px;
-            font-size:.82rem;
-            font-weight:700;
-            display:inline-flex;
-            align-items:center;
+        .btn-save:hover { opacity: 0.9; }
+        .btn-cancel {
+            padding: 0.75rem 1.5rem; border: 2px solid #e5e7eb; border-radius: 8px;
+            background: transparent; color: #6b7280; font-weight: 700; font-size: 0.9rem;
+            cursor: pointer; font-family: 'DM Sans', sans-serif;
         }
+        .btn-cancel:hover { background: #f9fafb; }
 
-        .patient-actions{
-            display:flex;
-            flex-direction:column;
-            gap:1rem;
-            min-width:220px;
+        /* ── SEÇÕES ── */
+        .section-card {
+            background: #fff; border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(45,106,79,0.08); overflow: hidden; margin-bottom: 1.5rem;
         }
-
-        .btn-primary,
-        .btn-secondary{
-            border:none;
-            padding:1rem 1.2rem;
-            border-radius:14px;
-            cursor:pointer;
-            font-weight:700;
-            transition:.2s;
-            font-size:.95rem;
+        .section-card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1.2rem 1.5rem; border-bottom: 1px solid #f0fdf4;
         }
-
-        .btn-primary{
-            background:linear-gradient(135deg,#52B788,#2D6A4F);
-            color:#ffffff;
-            box-shadow:0 6px 18px rgba(82,183,136,0.25);
+        .section-card-title {
+            font-family: 'Playfair Display', serif; font-size: 1.2rem;
+            color: #1a3a2a; display: flex; align-items: center; gap: 0.5rem;
         }
+        .section-card-body { padding: 1.5rem; }
 
-        .btn-secondary{
-            background:#ffffff;
-            color:#2D6A4F;
-            border:2px solid #b7ebcb;
+        .meal-item {
+            border: 1px solid #dcfce7; border-radius: 14px;
+            padding: 1.1rem 1.3rem; margin-bottom: 0.9rem; background: #fcfffd; transition: 0.2s;
         }
+        .meal-item:last-child { margin-bottom: 0; }
+        .meal-item:hover { border-color: #52B788; }
+        .meal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+        .meal-nome { font-weight: 700; color: #2D6A4F; font-size: 1rem; display: flex; align-items: center; gap: 0.4rem; }
+        .meal-horario { background: #f0fdf4; color: #2D6A4F; padding: 0.22rem 0.75rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
+        .meal-obj { display: inline-flex; align-items: center; gap: 0.3rem; background: #d1fae5; color: #065f46; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .meal-desc { color: #4b5563; font-size: 0.88rem; line-height: 1.55; }
 
-        .btn-primary:hover,
-        .btn-secondary:hover{
-            transform:translateY(-2px);
+        .empty-state { text-align: center; padding: 2.5rem; color: #9ca3af; }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; color: #d1fae5; }
+
+        .subs-item {
+            background: #fefce8; border: 1px solid #fde68a; border-radius: 12px;
+            padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap;
         }
+        .subs-texto { font-size: 0.88rem; color: #374151; flex: 1; }
+        .subs-meta { font-size: 0.78rem; color: #9ca3af; margin-top: 0.3rem; }
+        .subs-actions { display: flex; gap: 0.5rem; }
+        .btn-aprovar { background: #d1fae5; color: #065f46; border: none; padding: 0.4rem 0.9rem; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+        .btn-negar   { background: #fee2e2; color: #dc2626; border: none; padding: 0.4rem 0.9rem; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+        .status-badge { padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+        .status-pendente { background: #fef3c7; color: #d97706; }
+        .status-aprovado { background: #d1fae5; color: #065f46; }
+        .status-negado   { background: #fee2e2; color: #dc2626; }
 
-        .grid-2col{
-            display:grid;
-            grid-template-columns:2fr 1fr;
-            gap:2rem;
+        /* ── ZONA DE PERIGO ── */
+        .danger-zone {
+            background: #fff; border-radius: 20px; border: 2px solid #fee2e2;
+            padding: 1.5rem; margin-bottom: 1.5rem;
         }
-
-        .card{
-            background:#ffffff;
-            border-radius:24px;
-            padding:2rem;
-            box-shadow:0 4px 20px rgba(45,106,79,0.06);
-            border:1px solid rgba(82,183,136,0.08);
+        .danger-title {
+            font-family: 'Playfair Display', serif; font-size: 1.1rem;
+            color: #dc2626; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;
         }
-
-        .card-header{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:1.7rem;
+        .danger-desc { font-size: 0.85rem; color: #6b7280; margin-bottom: 1rem; }
+        .btn-delete-full {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem; background: #dc2626; color: #fff;
+            border: none; border-radius: 10px; font-weight: 700; font-size: 0.9rem;
+            cursor: pointer; transition: 0.2s; font-family: 'DM Sans', sans-serif;
         }
+        .btn-delete-full:hover { background: #b91c1c; }
 
-        .card-title{
-            font-family:'Playfair Display',serif;
-            font-size:1.5rem;
-            color:#1a3a2a;
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(82,183,136,0.3); border-top-color: #52B788; border-radius: 50%; animation: spin .8s linear infinite; vertical-align: middle; margin-right: 0.5rem; }
+
+        @media(max-width: 768px) {
+            .container { padding: 1rem; }
+            .patient-header-body { flex-direction: column; }
+            .extra-grid { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-row { grid-template-columns: 1fr; }
+            .actions-bar { flex-direction: column; }
         }
-
-        .card-action{
-            color:#2D6A4F;
-            text-decoration:none;
-            font-weight:700;
-            font-size:.9rem;
-        }
-
-        .card-action:hover{
-            text-decoration:underline;
-        }
-
-        .stats-grid{
-            display:grid;
-            grid-template-columns:repeat(4,1fr);
-            gap:1rem;
-            margin-bottom:2rem;
-        }
-
-        .stat-box{
-            background:#f7fdf9;
-            border:1px solid #dcfce7;
-            padding:1.2rem;
-            border-radius:16px;
-            text-align:center;
-        }
-
-        .stat-value{
-            font-size:1.5rem;
-            font-weight:700;
-            color:#2D6A4F;
-        }
-
-        .stat-label{
-            font-size:.78rem;
-            color:#6b7280;
-            margin-top:.4rem;
-        }
-
-        .meal-item{
-            border:1px solid #dcfce7;
-            border-radius:18px;
-            padding:1.3rem;
-            margin-bottom:1rem;
-            background:#fcfffd;
-        }
-
-        .meal-header{
-            display:flex;
-            align-items:center;
-            gap:.8rem;
-            margin-bottom:1rem;
-        }
-
-        .meal-icon{
-            width:42px;
-            height:42px;
-            border-radius:12px;
-            background:#f0fdf4;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-        }
-
-        .meal-name{
-            font-weight:700;
-            flex:1;
-            font-size:.95rem;
-        }
-
-        .meal-time{
-            color:#6b7280;
-            font-size:.82rem;
-        }
-
-        .food-list{
-            list-style:none;
-        }
-
-        .food-item{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:.9rem 0;
-            border-bottom:1px solid #f1f5f9;
-            font-size:.9rem;
-            gap:1rem;
-        }
-
-        .food-item:last-child{
-            border-bottom:none;
-        }
-
-        .food-name{
-            flex:1;
-            font-weight:600;
-        }
-
-        .food-amount{
-            color:#6b7280;
-            min-width:80px;
-            text-align:right;
-        }
-
-        .food-calories{
-            font-weight:700;
-            color:#2D6A4F;
-            min-width:90px;
-            text-align:right;
-        }
-
-        .imc-display{
-            text-align:center;
-        }
-
-        .imc-value-large{
-            font-size:4rem;
-            font-weight:700;
-            color:#2D6A4F;
-            line-height:1;
-            margin-bottom:.5rem;
-        }
-
-        .imc-classification-large{
-            font-size:1rem;
-            font-weight:700;
-            color:#16a34a;
-            margin-bottom:2rem;
-        }
-
-        .imc-range{
-            display:flex;
-            flex-direction:column;
-            gap:.8rem;
-        }
-
-        .imc-range-item{
-            display:flex;
-            justify-content:space-between;
-            background:#f9fafb;
-            padding:.9rem 1rem;
-            border-radius:12px;
-            font-size:.9rem;
-        }
-
-        .imc-range-label{
-            color:#374151;
-        }
-
-        .imc-range-value{
-            font-weight:700;
-            color:#2D6A4F;
-        }
-
-        @media(max-width:1000px){
-
-            .grid-2col{
-                grid-template-columns:1fr;
-            }
-
-            .stats-grid{
-                grid-template-columns:repeat(2,1fr);
-            }
-
-        }
-
-        @media(max-width:768px){
-
-            .patient-header{
-                flex-direction:column;
-                text-align:center;
-            }
-
-            .patient-actions{
-                width:100%;
-            }
-
-            .stats-grid{
-                grid-template-columns:1fr;
-            }
-
-            .container{
-                padding:1rem;
-            }
-
-        }
-
     </style>
 </head>
-
 <body>
 
 <script>
-
-    const tipo = localStorage.getItem("tipoUsuario");
-
-    if(!tipo){
-        window.location.href = "/login.html";
-    }
-
-    function logout(){
-        localStorage.clear();
-        window.location.href = "/login.html";
-    }
-
-    function editarDieta(){
-        window.location.href = "/editar_dieta.html";
-    }
-
-    function agendarConsulta(){
-        window.location.href = "/agendamento.html";
-    }
-
+    (function () {
+        const tipo = localStorage.getItem("tipoUsuario");
+        if (!tipo) window.location.href = "/login.html";
+        else if (tipo !== "NUTRICIONISTA") window.location.href = "/home_paciente.html";
+    })();
 </script>
 
+<!-- NAVBAR -->
 <nav class="navbar">
-
-    <div class="navbar-logo">
-
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-            <path d="M20 5C15 5 12 8 12 12C12 16 15 19 20 25C25 19 28 16 28 12C28 8 25 5 20 5Z" fill="#52B788"/>
-            <path d="M20 25C20 25 8 28 8 33C8 35 10 35 20 35C30 35 32 35 32 33C32 28 20 25 20 25Z" fill="#2D6A4F"/>
+    <a href="/dashboard.html" class="navbar-logo">
+        <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+            <path d="M16 2C16 2 8 6 8 16C8 20 10 24 16 28C22 24 24 20 24 16C24 6 16 2 16 2Z" fill="#52B788"/>
+            <path d="M16 8C13 10 12 13 12 16C12 18 13 20 16 22C19 20 20 18 20 16C20 13 19 10 16 8Z" fill="#2D6A4F"/>
         </svg>
-
-        <span class="navbar-logo-text">NutriSmart</span>
-
+        NutriSmart
+    </a>
+    <div class="navbar-menu">
+        <a href="/dashboard.html" class="btn-nav"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+        <button class="btn-sair" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
     </div>
-
-    <button class="btn-logout" onclick="logout()">
-        Sair
-    </button>
-
 </nav>
 
+<!-- CONTEÚDO -->
 <div class="container">
 
-    <a href="/dashboard.html" class="back-btn">
-
-        <svg class="icon-sm" viewBox="0 0 24 24">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-
-        Voltar ao Dashboard
-
-    </a>
-
-    <div class="patient-header">
-
-        <div class="patient-avatar-large">
-
-            <svg class="icon-lg" viewBox="0 0 24 24">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-
-        </div>
-
-        <div class="patient-info">
-
-            <h1 class="patient-name-large">Maria Silva</h1>
-
-            <div class="patient-meta">
-
-                <div class="meta-item">
-                    <span class="meta-label">Idade</span>
-                    <span class="meta-value">32 anos</span>
-                </div>
-
-                <div class="meta-item">
-                    <span class="meta-label">Peso Atual</span>
-                    <span class="meta-value">68.5 kg</span>
-                </div>
-
-                <div class="meta-item">
-                    <span class="meta-label">Altura</span>
-                    <span class="meta-value">1.70 m</span>
-                </div>
-
-                <div class="meta-item">
-                    <span class="meta-label">Meta</span>
-                    <span class="meta-value">65 kg</span>
-                </div>
-
-            </div>
-
-            <span class="patient-status-badge">
-                Dieta ativa desde 15/03/2026
-            </span>
-
-        </div>
-
-        <div class="patient-actions">
-
-            <button class="btn-primary" onclick="editarDieta()">
-                Editar Dieta
-            </button>
-
-            <button class="btn-secondary" onclick="agendarConsulta()">
-                Agendar Consulta
-            </button>
-
-        </div>
-
+    <div class="breadcrumb">
+        <a href="/dashboard.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+        <span>/</span>
+        <span id="breadNome">Detalhes do Paciente</span>
     </div>
 
-    <div class="grid-2col">
-
-        <div>
-
-            <div class="card">
-
-                <div class="card-header">
-
-                    <h2 class="card-title">
-                        Plano Alimentar Atual
-                    </h2>
-
-                    <a href="/editar_dieta.html" class="card-action">
-                        Editar
-                    </a>
-
-                </div>
-
-                <div class="stats-grid">
-
-                    <div class="stat-box">
-                        <div class="stat-value">1850</div>
-                        <div class="stat-label">Calorias</div>
-                    </div>
-
-                    <div class="stat-box">
-                        <div class="stat-value">120g</div>
-                        <div class="stat-label">Proteínas</div>
-                    </div>
-
-                    <div class="stat-box">
-                        <div class="stat-value">200g</div>
-                        <div class="stat-label">Carboidratos</div>
-                    </div>
-
-                    <div class="stat-box">
-                        <div class="stat-value">55g</div>
-                        <div class="stat-label">Gorduras</div>
-                    </div>
-
-                </div>
-
-                <div class="meal-item">
-
-                    <div class="meal-header">
-
-                        <div class="meal-icon">
-
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                            </svg>
-
-                        </div>
-
-                        <span class="meal-name">
-                            Café da Manhã
-                        </span>
-
-                        <span class="meal-time">
-                            07:00 - 08:00
-                        </span>
-
-                    </div>
-
-                    <ul class="food-list">
-
-                        <li class="food-item">
-                            <span class="food-name">Aveia em flocos</span>
-                            <span class="food-amount">50g</span>
-                            <span class="food-calories">195 kcal</span>
-                        </li>
-
-                        <li class="food-item">
-                            <span class="food-name">Banana</span>
-                            <span class="food-amount">1 unidade</span>
-                            <span class="food-calories">89 kcal</span>
-                        </li>
-
-                        <li class="food-item">
-                            <span class="food-name">Leite integral</span>
-                            <span class="food-amount">200ml</span>
-                            <span class="food-calories">122 kcal</span>
-                        </li>
-
-                    </ul>
-
-                </div>
-
-                <div class="meal-item">
-
-                    <div class="meal-header">
-
-                        <div class="meal-icon">
-
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                            </svg>
-
-                        </div>
-
-                        <span class="meal-name">
-                            Almoço
-                        </span>
-
-                        <span class="meal-time">
-                            12:00 - 13:00
-                        </span>
-
-                    </div>
-
-                    <ul class="food-list">
-
-                        <li class="food-item">
-                            <span class="food-name">Arroz integral</span>
-                            <span class="food-amount">120g</span>
-                            <span class="food-calories">156 kcal</span>
-                        </li>
-
-                        <li class="food-item">
-                            <span class="food-name">Peito de frango grelhado</span>
-                            <span class="food-amount">150g</span>
-                            <span class="food-calories">240 kcal</span>
-                        </li>
-
-                        <li class="food-item">
-                            <span class="food-name">Legumes cozidos</span>
-                            <span class="food-amount">100g</span>
-                            <span class="food-calories">65 kcal</span>
-                        </li>
-
-                    </ul>
-
-                </div>
-
+    <!-- HEADER -->
+    <div class="patient-header">
+        <div class="patient-header-bar"></div>
+        <div class="patient-header-body">
+            <div class="patient-avatar-lg">
+                <i class="fa-solid fa-user" style="color:#2D6A4F;font-size:2rem"></i>
             </div>
-
-        </div>
-
-        <div>
-
-            <div class="card">
-
-                <div class="card-header">
-                    <h2 class="card-title">
-                        IMC Atual
-                    </h2>
+            <div class="patient-main">
+                <div class="patient-nome" id="nomePaciente"><span class="spinner"></span> Carregando...</div>
+                <div class="patient-email" id="emailPaciente"></div>
+                <div class="patient-objetivo" id="objetivoPaciente" style="display:none">
+                    <i class="fa-solid fa-bullseye"></i><span id="objetivoTexto"></span>
                 </div>
-
-                <div class="imc-display">
-
-                    <div class="imc-value-large">
-                        23.7
-                    </div>
-
-                    <div class="imc-classification-large">
-                        Peso Normal
-                    </div>
-
-                    <div class="imc-range">
-
-                        <div class="imc-range-item">
-                            <span class="imc-range-label">Abaixo do peso</span>
-                            <span class="imc-range-value">&lt; 18.5</span>
-                        </div>
-
-                        <div class="imc-range-item">
-                            <span class="imc-range-label">Peso normal</span>
-                            <span class="imc-range-value">18.5 - 24.9</span>
-                        </div>
-
-                        <div class="imc-range-item">
-                            <span class="imc-range-label">Sobrepeso</span>
-                            <span class="imc-range-value">25 - 29.9</span>
-                        </div>
-
-                        <div class="imc-range-item">
-                            <span class="imc-range-label">Obesidade</span>
-                            <span class="imc-range-value">&gt; 30</span>
-                        </div>
-
-                    </div>
-
-                </div>
-
+                <div class="info-grid" id="infoGrid"></div>
+                <div class="extra-grid" id="extraGrid" style="display:none"></div>
             </div>
-
         </div>
+    </div>
 
+    <!-- AÇÕES PRINCIPAIS -->
+    <div class="actions-bar">
+        <button class="btn-action btn-primary" onclick="editarDieta()">
+            <i class="fa-solid fa-pen-to-square"></i> Editar Plano Alimentar
+        </button>
+        <button class="btn-action btn-warning" onclick="abrirModalEditar()">
+            <i class="fa-solid fa-user-pen"></i> Editar Dados do Paciente
+        </button>
+    </div>
+
+    <!-- DIETA -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <span class="section-card-title">
+                <i class="fa-solid fa-utensils" style="color:#52B788"></i> Plano Alimentar Atual
+            </span>
+            <button class="btn-action btn-primary" style="padding:.5rem 1rem;font-size:.82rem" onclick="editarDieta()">
+                <i class="fa-solid fa-plus"></i> Adicionar / Editar
+            </button>
+        </div>
+        <div class="section-card-body" id="listaDietas">
+            <div class="empty-state"><span class="spinner"></span> Carregando...</div>
+        </div>
+    </div>
+
+
+
+    <!-- ZONA DE PERIGO -->
+    <div class="danger-zone">
+        <div class="danger-title"><i class="fa-solid fa-triangle-exclamation"></i> Zona de Perigo</div>
+        <p class="danger-desc">Ao apagar este paciente, todas as dietas e dados vinculados a ele serão removidos permanentemente. Esta ação não pode ser desfeita.</p>
+        <button class="btn-delete-full" onclick="apagarPaciente()">
+            <i class="fa-solid fa-trash"></i> Apagar Paciente
+        </button>
     </div>
 
 </div>
 
+<!-- MODAL EDITAR PACIENTE -->
+<div class="modal-overlay" id="modalEditar" onclick="fecharModalFora(event)">
+    <div class="modal-box" id="modalBox">
+        <div class="modal-header">
+            <span class="modal-title"><i class="fa-solid fa-user-pen" style="color:#52B788;margin-right:.5rem"></i> Editar Dados do Paciente</span>
+            <button class="modal-close" onclick="fecharModal()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Nome Completo *</label>
+                <input type="text" class="form-input" id="e-nome">
+            </div>
+            <div class="form-group">
+                <label class="form-label">E-mail</label>
+                <input type="email" class="form-input" id="e-email">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Idade</label>
+                    <input type="number" class="form-input" id="e-idade" min="1" max="120">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sexo</label>
+                    <select class="form-input" id="e-sexo">
+                        <option value="">Selecione</option>
+                        <option>Feminino</option>
+                        <option>Masculino</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Peso (kg)</label>
+                    <input type="number" class="form-input" id="e-peso" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Altura (m)</label>
+                    <input type="number" class="form-input" id="e-altura" step="0.01">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Objetivo</label>
+                <select class="form-input" id="e-objetivo">
+                    <option value="">Selecione</option>
+                    <option>Emagrecimento</option>
+                    <option>Hipertrofia</option>
+                    <option>Manutenção</option>
+                    <option>Reeducação alimentar</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Restrições Alimentares</label>
+                <input type="text" class="form-input" id="e-restricoes" placeholder="Ex: lactose, glúten...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Observações</label>
+                <textarea class="form-input" id="e-observacoes" rows="3"></textarea>
+            </div>
+            <div id="erroEditar" style="display:none;background:#fee2e2;color:#991b1b;padding:.75rem;border-radius:8px;font-size:.85rem;margin-top:.5rem"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+            <button class="btn-save" onclick="salvarEdicao()"><i class="fa-solid fa-floppy-disk"></i> Salvar Alterações</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const pacienteId = localStorage.getItem("pacienteSelecionado");
+    if (!pacienteId) window.location.href = "/dashboard.html";
+
+    let pacienteAtual = null;
+
+    function editarDieta() { window.location.href = "/editar_dieta.html"; }
+    function logout() { localStorage.clear(); window.location.href = "/login.html"; }
+
+    function classificarIMC(imc) {
+        if (imc < 18.5) return { label: 'Abaixo do peso', cls: 'imc-baixo' };
+        if (imc < 25)   return { label: 'Peso normal',    cls: 'imc-normal' };
+        if (imc < 30)   return { label: 'Sobrepeso',      cls: 'imc-sobrepeso' };
+        return              { label: 'Obesidade',          cls: 'imc-obesidade' };
+    }
+
+    // ── CARREGAR PACIENTE ─────────────────────────────────
+    async function carregarPaciente() {
+        try {
+            const res = await fetch('/pacientes');
+            const lista = await res.json();
+            const p = lista.find(x => String(x.id) === String(pacienteId));
+            if (!p) { document.getElementById("nomePaciente").innerText = "Paciente não encontrado"; return; }
+
+            pacienteAtual = p;
+            document.getElementById("nomePaciente").innerText = p.nome;
+            document.getElementById("breadNome").innerText    = p.nome;
+
+            if (p.email) {
+                document.getElementById("emailPaciente").innerHTML =
+                    `<i class="fa-solid fa-envelope" style="color:#52B788;margin-right:.3rem"></i>${p.email}`;
+            }
+
+            if (p.objetivo) {
+                document.getElementById("objetivoTexto").innerText = p.objetivo;
+                document.getElementById("objetivoPaciente").style.display = "inline-flex";
+            }
+
+            const imcVal  = p.imc ? Number(p.imc).toFixed(1) : '—';
+            const imcInfo = p.imc ? classificarIMC(Number(p.imc)) : null;
+
+            document.getElementById("infoGrid").innerHTML = `
+                <div class="info-box"><div class="info-label">Idade</div><div class="info-value">${p.idade ? p.idade + ' anos' : '—'}</div></div>
+                <div class="info-box"><div class="info-label">Sexo</div><div class="info-value">${p.sexo || '—'}</div></div>
+                <div class="info-box"><div class="info-label">Peso</div><div class="info-value">${p.peso ? p.peso + ' kg' : '—'}</div></div>
+                <div class="info-box"><div class="info-label">Altura</div><div class="info-value">${p.altura ? p.altura + ' m' : '—'}</div></div>
+                <div class="info-box">
+                    <div class="info-label">IMC</div>
+                    <div class="info-value">${imcVal}${imcInfo ? `<span class="imc-badge ${imcInfo.cls}">${imcInfo.label}</span>` : ''}</div>
+                </div>
+            `;
+
+            if (p.restricoes || p.observacoes) {
+                document.getElementById("extraGrid").style.display = "grid";
+                document.getElementById("extraGrid").innerHTML = `
+                    ${p.restricoes ? `<div class="extra-box"><div class="extra-label"><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> Restrições</div><div class="extra-value">${p.restricoes}</div></div>` : ''}
+                    ${p.observacoes ? `<div class="extra-box"><div class="extra-label"><i class="fa-solid fa-note-sticky" style="color:#6b7280"></i> Observações</div><div class="extra-value">${p.observacoes}</div></div>` : ''}
+                `;
+            }
+        } catch(e) {
+            document.getElementById("nomePaciente").innerText = "Erro ao carregar.";
+        }
+    }
+
+    // ── CARREGAR DIETA ────────────────────────────────────
+    async function carregarDieta() {
+        const container = document.getElementById("listaDietas");
+        try {
+            const res = await fetch(`/dietas/paciente/${pacienteId}`);
+            const dietas = await res.json();
+            if (!dietas.length) {
+                container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-clipboard-list"></i><p>Nenhum plano alimentar cadastrado.<br><button class="btn-action btn-primary" style="margin-top:1rem" onclick="editarDieta()"><i class="fa-solid fa-plus"></i> Criar Plano</button></p></div>`;
+                return;
+            }
+            container.innerHTML = dietas.map(d => `
+                <div class="meal-item">
+                    <div class="meal-top">
+                        <div class="meal-nome"><i class="fa-solid fa-utensils" style="color:#52B788"></i> ${d.refeicaoNome || 'Refeição'}</div>
+                        ${d.horario ? `<span class="meal-horario">🕐 ${d.horario}</span>` : ''}
+                    </div>
+                    ${d.objetivo ? `<div class="meal-obj"><i class="fa-solid fa-bullseye"></i> ${d.objetivo}</div>` : ''}
+                    <p class="meal-desc">${d.descricao || 'Sem descrição'}</p>
+                </div>
+            `).join('');
+        } catch(e) {
+            container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-triangle-exclamation" style="color:#fca5a5"></i><p style="color:#dc2626">Erro ao carregar dieta.</p></div>`;
+        }
+    }
+
+
+
+    // ── MODAL EDITAR ──────────────────────────────────────
+    function abrirModalEditar() {
+        if (!pacienteAtual) return;
+        const p = pacienteAtual;
+        document.getElementById('e-nome').value        = p.nome || '';
+        document.getElementById('e-email').value       = p.email || '';
+        document.getElementById('e-idade').value       = p.idade || '';
+        document.getElementById('e-sexo').value        = p.sexo || '';
+        document.getElementById('e-peso').value        = p.peso || '';
+        document.getElementById('e-altura').value      = p.altura || '';
+        document.getElementById('e-objetivo').value    = p.objetivo || '';
+        document.getElementById('e-restricoes').value  = p.restricoes || '';
+        document.getElementById('e-observacoes').value = p.observacoes || '';
+        document.getElementById('erroEditar').style.display = 'none';
+        document.getElementById('modalEditar').classList.add('open');
+    }
+
+    function fecharModal() {
+        document.getElementById('modalEditar').classList.remove('open');
+    }
+
+    function fecharModalFora(e) {
+        if (e.target === document.getElementById('modalEditar')) fecharModal();
+    }
+
+    async function salvarEdicao() {
+        const erroDiv = document.getElementById('erroEditar');
+        erroDiv.style.display = 'none';
+
+        const dados = {
+            nome:        document.getElementById('e-nome').value.trim(),
+            email:       document.getElementById('e-email').value.trim().toLowerCase(),
+            idade:       parseInt(document.getElementById('e-idade').value) || null,
+            sexo:        document.getElementById('e-sexo').value,
+            peso:        parseFloat(document.getElementById('e-peso').value) || null,
+            altura:      parseFloat(document.getElementById('e-altura').value) || null,
+            objetivo:    document.getElementById('e-objetivo').value,
+            restricoes:  document.getElementById('e-restricoes').value,
+            observacoes: document.getElementById('e-observacoes').value
+        };
+
+        if (!dados.nome) {
+            erroDiv.innerText = 'O nome é obrigatório.';
+            erroDiv.style.display = 'block';
+            return;
+        }
+
+        try {
+            const res = await fetch(`/pacientes/${pacienteId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                erroDiv.innerText = data.erro || 'Erro ao salvar.';
+                erroDiv.style.display = 'block';
+                return;
+            }
+            fecharModal();
+            await Swal.fire({ icon: 'success', title: 'Dados atualizados!', timer: 1800, showConfirmButton: false });
+            carregarPaciente();
+        } catch(e) {
+            erroDiv.innerText = 'Erro de conexão.';
+            erroDiv.style.display = 'block';
+        }
+    }
+
+    // ── APAGAR PACIENTE ───────────────────────────────────
+    async function apagarPaciente() {
+        const confirm = await Swal.fire({
+            icon: 'warning',
+            title: 'Apagar paciente?',
+            html: `Todos os dados de <strong>${pacienteAtual?.nome || 'este paciente'}</strong> serão removidos permanentemente.`,
+            showCancelButton: true,
+            confirmButtonText: 'Sim, apagar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280'
+        });
+
+        if (!confirm.isConfirmed) return;
+
+        try {
+            const res = await fetch(`/pacientes/${pacienteId}`, { method: 'DELETE' });
+            if (res.ok) {
+                await Swal.fire({ icon: 'success', title: 'Paciente removido.', timer: 1800, showConfirmButton: false });
+                localStorage.removeItem("pacienteSelecionado");
+                window.location.href = "/dashboard.html";
+            } else {
+                const data = await res.json();
+                Swal.fire({ icon: 'error', title: 'Erro', text: data.erro || 'Não foi possível remover.' });
+            }
+        } catch(e) {
+            Swal.fire({ icon: 'error', title: 'Erro de conexão.' });
+        }
+    }
+
+    // ── INIT ──────────────────────────────────────────────
+    carregarPaciente();
+    carregarDieta();
+</script>
 </body>
 </html>

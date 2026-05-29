@@ -5,7 +5,9 @@ import comseuprojetonutriapp.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -14,43 +16,80 @@ public class PacienteService {
     @Autowired
     private PacienteRepository repository;
 
-    /**
-     * Salva um paciente, impedindo duplicação por nome (case-insensitive).
-     * Se já existir um paciente com o mesmo nome, lança exceção com mensagem clara.
-     */
     public Paciente salvar(Paciente paciente) {
-        // Verifica duplicata por nome (ignora maiúsculas/minúsculas e espaços extras)
         String nomeNormalizado = paciente.getNome().trim();
         paciente.setNome(nomeNormalizado);
 
-        boolean jaExiste = repository.findAll().stream()
-                .anyMatch(p -> p.getNome().trim().equalsIgnoreCase(nomeNormalizado));
+        boolean nomeExiste = repository.findByNomeIgnoreCase(nomeNormalizado).isPresent();
+        if (nomeExiste) {
+            throw new IllegalArgumentException("Já existe um paciente cadastrado com esse nome.");
+        }
 
-        if (jaExiste) {
-            throw new IllegalArgumentException(
-                    "Já existe um paciente cadastrado com o nome '" + nomeNormalizado + "'."
-            );
+        // Valida email duplicado se informado
+        if (paciente.getEmail() != null && !paciente.getEmail().isBlank()) {
+            String emailNorm = paciente.getEmail().trim().toLowerCase();
+            paciente.setEmail(emailNorm);
+            boolean emailExiste = repository.findByEmailIgnoreCase(emailNorm).isPresent();
+            if (emailExiste) {
+                throw new IllegalArgumentException("Já existe um paciente cadastrado com esse e-mail.");
+            }
         }
 
         return repository.save(paciente);
     }
 
-    /**
-     * Lista todos os pacientes sem duplicatas.
-     * A deduplicação por ID garante que mesmo que o banco tenha registros
-     * duplicados por algum bug anterior, o retorno sempre será limpo.
-     */
+    public Paciente atualizar(Long id, Paciente dados) {
+        Paciente existente = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Paciente não encontrado."));
+
+        // Verifica nome duplicado apenas se mudou
+        if (!existente.getNome().equalsIgnoreCase(dados.getNome().trim())) {
+            boolean nomeExiste = repository.findByNomeIgnoreCase(dados.getNome().trim()).isPresent();
+            if (nomeExiste) {
+                throw new IllegalArgumentException("Já existe um paciente cadastrado com esse nome.");
+            }
+        }
+
+        existente.setNome(dados.getNome().trim());
+        existente.setIdade(dados.getIdade());
+        existente.setPeso(dados.getPeso());
+        existente.setAltura(dados.getAltura());
+        existente.setSexo(dados.getSexo());
+        existente.setObjetivo(dados.getObjetivo());
+        existente.setRestricoes(dados.getRestricoes());
+        existente.setObservacoes(dados.getObservacoes());
+
+        if (dados.getEmail() != null && !dados.getEmail().isBlank()) {
+            String emailNorm = dados.getEmail().trim().toLowerCase();
+            if (!emailNorm.equals(existente.getEmail())) {
+                boolean emailExiste = repository.findByEmailIgnoreCase(emailNorm).isPresent();
+                if (emailExiste) {
+                    throw new IllegalArgumentException("Já existe um paciente com esse e-mail.");
+                }
+            }
+            existente.setEmail(emailNorm);
+        }
+
+        return repository.save(existente);
+    }
+
+    public void deletar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new IllegalArgumentException("Paciente não encontrado.");
+        }
+        repository.deleteById(id);
+    }
+
     public List<Paciente> listarTodos() {
-        return repository.findAll().stream()
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toMap(
-                                Paciente::getId,       // chave = ID único
-                                p -> p,                // valor = o próprio paciente
-                                (a, b) -> a            // em caso de colisão, mantém o primeiro
-                        ),
-                        map -> map.values().stream()
-                                .sorted((a, b) -> Long.compare(a.getId(), b.getId()))
-                                .collect(Collectors.toList())
-                ));
+        List<Paciente> pacientes = repository.findAll();
+        Map<Long, Paciente> mapa = new LinkedHashMap<>();
+        for (Paciente p : pacientes) {
+            if (p.getId() != null && !mapa.containsKey(p.getId())) {
+                mapa.put(p.getId(), p);
+            }
+        }
+        return mapa.values().stream()
+                .sorted((a, b) -> a.getId().compareTo(b.getId()))
+                .collect(Collectors.toList());
     }
 }

@@ -4,123 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha Área - NutriSmart</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style_nutrismart.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root {
-            --vd: #1B4332; --vm: #2D6A4F; --va: #52B788;
-            --bg: #f0fdf4; --bg2: #e9f7ef; --tx: #1a3a2a; --ts: #6b7280;
-            --sh: 0 4px 20px rgba(27,67,50,0.09); --r: 16px;
-        }
-        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--tx); min-height:100vh; }
-
-        /* NAVBAR */
-        .navbar { height:64px; background:#fff; border-bottom:1px solid rgba(82,183,136,0.25); box-shadow:0 2px 12px rgba(45,106,79,0.07); display:flex; align-items:center; justify-content:space-between; padding:0 2rem; position:sticky; top:0; z-index:200; }
-        .navbar-logo { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; color:var(--vm); text-decoration:none; display:flex; align-items:center; gap:.5rem; }
-        .nav-right { display:flex; align-items:center; gap:.5rem; }
-        .nav-nome { font-size:.9rem; font-weight:700; color:var(--vm); margin-right:.25rem; }
-        .nav-btn { display:inline-flex; align-items:center; gap:.35rem; padding:.45rem .9rem; border-radius:8px; font-size:.85rem; font-weight:600; cursor:pointer; border:none; transition:.2s; text-decoration:none; background:transparent; color:var(--ts); }
-        .nav-btn:hover { background:#fee2e2; color:#dc2626; }
-
-        /* BANNER */
-        .banner { background:linear-gradient(135deg, var(--vd) 0%, var(--va) 100%); padding:2rem 2rem 0; color:#fff; }
-        .banner h1 { font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:700; }
-        .banner p  { opacity:.88; font-size:.95rem; margin-top:.3rem; }
-
-        /* TABS */
-        .tabs { display:flex; padding:1.2rem 0 0; }
-        .tab { padding:.7rem 1.4rem; font-weight:700; font-size:.88rem; background:transparent; border:none; color:rgba(255,255,255,.65); cursor:pointer; border-bottom:3px solid transparent; transition:.2s; white-space:nowrap; }
-        .tab.active { color:#fff; border-bottom-color:#fff; }
-        .tab:hover:not(.active) { color:rgba(255,255,255,.9); }
-
-        /* CONTAINER */
-        .container { max-width:860px; margin:0 auto; padding:2rem 1.5rem 4rem; }
-        .tab-section { display:none; }
-        .tab-section.active { display:block; }
-
-        /* MEAL CARDS */
-        .meal-card { background:#fff; border-radius:var(--r); box-shadow:var(--sh); overflow:hidden; margin-bottom:1.2rem; }
-        .meal-card-bar { height:4px; background:linear-gradient(90deg, var(--vm), var(--va)); }
-        .meal-card-body { padding:1.3rem 1.5rem; }
-        .meal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.8rem; flex-wrap:wrap; gap:.5rem; }
-        .meal-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--tx); display:flex; align-items:center; gap:.5rem; }
-        .meal-time-badge { background:var(--bg2); color:var(--vm); padding:.3rem .8rem; border-radius:999px; font-size:.8rem; font-weight:700; }
-        .meal-desc { color:var(--ts); font-size:.9rem; margin-bottom:.8rem; line-height:1.5; }
-        .meal-objetivo { display:inline-flex; align-items:center; gap:.3rem; background:#d1fae5; color:#065f46; padding:.25rem .75rem; border-radius:999px; font-size:.78rem; font-weight:700; margin-bottom:1rem; }
-        .btn-chat { display:inline-flex; align-items:center; gap:.4rem; padding:.55rem 1.1rem; border-radius:10px; background:linear-gradient(135deg, var(--vm), var(--va)); color:#fff; border:none; font-size:.85rem; font-weight:700; cursor:pointer; transition:.2s; font-family:'DM Sans',sans-serif; }
-        .btn-chat:hover { opacity:.88; transform:translateY(-1px); }
-
-        .empty-dieta { text-align:center; padding:3rem; color:var(--ts); background:#fff; border-radius:var(--r); box-shadow:var(--sh); }
-        .empty-dieta .icon { font-size:3rem; margin-bottom:.75rem; }
-
-        /* CONSULTAS */
-        .form-card { background:#fff; border-radius:var(--r); box-shadow:var(--sh); overflow:hidden; margin-bottom:1.5rem; }
-        .form-card-bar { height:4px; background:linear-gradient(90deg, var(--vm), var(--va)); }
-        .form-body { padding:1.5rem; }
-        .form-title { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; margin-bottom:1.2rem; color:var(--tx); }
-        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-        .form-group { margin-bottom:1rem; }
-        .form-label { display:block; font-size:.78rem; font-weight:700; color:#374151; text-transform:uppercase; letter-spacing:.04em; margin-bottom:.4rem; }
-        .form-input, .form-select, .form-textarea { width:100%; padding:.75rem 1rem; border:2px solid #e5e7eb; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; color:var(--tx); outline:none; transition:border-color .2s; background:#fff; }
-        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color:var(--va); }
-        .form-textarea { resize:vertical; min-height:80px; }
-        .btn-submit { width:100%; padding:.85rem; border:none; border-radius:10px; background:linear-gradient(135deg, var(--vd), var(--va)); color:#fff; font-family:'DM Sans',sans-serif; font-weight:700; font-size:.95rem; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:.5rem; margin-top:.5rem; }
-        .btn-submit:hover { opacity:.92; transform:translateY(-1px); }
-
-        .hist-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--tx); margin-bottom:1rem; }
-        .hist-card { background:#fff; border-radius:14px; padding:1.1rem 1.3rem; border-left:4px solid #d1d5db; box-shadow:0 2px 10px rgba(27,67,50,0.06); margin-bottom:.8rem; }
-        .hist-card.pendente  { border-left-color:#f59e0b; }
-        .hist-card.aceita    { border-left-color:#22c55e; }
-        .hist-card.recusada  { border-left-color:#ef4444; }
-        .hist-card.sugerido  { border-left-color:#8b5cf6; }
-        .hist-top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:.5rem; margin-bottom:.4rem; }
-        .hist-top h4 { font-size:.95rem; font-weight:700; color:var(--tx); }
-        .hist-top span { font-size:.82rem; color:var(--ts); }
-        .badge { padding:.28rem .8rem; border-radius:999px; font-size:.75rem; font-weight:700; white-space:nowrap; }
-        .badge.pendente  { background:#fef3c7; color:#d97706; }
-        .badge.aceita    { background:#dcfce7; color:#16a34a; }
-        .badge.recusada  { background:#fee2e2; color:#dc2626; }
-        .badge.sugerido  { background:#ede9fe; color:#7c3aed; }
-        .sugestao-box { background:#ede9fe; border-radius:10px; padding:.65rem 1rem; margin-top:.6rem; font-size:.83rem; color:#5b21b6; font-weight:600; }
-        .sugestao-actions { display:flex; gap:.5rem; margin-top:.5rem; }
-        .btn-s-aceitar { background:#22c55e; color:#fff; border:none; padding:.4rem .9rem; border-radius:8px; font-weight:700; font-size:.8rem; cursor:pointer; }
-        .btn-s-recusar { background:#fee2e2; color:#dc2626; border:none; padding:.4rem .9rem; border-radius:8px; font-weight:700; font-size:.8rem; cursor:pointer; }
-        .empty-hist { text-align:center; padding:2rem; color:var(--ts); background:#fff; border-radius:var(--r); box-shadow:var(--sh); }
-
-        /* CHATBOT */
-        .chat-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:500; display:none; align-items:flex-end; justify-content:center; padding:1rem; }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
+        .hist-card { background:#fff; border-radius:14px; padding:1rem 1.2rem; border-left:4px solid #e5e7eb; box-shadow:0 2px 8px rgba(27,67,50,0.05); margin-bottom:.75rem; }
+        .hist-card.pendente { border-left-color:#f59e0b; }
+        .hist-card.aceita   { border-left-color:#22c55e; }
+        .hist-card.recusada { border-left-color:#ef4444; }
+        .hist-card.sugerido { border-left-color:#8b5cf6; }
+        .badge-status { padding:.22rem .7rem; border-radius:999px; font-size:.72rem; font-weight:700; }
+        .badge-status.pendente { background:#fef3c7; color:#d97706; }
+        .badge-status.aceita   { background:#dcfce7; color:#16a34a; }
+        .badge-status.recusada { background:#fee2e2; color:#dc2626; }
+        .badge-status.sugerido { background:#ede9fe; color:#7c3aed; }
+        .sug-box { background:#ede9fe; border-radius:8px; padding:.55rem .9rem; margin-top:.5rem; font-size:.8rem; color:#5b21b6; font-weight:600; }
+        .sug-btns { display:flex; gap:.5rem; margin-top:.4rem; }
+        .btn-sim { background:#22c55e; color:#fff; border:none; padding:.35rem .8rem; border-radius:7px; font-weight:700; font-size:.78rem; cursor:pointer; }
+        .btn-nao { background:#fee2e2; color:#dc2626; border:none; padding:.35rem .8rem; border-radius:7px; font-weight:700; font-size:.78rem; cursor:pointer; }
+        /* Chat slide-up */
+        .chat-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500; display:none; align-items:flex-end; justify-content:center; }
         .chat-overlay.open { display:flex; }
-        .chat-box { background:#fff; border-radius:20px 20px 0 0; width:100%; max-width:600px; max-height:82vh; display:flex; flex-direction:column; box-shadow:0 -8px 40px rgba(27,67,50,0.18); animation:slideUp .3s ease; }
-        @keyframes slideUp { from{transform:translateY(60px);opacity:0} to{transform:translateY(0);opacity:1} }
-        .chat-header { padding:1.1rem 1.4rem; background:linear-gradient(135deg, var(--vd), var(--va)); border-radius:20px 20px 0 0; display:flex; align-items:center; justify-content:space-between; color:#fff; }
-        .chat-header-info { display:flex; align-items:center; gap:.7rem; }
-        .chat-avatar { width:40px; height:40px; background:rgba(255,255,255,.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
-        .chat-header h3 { font-size:1rem; font-weight:700; }
-        .chat-header p  { font-size:.78rem; opacity:.85; }
-        .chat-close { background:rgba(255,255,255,.2); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-        .chat-context { padding:.6rem 1.2rem; background:#f0fdf4; border-bottom:1px solid #dcfce7; font-size:.8rem; color:var(--vm); font-weight:600; }
-        .chat-messages { flex:1; overflow-y:auto; padding:1.2rem; display:flex; flex-direction:column; gap:.8rem; }
-        .chat-messages::-webkit-scrollbar { width:4px; }
-        .chat-messages::-webkit-scrollbar-thumb { background:var(--va); border-radius:4px; }
-        .msg { max-width:82%; padding:.75rem 1rem; border-radius:16px; font-size:.88rem; line-height:1.55; white-space:pre-wrap; }
-        .msg-bot  { background:var(--bg2); color:var(--tx); border-radius:4px 16px 16px 16px; align-self:flex-start; }
-        .msg-user { background:linear-gradient(135deg, var(--vm), var(--va)); color:#fff; border-radius:16px 4px 16px 16px; align-self:flex-end; }
-        .msg-loading { background:var(--bg2); color:var(--ts); border-radius:4px 16px 16px 16px; align-self:flex-start; font-style:italic; font-size:.83rem; }
-        .chat-input-area { padding:1rem 1.2rem; border-top:1px solid #e5e7eb; display:flex; gap:.7rem; }
-        .chat-input { flex:1; padding:.75rem 1rem; border:2px solid #e5e7eb; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.9rem; outline:none; resize:none; transition:border-color .2s; }
-        .chat-input:focus { border-color:var(--va); }
-        .chat-send { background:linear-gradient(135deg, var(--vm), var(--va)); color:#fff; border:none; border-radius:10px; padding:.75rem 1.1rem; cursor:pointer; font-weight:700; font-size:.9rem; transition:.2s; }
-        .chat-send:hover { opacity:.88; }
-
+        .chat-box { background:#fff; width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column; border-radius:20px 20px 0 0; box-shadow:0 -8px 40px rgba(0,0,0,.15); animation:slideUp .3s ease; }
+        @keyframes slideUp { from{transform:translateY(40px);opacity:0} to{transform:translateY(0);opacity:1} }
+        .chat-head { padding:1rem 1.3rem; background:linear-gradient(135deg,#1B4332,#52B788); border-radius:20px 20px 0 0; display:flex; align-items:center; justify-content:space-between; color:#fff; }
+        .chat-head-left { display:flex; align-items:center; gap:.65rem; }
+        .chat-av { width:38px; height:38px; background:rgba(255,255,255,.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+        .chat-close { background:rgba(255,255,255,.2); border:none; color:#fff; width:30px; height:30px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+        .chat-ctx { padding:.5rem 1.2rem; background:#f0fdf4; border-bottom:1px solid #dcfce7; font-size:.78rem; color:#2D6A4F; font-weight:600; }
+        .chat-msgs { flex:1; overflow-y:auto; padding:1rem 1.2rem; display:flex; flex-direction:column; gap:.75rem; }
+        .msg { max-width:80%; padding:.7rem 1rem; border-radius:14px; font-size:.86rem; line-height:1.55; white-space:pre-wrap; }
+        .msg-bot  { background:#e9f7ef; color:#1a3a2a; border-radius:4px 14px 14px 14px; align-self:flex-start; }
+        .msg-user { background:linear-gradient(135deg,#2D6A4F,#52B788); color:#fff; border-radius:14px 4px 14px 14px; align-self:flex-end; }
+        .msg-load { background:#e9f7ef; color:#6b7280; border-radius:4px 14px 14px 14px; align-self:flex-start; font-style:italic; font-size:.82rem; }
+        .chat-input-area { padding:.9rem 1.2rem; border-top:1px solid #e5e7eb; display:flex; gap:.6rem; }
+        .chat-input { flex:1; padding:.7rem 1rem; border:2px solid #e5e7eb; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.88rem; outline:none; resize:none; }
+        .chat-input:focus { border-color:#52B788; }
+        .chat-send { background:linear-gradient(135deg,#2D6A4F,#52B788); color:#fff; border:none; border-radius:10px; padding:.7rem 1rem; cursor:pointer; font-weight:700; }
         @keyframes spin { to{transform:rotate(360deg)} }
-        .spinner { display:inline-block; width:18px; height:18px; border:2px solid rgba(82,183,136,0.3); border-top-color:var(--va); border-radius:50%; animation:spin .8s linear infinite; vertical-align:middle; margin-right:.4rem; }
-
-        @media(max-width:600px) {
-            .form-row { grid-template-columns:1fr; }
-            .banner h1 { font-size:1.5rem; }
-            .container { padding:1.2rem 1rem 3rem; }
-        }
+        .spinner { display:inline-block; width:16px; height:16px; border:2px solid rgba(82,183,136,0.3); border-top-color:#52B788; border-radius:50%; animation:spin .8s linear infinite; vertical-align:middle; margin-right:.4rem; }
     </style>
 </head>
 <body>
@@ -133,77 +56,74 @@
     })();
 </script>
 
-<!-- NAVBAR -->
 <nav class="navbar">
-    <a href="/home_paciente.html" class="navbar-logo">
-        <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+    <div class="navbar-logo">
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none" style="margin-right:.4rem">
             <path d="M16 2C16 2 8 6 8 16C8 20 10 24 16 28C22 24 24 20 24 16C24 6 16 2 16 2Z" fill="#52B788"/>
             <path d="M16 8C13 10 12 13 12 16C12 18 13 20 16 22C19 20 20 18 20 16C20 13 19 10 16 8Z" fill="#2D6A4F"/>
         </svg>
         NutriSmart
-    </a>
-    <div class="nav-right">
-        <span class="nav-nome" id="nomeExibido"></span>
-        <button class="nav-btn" onclick="logout()">&#x2192; Sair</button>
+    </div>
+    <div class="navbar-menu">
+        <div class="navbar-user" id="nomeExibido"></div>
+        <button onclick="logout()" class="btn btn-danger" style="padding:.5rem 1rem;font-size:.85rem">&#x2192; Sair</button>
     </div>
 </nav>
 
-<!-- BANNER + TABS -->
-<div class="banner">
+<div class="banner" style="border-radius:0;margin:0;padding-bottom:0">
     <h1 id="boasVindas">Olá, Paciente 👋</h1>
-    <p>Acompanhe sua alimentação e gerencie suas consultas.</p>
-    <div class="tabs">
-        <button class="tab active" onclick="mudarAba('dieta',this)">🥗 Minha Dieta</button>
-        <button class="tab" onclick="mudarAba('consultas',this)">📅 Consultas</button>
+    <p>Acompanhe sua alimentação e consultas.</p>
+    <div class="tabs" style="border-bottom:none;margin-bottom:0;padding-top:1.5rem">
+        <button class="tab active" onclick="switchTab('dieta',this)">🥗 Minha Dieta</button>
+        <button class="tab" onclick="switchTab('consultas',this)">📅 Consultas</button>
     </div>
 </div>
 
-<!-- CONTEÚDO -->
-<div class="container">
+<div class="container" style="padding-top:2rem">
 
     <!-- ABA DIETA -->
-    <div id="aba-dieta" class="tab-section active">
+    <div id="tab-dieta" class="tab-content active">
         <div id="dietaContainer">
-            <div class="empty-dieta">
+            <div style="text-align:center;padding:3rem;color:#6b7280">
                 <span class="spinner"></span> Carregando sua dieta...
             </div>
         </div>
     </div>
 
     <!-- ABA CONSULTAS -->
-    <div id="aba-consultas" class="tab-section">
-        <div class="form-card">
-            <div class="form-card-bar"></div>
-            <div class="form-body">
-                <h2 class="form-title">📅 Solicitar Nova Consulta</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Data Preferida</label>
-                        <input type="date" class="form-input" id="dataConsulta">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Horário Preferido</label>
-                        <input type="time" class="form-input" id="horarioConsulta">
-                    </div>
+    <div id="tab-consultas" class="tab-content">
+        <div class="card" style="margin-bottom:2rem">
+            <h2 style="color:var(--verde-escuro);margin-bottom:1.5rem">📅 Solicitar Consulta</h2>
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label class="form-label">Data Preferida</label>
+                    <input type="date" class="form-input" id="dataConsulta">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Tipo de Consulta</label>
-                    <select class="form-select" id="tipoConsulta">
-                        <option value="">Selecione</option>
-                        <option>Primeira Consulta</option>
-                        <option>Retorno</option>
-                        <option>Avaliação Nutricional</option>
-                        <option>Acompanhamento Mensal</option>
-                    </select>
+                    <label class="form-label">Horário</label>
+                    <input type="time" class="form-input" id="horarioConsulta">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Observações (opcional)</label>
-                    <textarea class="form-textarea" id="obsConsulta" placeholder="Ex: Prefiro horário à tarde..."></textarea>
-                </div>
-                <button class="btn-submit" onclick="solicitarConsulta()">&#x27A4; Enviar Solicitação</button>
             </div>
+            <div class="form-group">
+                <label class="form-label">Tipo de Consulta</label>
+                <select class="form-select" id="tipoConsulta">
+                    <option value="">Selecione</option>
+                    <option>Primeira Consulta</option>
+                    <option>Retorno</option>
+                    <option>Avaliação Nutricional</option>
+                    <option>Acompanhamento Mensal</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Observações (opcional)</label>
+                <textarea class="form-textarea" id="obsConsulta" placeholder="Ex: Prefiro horário à tarde..." style="min-height:80px"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="solicitarConsulta()" style="width:100%">
+                &#x27A4; Enviar Solicitação
+            </button>
         </div>
-        <div class="hist-title">🕐 Minhas Solicitações</div>
+
+        <h3 style="color:var(--verde-escuro);margin-bottom:1rem">🕐 Minhas Solicitações</h3>
         <div id="historicoConsultas"></div>
     </div>
 
@@ -212,346 +132,201 @@
 <!-- CHATBOT -->
 <div class="chat-overlay" id="chatOverlay" onclick="fecharChatFora(event)">
     <div class="chat-box">
-        <div class="chat-header">
-            <div class="chat-header-info">
-                <div class="chat-avatar">🤖</div>
+        <div class="chat-head">
+            <div class="chat-head-left">
+                <div class="chat-av">🤖</div>
                 <div>
-                    <h3>NutriBot</h3>
-                    <p>Assistente inteligente de substituição de alimentos</p>
+                    <div style="font-weight:700;font-size:.95rem">NutriBot</div>
+                    <div style="font-size:.75rem;opacity:.85">Assistente de substituição alimentar</div>
                 </div>
             </div>
             <button class="chat-close" onclick="fecharChat()">✕</button>
         </div>
-        <div class="chat-context" id="chatContexto"></div>
-        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-ctx" id="chatCtx"></div>
+        <div class="chat-msgs" id="chatMsgs"></div>
         <div class="chat-input-area">
       <textarea class="chat-input" id="chatInput" rows="1"
                 placeholder="Ex: Não gosto de frango, pode sugerir outra proteína?"
-                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMensagem();}"></textarea>
-            <button class="chat-send" onclick="enviarMensagem()">&#x27A4;</button>
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMsg();}"></textarea>
+            <button class="chat-send" onclick="enviarMsg()">&#x27A4;</button>
         </div>
     </div>
 </div>
 
 <script>
-    // ── ESTADO ────────────────────────────────────────────────
     const pacienteNome = localStorage.getItem("nomeUsuario") || "Paciente";
-    const pacienteId   = (localStorage.getItem("usuarioId")  || "").split(':')[0];
+    const pacienteId   = (localStorage.getItem("usuarioId") || "").split(':')[0];
     const emailLogin   = localStorage.getItem("emailUsuario") || "";
-
-    let refeicaoContexto = null;
-    let historicoChat    = [];
+    let chatCtx = null, chatHist = [];
 
     document.getElementById("nomeExibido").innerText = pacienteNome;
     document.getElementById("boasVindas").innerText  = `Olá, ${pacienteNome} 👋`;
 
     document.addEventListener('DOMContentLoaded', () => {
-        const hoje = new Date().toISOString().split('T')[0];
-        document.getElementById('dataConsulta').min = hoje;
+        document.getElementById('dataConsulta').min = new Date().toISOString().split('T')[0];
         carregarDieta();
         renderHistorico();
     });
 
-    // ── ABAS ──────────────────────────────────────────────────
-    function mudarAba(aba, btn) {
-        document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+    function switchTab(nome, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-        document.getElementById('aba-' + aba).classList.add('active');
+        document.getElementById('tab-' + nome).classList.add('active');
         btn.classList.add('active');
     }
 
-    // ── DIETA ─────────────────────────────────────────────────
     async function carregarDieta() {
-        const container = document.getElementById("dietaContainer");
-        container.innerHTML = `<div class="empty-dieta"><span class="spinner"></span> Carregando...</div>`;
-
+        const c = document.getElementById("dietaContainer");
         let lista = [];
-
         try {
-            // 1) tenta pelo email salvo no login
             if (emailLogin) {
                 const r1 = await fetch(`/dietas/paciente/email/${encodeURIComponent(emailLogin)}`);
-                if (r1.ok) {
-                    const d1 = await r1.json();
-                    lista = Array.isArray(d1) ? d1 : (d1 ? [d1] : []);
-                }
+                if (r1.ok) { const d1 = await r1.json(); lista = Array.isArray(d1) ? d1 : (d1 ? [d1] : []); }
             }
-            // 2) fallback: tenta pelo ID do usuario
             if (!lista.length && pacienteId) {
                 const r2 = await fetch(`/dietas/paciente/${pacienteId}`);
-                if (r2.ok) {
-                    const d2 = await r2.json();
-                    lista = Array.isArray(d2) ? d2 : (d2 ? [d2] : []);
-                }
+                if (r2.ok) { const d2 = await r2.json(); lista = Array.isArray(d2) ? d2 : (d2 ? [d2] : []); }
             }
         } catch(e) {
-            container.innerHTML = `
-        <div class="empty-dieta">
-          <div class="icon">⚠️</div>
-          <p style="color:#dc2626">Erro ao carregar dieta. Verifique se o backend está rodando.</p>
-        </div>`;
-            return;
+            c.innerHTML = `<div style="text-align:center;padding:2rem;color:#dc2626">⚠️ Erro ao carregar dieta.</div>`; return;
         }
+
+        // Remove duplicatas
+        const vistos = new Set();
+        lista = lista.filter(i => { if(vistos.has(i.id)) return false; vistos.add(i.id); return true; });
 
         if (!lista.length) {
-            container.innerHTML = `
-        <div class="empty-dieta">
-          <div class="icon">🥗</div>
-          <p>Seu nutricionista ainda não cadastrou sua dieta.</p>
-        </div>`;
+            c.innerHTML = `<div style="text-align:center;padding:3rem;color:#6b7280"><div style="font-size:2.5rem;margin-bottom:.75rem">🥗</div><p>Seu nutricionista ainda não cadastrou sua dieta.</p></div>`;
             return;
         }
 
-        container.innerHTML = lista.map(item => `
-      <div class="meal-card">
-        <div class="meal-card-bar"></div>
-        <div class="meal-card-body">
-          <div class="meal-header">
-            <div class="meal-title">🍽️ ${item.refeicaoNome || "Refeição"}</div>
-            <span class="meal-time-badge">🕐 ${item.horario || "—"}</span>
-          </div>
-          <p class="meal-desc">${item.descricao || "Sem descrição"}</p>
-          ${item.objetivo ? `<div class="meal-objetivo">🎯 ${item.objetivo}</div>` : ""}
-          <button class="btn-chat" onclick="abrirChat(${item.id}, this.dataset.nome, this.dataset.desc)"
+        c.innerHTML = `<div class="grid grid-2">${lista.map(item => `
+      <div class="refeicao-card">
+        <div class="refeicao-header"></div>
+        <div class="refeicao-body">
+          <h3 class="refeicao-titulo">🍽️ ${item.refeicaoNome || "Refeição"}</h3>
+          <span class="badge badge-horario">🕐 ${item.horario || "—"}</span>
+          <p class="refeicao-descricao">${item.descricao || "Sem descrição"}</p>
+          ${item.objetivo ? `<span class="badge badge-manter-peso">🎯 ${item.objetivo}</span>` : ''}
+          <button class="btn btn-primary" style="width:100%;margin-top:1rem"
+            data-id="${item.id}"
             data-nome="${(item.refeicaoNome||'Refeição').replace(/"/g,'&quot;')}"
-            data-desc="${(item.descricao||'').replace(/"/g,'&quot;')}">
+            data-desc="${(item.descricao||'').replace(/"/g,'&quot;')}"
+            onclick="abrirChat(this)">
             🤖 Sugerir Substituição com IA
           </button>
         </div>
       </div>
-    `).join('');
+    `).join('')}</div>`;
     }
 
-    // ── CHATBOT ───────────────────────────────────────────────
-    function abrirChat(dietaId, refeicaoNomeOuBtn, descricao) {
-        // Suporta chamada via dataset (botão) ou parâmetros diretos
-        let refeicaoNome = refeicaoNomeOuBtn;
-        if (refeicaoNomeOuBtn && typeof refeicaoNomeOuBtn === 'object') {
-            const btn = refeicaoNomeOuBtn;
-            refeicaoNome = btn.dataset.nome || 'Refeição';
-            descricao    = btn.dataset.desc || '';
-            dietaId      = dietaId;
-        }
-        refeicaoContexto = { dietaId, refeicaoNome, descricao };
-        historicoChat    = [];
-
-        document.getElementById('chatContexto').innerText =
-            `Refeição: ${refeicaoNome}  —  "${descricao || 'sem descrição'}"`;
-
-        const msgs = document.getElementById('chatMessages');
+    function abrirChat(btn) {
+        chatCtx = { id: btn.dataset.id, nome: btn.dataset.nome, desc: btn.dataset.desc };
+        chatHist = [];
+        document.getElementById('chatCtx').innerText = `Refeição: ${chatCtx.nome} — "${chatCtx.desc || 'sem descrição'}"`;
+        const msgs = document.getElementById('chatMsgs');
         msgs.innerHTML = '';
-        adicionarMsgBot(
-            `Olá! 👋 Sou o NutriBot.\n\nVocê quer ajuda com a refeição "${refeicaoNome}".\n\nMe conte o que quer substituir — um alimento que não gosta, uma restrição alimentar ou simplesmente uma variação. Vou sugerir opções com equivalência nutricional! 🥦`
-        );
-
+        addBot(`Olá! 👋 Sou o NutriBot.\n\nVocê quer ajuda com "${chatCtx.nome}".\n\nMe diga o que quer substituir — alimento que não gosta, restrição ou preferência. Vou sugerir alternativas com equivalência nutricional! 🥦`);
         document.getElementById('chatOverlay').classList.add('open');
         setTimeout(() => document.getElementById('chatInput').focus(), 300);
     }
 
-    function fecharChat() {
-        document.getElementById('chatOverlay').classList.remove('open');
-    }
+    function fecharChat() { document.getElementById('chatOverlay').classList.remove('open'); }
+    function fecharChatFora(e) { if(e.target.id==='chatOverlay') fecharChat(); }
 
-    function fecharChatFora(e) {
-        if (e.target === document.getElementById('chatOverlay')) fecharChat();
+    function addBot(txt) {
+        const d = document.createElement('div'); d.className='msg msg-bot'; d.innerText=txt;
+        const m = document.getElementById('chatMsgs'); m.appendChild(d); m.scrollTop=m.scrollHeight;
     }
-
-    function adicionarMsgBot(texto) {
-        const msgs = document.getElementById('chatMessages');
-        const div  = document.createElement('div');
-        div.className = 'msg msg-bot';
-        div.innerText = texto;
-        msgs.appendChild(div);
-        msgs.scrollTop = msgs.scrollHeight;
+    function addUser(txt) {
+        const d = document.createElement('div'); d.className='msg msg-user'; d.innerText=txt;
+        const m = document.getElementById('chatMsgs'); m.appendChild(d); m.scrollTop=m.scrollHeight;
     }
-
-    function adicionarMsgUser(texto) {
-        const msgs = document.getElementById('chatMessages');
-        const div  = document.createElement('div');
-        div.className = 'msg msg-user';
-        div.innerText = texto;
-        msgs.appendChild(div);
-        msgs.scrollTop = msgs.scrollHeight;
+    function addLoad() {
+        const d = document.createElement('div'); d.className='msg msg-load'; d.id='msgLoad'; d.innerText='⏳ NutriBot está pensando...';
+        const m = document.getElementById('chatMsgs'); m.appendChild(d); m.scrollTop=m.scrollHeight;
     }
+    function removeLoad() { document.getElementById('msgLoad')?.remove(); }
 
-    function adicionarMsgLoading() {
-        const msgs = document.getElementById('chatMessages');
-        const div  = document.createElement('div');
-        div.className = 'msg msg-loading';
-        div.id = 'msgLoading';
-        div.innerText = '⏳ NutriBot está pensando...';
-        msgs.appendChild(div);
-        msgs.scrollTop = msgs.scrollHeight;
-    }
-
-    function removerLoading() {
-        const el = document.getElementById('msgLoading');
-        if (el) el.remove();
-    }
-
-    async function enviarMensagem() {
+    async function enviarMsg() {
         const input = document.getElementById('chatInput');
-        const texto = input.value.trim();
-        if (!texto) return;
-
-        input.value = '';
-        adicionarMsgUser(texto);
-        adicionarMsgLoading();
-        historicoChat.push({ role:"user", content:texto });
-
-        const systemPrompt = `Você é o NutriBot, assistente nutricional inteligente do NutriSmart.
-O paciente está consultando sobre a refeição: "${refeicaoContexto.refeicaoNome}".
-Descrição da refeição atual: "${refeicaoContexto.descricao || 'não informada'}".
-
-Sua missão é sugerir substituições inteligentes de alimentos considerando:
-- Equivalência calórica e de macronutrientes (proteínas, carboidratos, gorduras)
-- Preferências, restrições e intolerâncias do paciente
-- Praticidade e disponibilidade dos alimentos no Brasil
-- Objetivo nutricional quando mencionado pelo paciente
-
-Sempre responda em português brasileiro de forma amigável e objetiva.
-Ao sugerir substituições, informe brevemente: o alimento substituto, a quantidade equivalente e o motivo nutricional.
-Mantenha respostas diretas e concisas (máximo 3 parágrafos).
-Nunca invente informações nutricionais — baseie-se em dados reais conhecidos.`;
+        const texto = input.value.trim(); if(!texto) return;
+        input.value = ''; addUser(texto); addLoad();
+        chatHist.push({ role:"user", content:texto });
 
         try {
-            const response = await fetch("https://api.anthropic.com/v1/messages", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const res = await fetch('/api/nutribot/chat', {
+                method:'POST', headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
-                    model: "claude-sonnet-4-20250514",
-                    max_tokens: 1000,
-                    system: systemPrompt,
-                    messages: historicoChat
+                    model:"claude-sonnet-4-20250514", max_tokens:1000,
+                    system:`Você é o NutriBot, assistente nutricional do NutriSmart. Refeição: "${chatCtx.nome}". Descrição: "${chatCtx.desc||'não informada'}". Sugira substituições com equivalência calórica e de macros. Responda em português, máximo 3 parágrafos.`,
+                    messages: chatHist
                 })
             });
-
-            const data = await response.json();
-            removerLoading();
-
-            const respostaBot = data.content?.[0]?.text ||
-                "Desculpe, não consegui processar sua solicitação. Tente novamente.";
-            historicoChat.push({ role:"assistant", content:respostaBot });
-            adicionarMsgBot(respostaBot);
-
+            removeLoad();
+            if(!res.ok) { addBot("⚠️ Serviço indisponível. Tente novamente."); return; }
+            const data = await res.json();
+            const resp = data.content?.[0]?.text || "Não consegui processar. Tente novamente.";
+            chatHist.push({ role:"assistant", content:resp });
+            addBot(resp);
         } catch(e) {
-            removerLoading();
-            adicionarMsgBot("⚠️ Erro ao conectar com o NutriBot. Verifique sua conexão e tente novamente.");
+            removeLoad(); addBot("⚠️ Erro de conexão. Verifique se o backend está rodando.");
         }
     }
 
-    // ── CONSULTAS ─────────────────────────────────────────────
-    function storageKey() { return `ns_consultas_paciente_${pacienteId}`; }
-
-    function getMinhasConsultas() {
-        return JSON.parse(localStorage.getItem(storageKey())) || [];
-    }
-
-    function setMinhasConsultas(arr) {
-        localStorage.setItem(storageKey(), JSON.stringify(arr));
-        const global  = JSON.parse(localStorage.getItem('ns_consultas')) || [];
-        const semEste = global.filter(c => c.pacienteId !== pacienteId);
-        localStorage.setItem('ns_consultas', JSON.stringify([...semEste, ...arr]));
+    // CONSULTAS
+    function stKey() { return `ns_consultas_${pacienteId}`; }
+    function getC()  { return JSON.parse(localStorage.getItem(stKey())) || []; }
+    function setC(a) {
+        localStorage.setItem(stKey(), JSON.stringify(a));
+        const g = JSON.parse(localStorage.getItem('ns_consultas')) || [];
+        localStorage.setItem('ns_consultas', JSON.stringify([...g.filter(c=>c.pacienteId!==pacienteId), ...a]));
     }
 
     function solicitarConsulta() {
-        const data    = document.getElementById('dataConsulta').value;
-        const horario = document.getElementById('horarioConsulta').value;
-        const tipo    = document.getElementById('tipoConsulta').value;
-        const obs     = document.getElementById('obsConsulta').value.trim();
-
-        if (!data || !horario || !tipo) {
-            Swal.fire({ icon:'warning', title:'Campos obrigatórios',
-                text:'Preencha data, horário e tipo de consulta.',
-                confirmButtonColor:'#1B4332' });
-            return;
-        }
-
-        const consulta = {
-            id: Date.now(), paciente: pacienteNome, pacienteId,
-            data, horario, tipo, obs,
-            status: 'pendente',
-            solicitadoEm: new Date().toLocaleDateString('pt-BR')
-        };
-
-        const lista = getMinhasConsultas();
-        lista.unshift(consulta);
-        setMinhasConsultas(lista);
-
-        ['dataConsulta','horarioConsulta','tipoConsulta','obsConsulta']
-            .forEach(id => document.getElementById(id).value = '');
-
+        const data=document.getElementById('dataConsulta').value;
+        const horario=document.getElementById('horarioConsulta').value;
+        const tipo=document.getElementById('tipoConsulta').value;
+        const obs=document.getElementById('obsConsulta').value.trim();
+        if(!data||!horario||!tipo) { Swal.fire({icon:'warning',title:'Campos obrigatórios',text:'Preencha data, horário e tipo.',confirmButtonColor:'#1B4332'}); return; }
+        const lista = getC();
+        lista.unshift({ id:Date.now(), paciente:pacienteNome, pacienteId, data, horario, tipo, obs, status:'pendente', solicitadoEm:new Date().toLocaleDateString('pt-BR') });
+        setC(lista);
+        ['dataConsulta','horarioConsulta','tipoConsulta','obsConsulta'].forEach(id=>document.getElementById(id).value='');
         renderHistorico();
-        Swal.fire({ icon:'success', title:'Solicitação enviada!',
-            text:'Aguarde a confirmação do seu nutricionista.',
-            confirmButtonColor:'#1B4332' });
+        Swal.fire({icon:'success',title:'Solicitação enviada!',text:'Aguarde a confirmação do nutricionista.',confirmButtonColor:'#1B4332'});
     }
 
-    function aceitarSugestao(id) {
-        const lista = getMinhasConsultas();
-        const item  = lista.find(c => c.id === id);
-        if (!item) return;
-        item.status  = 'aceita';
-        item.data    = item.dataSugerida;
-        item.horario = item.horarioSugerido;
-        setMinhasConsultas(lista);
-        renderHistorico();
-        Swal.fire({ icon:'success', title:'Horário confirmado!', confirmButtonColor:'#1B4332' });
+    function aceitarSug(id) {
+        const l=getC(); const i=l.find(c=>c.id===id); if(!i) return;
+        i.status='aceita'; i.data=i.dataSugerida; i.horario=i.horarioSugerido;
+        setC(l); renderHistorico(); Swal.fire({icon:'success',title:'Horário confirmado!',confirmButtonColor:'#1B4332'});
     }
-
-    function recusarSugestao(id) {
-        const lista = getMinhasConsultas();
-        const item  = lista.find(c => c.id === id);
-        if (!item) return;
-        item.status = 'recusada';
-        setMinhasConsultas(lista);
-        renderHistorico();
+    function recusarSug(id) {
+        const l=getC(); const i=l.find(c=>c.id===id); if(!i) return;
+        i.status='recusada'; setC(l); renderHistorico();
     }
 
     function renderHistorico() {
-        const lista     = getMinhasConsultas();
-        const container = document.getElementById('historicoConsultas');
-
-        if (!lista.length) {
-            container.innerHTML = `<div class="empty-hist">📭 Nenhuma solicitação ainda.</div>`;
-            return;
-        }
-
-        const labels = {
-            pendente:'⏳ Pendente', aceita:'✅ Aceita',
-            recusada:'❌ Recusada', sugerido:'🔄 Novo Horário'
-        };
-
-        container.innerHTML = lista.map(c => `
-      <div class="hist-card ${c.status}">
-        <div class="hist-top">
+        const lista=getC(); const c=document.getElementById('historicoConsultas');
+        if(!lista.length) { c.innerHTML=`<div style="text-align:center;padding:1.5rem;color:#6b7280">📭 Nenhuma solicitação ainda.</div>`; return; }
+        const lb={ pendente:'⏳ Pendente', aceita:'✅ Aceita', recusada:'❌ Recusada', sugerido:'🔄 Novo Horário' };
+        c.innerHTML = lista.map(x=>`
+      <div class="hist-card ${x.status}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem;margin-bottom:.3rem">
           <div>
-            <h4>📆 ${fmt(c.data)} às ${c.horario}</h4>
-            <span>${c.tipo} · Solicitado em ${c.solicitadoEm}</span>
+            <div style="font-weight:700;font-size:.9rem;color:#1a3a2a">📆 ${fmt(x.data)} às ${x.horario}</div>
+            <div style="font-size:.8rem;color:#6b7280">${x.tipo} · ${x.solicitadoEm}</div>
           </div>
-          <span class="badge ${c.status}">${labels[c.status] || c.status}</span>
+          <span class="badge-status ${x.status}">${lb[x.status]||x.status}</span>
         </div>
-        ${c.obs ? `<p style="font-size:.83rem;color:#4b5563;margin-top:.3rem">💬 ${c.obs}</p>` : ''}
-        ${c.status === 'sugerido' ? `
-          <div class="sugestao-box">🟣 Nutricionista sugeriu: ${fmt(c.dataSugerida)} às ${c.horarioSugerido}</div>
-          <div class="sugestao-actions">
-            <button class="btn-s-aceitar" onclick="aceitarSugestao(${c.id})">✅ Aceitar</button>
-            <button class="btn-s-recusar" onclick="recusarSugestao(${c.id})">❌ Recusar</button>
-          </div>` : ''}
-      </div>
-    `).join('');
+        ${x.obs?`<p style="font-size:.82rem;color:#4b5563;margin-top:.3rem">💬 ${x.obs}</p>`:''}
+        ${x.status==='sugerido'?`<div class="sug-box">🟣 Nutricionista sugeriu: ${fmt(x.dataSugerida)} às ${x.horarioSugerido}</div><div class="sug-btns"><button class="btn-sim" onclick="aceitarSug(${x.id})">✅ Aceitar</button><button class="btn-nao" onclick="recusarSug(${x.id})">❌ Recusar</button></div>`:''}
+      </div>`).join('');
     }
 
-    function fmt(iso) {
-        if (!iso) return '—';
-        const [y,m,d] = iso.split('-');
-        return `${d}/${m}/${y}`;
-    }
-
-    function logout() {
-        localStorage.clear();
-        window.location.href = "/login.html";
-    }
+    function fmt(iso) { if(!iso) return '—'; const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }
+    function logout() { localStorage.clear(); window.location.href="/login.html"; }
 </script>
 </body>
 </html>

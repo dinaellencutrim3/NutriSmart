@@ -1,8 +1,11 @@
 ### IntelliJ IDEA ###
+.idea/
+*.iml
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-.kotlin
+
+### Java ###
+*.class
+target/
 
 ### Eclipse ###
 .apt_generated
@@ -13,8 +16,6 @@ out/
 .springBeans
 .sts4-cache
 bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
 ### NetBeans ###
 /nbproject/private/
@@ -26,5 +27,11 @@ bin/
 ### VS Code ###
 .vscode/
 
+### Logs ###
+*.log
+
 ### Mac OS ###
 .DS_Store
+
+### Windows ###
+Thumbs.db

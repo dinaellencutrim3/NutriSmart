@@ -9,6 +9,26 @@
     <style>
         .tab-content { display:none; }
         .tab-content.active { display:block; }
+        .meal-section { background:#fff; border-radius:18px; box-shadow:0 4px 18px rgba(27,67,50,0.07); margin-bottom:1.5rem; overflow:hidden; border:1px solid rgba(82,183,136,0.15); }
+        .meal-section-header { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.4rem; background:linear-gradient(135deg,#1B4332 0%,#2D6A4F 100%); color:#fff; flex-wrap:wrap; gap:.5rem; }
+        .meal-section-title { display:flex; align-items:center; gap:.6rem; font-weight:700; font-size:1.05rem; }
+        .meal-emoji { font-size:1.3rem; }
+        .meal-horario-badge { background:rgba(255,255,255,0.18); padding:.18rem .65rem; border-radius:999px; font-size:.78rem; font-weight:600; }
+        .meal-kcal-total { background:rgba(82,183,136,0.35); padding:.25rem .8rem; border-radius:999px; font-size:.82rem; font-weight:700; color:#d1fae5; }
+        .meal-table-wrap { overflow-x:auto; }
+        .meal-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+        .meal-table thead tr { background:#f0fdf4; }
+        .meal-table th { padding:.65rem 1.2rem; text-align:left; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#2D6A4F; border-bottom:2px solid #dcfce7; }
+        .meal-table tbody tr { border-bottom:1px solid #f0fdf4; transition:background .15s; }
+        .meal-table tbody tr:last-child { border-bottom:none; }
+        .meal-table tbody tr:hover { background:#f9fefb; }
+        .meal-table td { padding:.7rem 1.2rem; color:#1a3a2a; vertical-align:middle; }
+        .meal-table td:first-child { font-weight:600; }
+        .td-center { text-align:center; }
+        .td-macros { color:#6b7280; font-size:.82rem; }
+        .meal-section-footer { padding:.9rem 1.2rem; background:#f9fefb; border-top:1px solid #dcfce7; }
+        .btn-nutribot { display:flex; align-items:center; gap:.5rem; background:linear-gradient(135deg,#2D6A4F,#52B788); color:#fff; border:none; border-radius:10px; padding:.65rem 1.3rem; font-weight:700; font-size:.86rem; cursor:pointer; transition:opacity .2s,transform .1s; }
+        .btn-nutribot:hover { opacity:.9; transform:translateY(-1px); }
         .hist-card { background:#fff; border-radius:14px; padding:1rem 1.2rem; border-left:4px solid #e5e7eb; box-shadow:0 2px 8px rgba(27,67,50,0.05); margin-bottom:.75rem; }
         .hist-card.pendente { border-left-color:#f59e0b; }
         .hist-card.aceita   { border-left-color:#22c55e; }
@@ -23,7 +43,6 @@
         .sug-btns { display:flex; gap:.5rem; margin-top:.4rem; }
         .btn-sim { background:#22c55e; color:#fff; border:none; padding:.35rem .8rem; border-radius:7px; font-weight:700; font-size:.78rem; cursor:pointer; }
         .btn-nao { background:#fee2e2; color:#dc2626; border:none; padding:.35rem .8rem; border-radius:7px; font-weight:700; font-size:.78rem; cursor:pointer; }
-        /* Chat slide-up */
         .chat-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500; display:none; align-items:flex-end; justify-content:center; }
         .chat-overlay.open { display:flex; }
         .chat-box { background:#fff; width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column; border-radius:20px 20px 0 0; box-shadow:0 -8px 40px rgba(0,0,0,.15); animation:slideUp .3s ease; }
@@ -81,7 +100,6 @@
 
 <div class="container" style="padding-top:2rem">
 
-    <!-- ABA DIETA -->
     <div id="tab-dieta" class="tab-content active">
         <div id="dietaContainer">
             <div style="text-align:center;padding:3rem;color:#6b7280">
@@ -90,7 +108,6 @@
         </div>
     </div>
 
-    <!-- ABA CONSULTAS -->
     <div id="tab-consultas" class="tab-content">
         <div class="card" style="margin-bottom:2rem">
             <h2 style="color:var(--verde-escuro);margin-bottom:1.5rem">📅 Solicitar Consulta</h2>
@@ -122,14 +139,12 @@
                 &#x27A4; Enviar Solicitação
             </button>
         </div>
-
         <h3 style="color:var(--verde-escuro);margin-bottom:1rem">🕐 Minhas Solicitações</h3>
         <div id="historicoConsultas"></div>
     </div>
 
 </div>
 
-<!-- CHATBOT -->
 <div class="chat-overlay" id="chatOverlay" onclick="fecharChatFora(event)">
     <div class="chat-box">
         <div class="chat-head">
@@ -145,9 +160,9 @@
         <div class="chat-ctx" id="chatCtx"></div>
         <div class="chat-msgs" id="chatMsgs"></div>
         <div class="chat-input-area">
-      <textarea class="chat-input" id="chatInput" rows="1"
-                placeholder="Ex: Não gosto de frango, pode sugerir outra proteína?"
-                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMsg();}"></textarea>
+            <textarea class="chat-input" id="chatInput" rows="1"
+                      placeholder="Ex: Não gosto de frango, pode sugerir outra proteína?"
+                      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMsg();}"></textarea>
             <button class="chat-send" onclick="enviarMsg()">&#x27A4;</button>
         </div>
     </div>
@@ -181,51 +196,94 @@
         try {
             if (emailLogin) {
                 const r1 = await fetch(`/dietas/paciente/email/${encodeURIComponent(emailLogin)}`);
-                if (r1.ok) { const d1 = await r1.json(); lista = Array.isArray(d1) ? d1 : (d1 ? [d1] : []); }
-            }
-            if (!lista.length && pacienteId) {
-                const r2 = await fetch(`/dietas/paciente/${pacienteId}`);
-                if (r2.ok) { const d2 = await r2.json(); lista = Array.isArray(d2) ? d2 : (d2 ? [d2] : []); }
+                if (r1.ok) lista = await r1.json();
             }
         } catch(e) {
             c.innerHTML = `<div style="text-align:center;padding:2rem;color:#dc2626">⚠️ Erro ao carregar dieta.</div>`; return;
         }
-
-        // Remove duplicatas
-        const vistos = new Set();
-        lista = lista.filter(i => { if(vistos.has(i.id)) return false; vistos.add(i.id); return true; });
 
         if (!lista.length) {
             c.innerHTML = `<div style="text-align:center;padding:3rem;color:#6b7280"><div style="font-size:2.5rem;margin-bottom:.75rem">🥗</div><p>Seu nutricionista ainda não cadastrou sua dieta.</p></div>`;
             return;
         }
 
-        c.innerHTML = `<div class="grid grid-2">${lista.map(item => `
-      <div class="refeicao-card">
-        <div class="refeicao-header"></div>
-        <div class="refeicao-body">
-          <h3 class="refeicao-titulo">🍽️ ${item.refeicaoNome || "Refeição"}</h3>
-          <span class="badge badge-horario">🕐 ${item.horario || "—"}</span>
-          <p class="refeicao-descricao">${item.descricao || "Sem descrição"}</p>
-          ${item.objetivo ? `<span class="badge badge-manter-peso">🎯 ${item.objetivo}</span>` : ''}
-          <button class="btn btn-primary" style="width:100%;margin-top:1rem"
-            data-id="${item.id}"
-            data-nome="${(item.refeicaoNome||'Refeição').replace(/"/g,'&quot;')}"
-            data-desc="${(item.descricao||'').replace(/"/g,'&quot;')}"
-            onclick="abrirChat(this)">
-            🤖 Sugerir Substituição com IA
-          </button>
-        </div>
-      </div>
-    `).join('')}</div>`;
+        const grupos = new Map();
+        lista.forEach(item => {
+            const chave = item.refeicaoNome || "Refeição";
+            if (!grupos.has(chave)) grupos.set(chave, { horario: item.horario, itens: [] });
+            grupos.get(chave).itens.push(item);
+        });
+
+        const emojiRefeicao = nome => {
+            const n = nome.toLowerCase();
+            if (n.includes('café') || n.includes('cafe') || n.includes('manhã') || n.includes('manha')) return '☀️';
+            if (n.includes('almoço') || n.includes('almoco')) return '🍛';
+            if (n.includes('janta') || n.includes('jantar')) return '🌙';
+            if (n.includes('lanche')) return '🥪';
+            if (n.includes('ceia')) return '🌛';
+            return '🍽️';
+        };
+
+        const parseDesc = desc => {
+            if (!desc) return { nome: '—', qtd: '', kcal: '', macros: '' };
+            const partes = desc.split(' — ');
+            const nome = partes[0] || desc;
+            const resto = partes[1] || '';
+            const campos = resto.split(' · ');
+            return { nome, qtd: campos[0] || '', kcal: campos[1] || '', macros: campos[2] || '' };
+        };
+
+        let html = '';
+        grupos.forEach((grupo, nomeRefeicao) => {
+            const emoji = emojiRefeicao(nomeRefeicao);
+            const horario = grupo.horario || '—';
+            let totalKcal = 0;
+            grupo.itens.forEach(it => {
+                const n = parseFloat((it.objetivo || '').replace(/[^\d.]/g, ''));
+                if (!isNaN(n)) totalKcal += n;
+            });
+            totalKcal = Math.round(totalKcal);
+            const descChat = grupo.itens.map(it => parseDesc(it.descricao).nome).join(', ');
+            const idsPrimeiro = grupo.itens[0]?.id || '';
+            const linhas = grupo.itens.map(it => {
+                const p = parseDesc(it.descricao);
+                return `<tr><td>${p.nome}</td><td class="td-center">${p.qtd}</td><td class="td-center">${p.kcal}</td><td class="td-macros">${p.macros}</td></tr>`;
+            }).join('');
+            html += `
+            <div class="meal-section">
+                <div class="meal-section-header">
+                    <div class="meal-section-title">
+                        <span class="meal-emoji">${emoji}</span>
+                        <span>${nomeRefeicao}</span>
+                        <span class="meal-horario-badge">🕐 ${horario}</span>
+                    </div>
+                    ${totalKcal > 0 ? `<span class="meal-kcal-total">${totalKcal} kcal total</span>` : ''}
+                </div>
+                <div class="meal-table-wrap">
+                    <table class="meal-table">
+                        <thead><tr><th>Alimento</th><th class="td-center">Quantidade</th><th class="td-center">Calorias</th><th class="td-macros">Macros</th></tr></thead>
+                        <tbody>${linhas}</tbody>
+                    </table>
+                </div>
+                <div class="meal-section-footer">
+                    <button class="btn-nutribot"
+                        data-id="${idsPrimeiro}"
+                        data-nome="${nomeRefeicao.replace(/"/g,'&quot;')}"
+                        data-desc="${descChat.replace(/"/g,'&quot;')}"
+                        onclick="abrirChat(this)">
+                        🤖 Sugerir Substituição com IA
+                    </button>
+                </div>
+            </div>`;
+        });
+        c.innerHTML = html;
     }
 
     function abrirChat(btn) {
         chatCtx = { id: btn.dataset.id, nome: btn.dataset.nome, desc: btn.dataset.desc };
         chatHist = [];
         document.getElementById('chatCtx').innerText = `Refeição: ${chatCtx.nome} — "${chatCtx.desc || 'sem descrição'}"`;
-        const msgs = document.getElementById('chatMsgs');
-        msgs.innerHTML = '';
+        document.getElementById('chatMsgs').innerHTML = '';
         addBot(`Olá! 👋 Sou o NutriBot.\n\nVocê quer ajuda com "${chatCtx.nome}".\n\nMe diga o que quer substituir — alimento que não gosta, restrição ou preferência. Vou sugerir alternativas com equivalência nutricional! 🥦`);
         document.getElementById('chatOverlay').classList.add('open');
         setTimeout(() => document.getElementById('chatInput').focus(), 300);
@@ -234,18 +292,9 @@
     function fecharChat() { document.getElementById('chatOverlay').classList.remove('open'); }
     function fecharChatFora(e) { if(e.target.id==='chatOverlay') fecharChat(); }
 
-    function addBot(txt) {
-        const d = document.createElement('div'); d.className='msg msg-bot'; d.innerText=txt;
-        const m = document.getElementById('chatMsgs'); m.appendChild(d); m.scrollTop=m.scrollHeight;
-    }
-    function addUser(txt) {
-        const d = document.createElement('div'); d.className='msg msg-user'; d.innerText=txt;
-        const m = document.getElementById('chatMsgs'); m.appendChild(d); m.scrollTop=m.scrollHeight;
-    }
-    function addLoad() {
-        const d = document.createElement('div'); d.className='msg msg-load'; d.id='msgLoad'; d.innerText='⏳ NutriBot está pensando...';
-        const m = document.getElementById('chatMsgs'); m.appendChild(d); m.scrollTop=m.scrollHeight;
-    }
+    function addBot(txt) { const d=document.createElement('div'); d.className='msg msg-bot'; d.innerText=txt; const m=document.getElementById('chatMsgs'); m.appendChild(d); m.scrollTop=m.scrollHeight; }
+    function addUser(txt) { const d=document.createElement('div'); d.className='msg msg-user'; d.innerText=txt; const m=document.getElementById('chatMsgs'); m.appendChild(d); m.scrollTop=m.scrollHeight; }
+    function addLoad() { const d=document.createElement('div'); d.className='msg msg-load'; d.id='msgLoad'; d.innerText='⏳ NutriBot está pensando...'; const m=document.getElementById('chatMsgs'); m.appendChild(d); m.scrollTop=m.scrollHeight; }
     function removeLoad() { document.getElementById('msgLoad')?.remove(); }
 
     async function enviarMsg() {
@@ -253,76 +302,79 @@
         const texto = input.value.trim(); if(!texto) return;
         input.value = ''; addUser(texto); addLoad();
         chatHist.push({ role:"user", content:texto });
-
         try {
             const res = await fetch('/api/nutribot/chat', {
                 method:'POST', headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
-                    model:"claude-sonnet-4-20250514", max_tokens:1000,
-                    system:`Você é o NutriBot, assistente nutricional do NutriSmart. Refeição: "${chatCtx.nome}". Descrição: "${chatCtx.desc||'não informada'}". Sugira substituições com equivalência calórica e de macros. Responda em português, máximo 3 parágrafos.`,
+                    model:"llama-3.3-70b-versatile", max_tokens:1000,
+                    system:`Você é o NutriBot, assistente nutricional do NutriSmart. Refeição: "${chatCtx.nome}". Alimentos: "${chatCtx.desc||'não informada'}". Sugira substituições com equivalência calórica e de macros. Responda em português, máximo 3 parágrafos.`,
                     messages: chatHist
                 })
             });
             removeLoad();
-            if(!res.ok) { addBot("⚠️ Serviço indisponível. Tente novamente."); return; }
+            if(!res.ok) { const e=await res.json().catch(()=>({})); addBot("⚠️ "+(e.erro||"Serviço indisponível.")); return; }
             const data = await res.json();
             const resp = data.content?.[0]?.text || "Não consegui processar. Tente novamente.";
             chatHist.push({ role:"assistant", content:resp });
             addBot(resp);
-        } catch(e) {
-            removeLoad(); addBot("⚠️ Erro de conexão. Verifique se o backend está rodando.");
-        }
+        } catch(e) { removeLoad(); addBot("⚠️ Erro de conexão."); }
     }
 
-    // CONSULTAS
-    function stKey() { return `ns_consultas_${pacienteId}`; }
-    function getC()  { return JSON.parse(localStorage.getItem(stKey())) || []; }
-    function setC(a) {
-        localStorage.setItem(stKey(), JSON.stringify(a));
-        const g = JSON.parse(localStorage.getItem('ns_consultas')) || [];
-        localStorage.setItem('ns_consultas', JSON.stringify([...g.filter(c=>c.pacienteId!==pacienteId), ...a]));
+    async function solicitarConsulta() {
+        const data    = document.getElementById('dataConsulta').value;
+        const horario = document.getElementById('horarioConsulta').value;
+        const tipo    = document.getElementById('tipoConsulta').value;
+        const obs     = document.getElementById('obsConsulta').value.trim();
+        if (!data || !horario || !tipo) { Swal.fire({icon:'warning',title:'Campos obrigatórios',text:'Preencha data, horário e tipo.',confirmButtonColor:'#1B4332'}); return; }
+        try {
+            const res = await fetch('/api/consultas', {
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ nomePaciente:pacienteNome, emailPaciente:emailLogin, data, horario, tipo, observacoes:obs, status:'pendente' })
+            });
+            if (!res.ok) throw new Error();
+            ['dataConsulta','horarioConsulta','tipoConsulta','obsConsulta'].forEach(id => document.getElementById(id).value = '');
+            await renderHistorico();
+            Swal.fire({icon:'success',title:'Solicitação enviada!',text:'Aguarde a confirmação do nutricionista.',confirmButtonColor:'#1B4332'});
+        } catch(e) { Swal.fire({icon:'error',title:'Erro',text:'Não foi possível enviar a solicitação.',confirmButtonColor:'#1B4332'}); }
     }
 
-    function solicitarConsulta() {
-        const data=document.getElementById('dataConsulta').value;
-        const horario=document.getElementById('horarioConsulta').value;
-        const tipo=document.getElementById('tipoConsulta').value;
-        const obs=document.getElementById('obsConsulta').value.trim();
-        if(!data||!horario||!tipo) { Swal.fire({icon:'warning',title:'Campos obrigatórios',text:'Preencha data, horário e tipo.',confirmButtonColor:'#1B4332'}); return; }
-        const lista = getC();
-        lista.unshift({ id:Date.now(), paciente:pacienteNome, pacienteId, data, horario, tipo, obs, status:'pendente', solicitadoEm:new Date().toLocaleDateString('pt-BR') });
-        setC(lista);
-        ['dataConsulta','horarioConsulta','tipoConsulta','obsConsulta'].forEach(id=>document.getElementById(id).value='');
-        renderHistorico();
-        Swal.fire({icon:'success',title:'Solicitação enviada!',text:'Aguarde a confirmação do nutricionista.',confirmButtonColor:'#1B4332'});
+    async function aceitarSug(id) {
+        await fetch(`/api/consultas/${id}/status`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'aceita'}) });
+        await renderHistorico();
+        Swal.fire({icon:'success',title:'Horário confirmado!',confirmButtonColor:'#1B4332'});
     }
 
-    function aceitarSug(id) {
-        const l=getC(); const i=l.find(c=>c.id===id); if(!i) return;
-        i.status='aceita'; i.data=i.dataSugerida; i.horario=i.horarioSugerido;
-        setC(l); renderHistorico(); Swal.fire({icon:'success',title:'Horário confirmado!',confirmButtonColor:'#1B4332'});
-    }
-    function recusarSug(id) {
-        const l=getC(); const i=l.find(c=>c.id===id); if(!i) return;
-        i.status='recusada'; setC(l); renderHistorico();
+    async function recusarSug(id) {
+        await fetch(`/api/consultas/${id}/status`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:'recusada'}) });
+        await renderHistorico();
     }
 
-    function renderHistorico() {
-        const lista=getC(); const c=document.getElementById('historicoConsultas');
-        if(!lista.length) { c.innerHTML=`<div style="text-align:center;padding:1.5rem;color:#6b7280">📭 Nenhuma solicitação ainda.</div>`; return; }
-        const lb={ pendente:'⏳ Pendente', aceita:'✅ Aceita', recusada:'❌ Recusada', sugerido:'🔄 Novo Horário' };
-        c.innerHTML = lista.map(x=>`
-      <div class="hist-card ${x.status}">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem;margin-bottom:.3rem">
-          <div>
-            <div style="font-weight:700;font-size:.9rem;color:#1a3a2a">📆 ${fmt(x.data)} às ${x.horario}</div>
-            <div style="font-size:.8rem;color:#6b7280">${x.tipo} · ${x.solicitadoEm}</div>
-          </div>
-          <span class="badge-status ${x.status}">${lb[x.status]||x.status}</span>
-        </div>
-        ${x.obs?`<p style="font-size:.82rem;color:#4b5563;margin-top:.3rem">💬 ${x.obs}</p>`:''}
-        ${x.status==='sugerido'?`<div class="sug-box">🟣 Nutricionista sugeriu: ${fmt(x.dataSugerida)} às ${x.horarioSugerido}</div><div class="sug-btns"><button class="btn-sim" onclick="aceitarSug(${x.id})">✅ Aceitar</button><button class="btn-nao" onclick="recusarSug(${x.id})">❌ Recusar</button></div>`:''}
-      </div>`).join('');
+    async function renderHistorico() {
+        const c = document.getElementById('historicoConsultas');
+        try {
+            const res = await fetch(`/api/consultas/paciente/${encodeURIComponent(emailLogin)}`);
+            if (!res.ok) throw new Error();
+            const lista = await res.json();
+            if (!lista.length) { c.innerHTML=`<div style="text-align:center;padding:1.5rem;color:#6b7280">📭 Nenhuma solicitação ainda.</div>`; return; }
+            const lb = { pendente:'⏳ Pendente', aceita:'✅ Aceita', recusada:'❌ Recusada', sugerido:'🔄 Novo Horário' };
+            c.innerHTML = lista.map(x => `
+            <div class="hist-card ${x.status}">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:.5rem;margin-bottom:.3rem">
+                    <div>
+                        <div style="font-weight:700;font-size:.9rem;color:#1a3a2a">📆 ${fmt(x.data)} às ${x.horario}</div>
+                        <div style="font-size:.8rem;color:#6b7280">${x.tipo}</div>
+                    </div>
+                    <span class="badge-status ${x.status}">${lb[x.status]||x.status}</span>
+                </div>
+                ${x.observacoes?`<p style="font-size:.82rem;color:#4b5563;margin-top:.3rem">💬 ${x.observacoes}</p>`:''}
+                ${x.status==='sugerido'?`
+                    <div class="sug-box">🟣 Nutricionista sugeriu: ${fmt(x.dataSugerida)} às ${x.horarioSugerido}</div>
+                    <div class="sug-btns">
+                        <button class="btn-sim" onclick="aceitarSug(${x.id})">✅ Aceitar</button>
+                        <button class="btn-nao" onclick="recusarSug(${x.id})">❌ Recusar</button>
+                    </div>`:''}
+            </div>`).join('');
+        } catch(e) { c.innerHTML=`<div style="text-align:center;padding:1.5rem;color:#dc2626">⚠️ Erro ao carregar consultas.</div>`; }
     }
 
     function fmt(iso) { if(!iso) return '—'; const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }

@@ -9,7 +9,7 @@
         *{margin:0;padding:0;box-sizing:border-box;}
         body{font-family:'DM Sans',sans-serif;background:#f0fdf4;color:#1a3a2a;}
         .navbar{height:70px;background:#fff;border-bottom:1px solid rgba(82,183,136,0.2);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;box-shadow:0 2px 10px rgba(45,106,79,0.06);}
-         .logo{display:flex;align-items:center;gap:.7rem;}
+        .logo{display:flex;align-items:center;gap:.7rem;}
         .logo-text{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#2D6A4F;}
         .btn-back{text-decoration:none;color:#2D6A4F;border:2px solid #52B788;padding:.7rem 1rem;border-radius:12px;font-weight:700;transition:.2s;}
         .btn-back:hover{background:#52B788;color:#fff;}
@@ -20,7 +20,7 @@
         .filter-btn{padding:.6rem 1.2rem;border-radius:20px;border:2px solid #d1d5db;background:#fff;cursor:pointer;font-weight:600;font-size:.85rem;transition:.2s;}
         .filter-btn.active,.filter-btn:hover{border-color:#52B788;background:#52B788;color:#fff;}
         .cards{display:flex;flex-direction:column;gap:1rem;}
-        .consult-card{background:#fff;border-radius:18px;padding:1.5rem;box-shadow:0 4px 14px rgba(45,106,79,0.07);border-left:4px solid #d1d5db;transition:.2s;}
+        .consult-card{background:#fff;border-radius:18px;padding:1.5rem;box-shadow:0 4px 14px rgba(45,106,79,0.07);border-left:4px solid #d1d5db;}
         .consult-card.pendente{border-left-color:#f59e0b;}
         .consult-card.aceita{border-left-color:#22c55e;}
         .consult-card.recusada{border-left-color:#ef4444;}
@@ -70,7 +70,6 @@
 <div class="container">
     <h1 class="page-title">📅 Consultas</h1>
     <p class="page-subtitle">Gerencie as solicitações de consulta dos seus pacientes.</p>
-
     <div class="filters">
         <button class="filter-btn active" onclick="filtrar('todas',this)">Todas</button>
         <button class="filter-btn" onclick="filtrar('pendente',this)">⏳ Pendentes</button>
@@ -78,135 +77,98 @@
         <button class="filter-btn" onclick="filtrar('recusada',this)">❌ Recusadas</button>
         <button class="filter-btn" onclick="filtrar('sugerido',this)">🔄 Sugeridos</button>
     </div>
-
-    <div class="cards" id="cardsContainer"></div>
+    <div class="cards" id="cardsContainer">
+        <div class="empty"><span>⏳</span>Carregando consultas...</div>
+    </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-    function getConsultas(){
-        return JSON.parse(localStorage.getItem('ns_consultas'))||[];
-    }
-    function setConsultas(arr){
-        localStorage.setItem('ns_consultas', JSON.stringify(arr));
-    }
-
+    let todasConsultas = [];
     let filtroAtivo = 'todas';
 
-    function filtrar(status, btn){
+    async function carregarConsultas() {
+        try {
+            const res = await fetch('/api/consultas');
+            todasConsultas = await res.json();
+            renderCards();
+        } catch(e) {
+            document.getElementById('cardsContainer').innerHTML = `<div class="empty"><span>⚠️</span>Erro ao carregar consultas.</div>`;
+        }
+    }
+
+    function filtrar(status, btn) {
         filtroAtivo = status;
-        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         renderCards();
     }
 
-    function renderCards(){
-        const consultas = getConsultas();
-        const lista = filtroAtivo==='todas' ? consultas : consultas.filter(c=>c.status===filtroAtivo);
+    function renderCards() {
+        const lista = filtroAtivo === 'todas' ? todasConsultas : todasConsultas.filter(c => c.status === filtroAtivo);
         const c = document.getElementById('cardsContainer');
-
-        if(!lista.length){
-            c.innerHTML=`<div class="empty"><span>📭</span>Nenhuma consulta encontrada.</div>`;
-            return;
-        }
-
-        c.innerHTML = lista.map((cons,i) => {
-            const idx = consultas.indexOf(cons);
-            const badgeLabel = {pendente:'⏳ Pendente',aceita:'✅ Aceita',recusada:'❌ Recusada',sugerido:'🔄 Novo Horário Sugerido'}[cons.status]||cons.status;
-            return `
-    <div class="consult-card ${cons.status}" id="card_${idx}">
-      <div class="consult-top">
-        <div class="consult-info">
-          <h3>👤 ${cons.paciente}</h3>
-          <span>Solicitado em ${cons.solicitadoEm||'—'}</span>
-        </div>
-        <span class="badge ${cons.status}">${badgeLabel}</span>
-      </div>
-      <div class="consult-body">
-        <div class="consult-detail"><span class="label">Data</span><span class="value">📆 ${cons.data}</span></div>
-        <div class="consult-detail"><span class="label">Horário</span><span class="value">🕐 ${cons.horario}</span></div>
-        <div class="consult-detail"><span class="label">Paciente</span><span class="value">${cons.paciente}</span></div>
-        ${cons.horarioSugerido ? `<div class="consult-detail"><span class="label">Horário Sugerido</span><span class="value">🟣 ${cons.dataSugerida} às ${cons.horarioSugerido}</span></div>` : ''}
-      </div>
-      ${cons.obs ? `<div class="obs-box">💬 <strong>Observação:</strong> ${cons.obs}</div>` : ''}
-      ${cons.status==='pendente' ? `
-      <div class="actions">
-        <button class="btn-aceitar" onclick="aceitar(${idx})">✅ Aceitar</button>
-        <button class="btn-recusar" onclick="recusar(${idx})">❌ Recusar</button>
-        <button class="btn-sugerir" onclick="toggleSugerir(${idx})">🔄 Sugerir Outro Horário</button>
-      </div>
-      <div class="sugerir-form" id="form_${idx}">
-        <label>Novo horário disponível:</label>
-        <div class="sugerir-row">
-          <input type="date" id="novaData_${idx}">
-          <input type="time" id="novoHorario_${idx}">
-          <button class="btn-enviar" onclick="sugerirHorario(${idx})">Enviar Sugestão</button>
-        </div>
-      </div>` : ''}
-      ${cons.status==='sugerido' ? `
-      <div class="actions">
-        <button class="btn-aceitar" onclick="aceitar(${idx})">✅ Confirmar Horário Sugerido</button>
-        <button class="btn-recusar" onclick="recusar(${idx})">❌ Cancelar</button>
-      </div>` : ''}
-    </div>`;
-        }).join('');
+        if (!lista.length) { c.innerHTML=`<div class="empty"><span>📭</span>Nenhuma consulta encontrada.</div>`; return; }
+        const lb = { pendente:'⏳ Pendente', aceita:'✅ Aceita', recusada:'❌ Recusada', sugerido:'🔄 Novo Horário Sugerido' };
+        c.innerHTML = lista.map(cons => `
+        <div class="consult-card ${cons.status}" id="card_${cons.id}">
+            <div class="consult-top">
+                <div class="consult-info">
+                    <h3>👤 ${cons.nomePaciente}</h3>
+                    <span>${cons.emailPaciente || ''}</span>
+                </div>
+                <span class="badge ${cons.status}">${lb[cons.status]||cons.status}</span>
+            </div>
+            <div class="consult-body">
+                <div class="consult-detail"><span class="label">Data</span><span class="value">📆 ${fmt(cons.data)}</span></div>
+                <div class="consult-detail"><span class="label">Horário</span><span class="value">🕐 ${cons.horario}</span></div>
+                <div class="consult-detail"><span class="label">Tipo</span><span class="value">${cons.tipo}</span></div>
+                ${cons.dataSugerida?`<div class="consult-detail"><span class="label">Sugerido</span><span class="value">🟣 ${fmt(cons.dataSugerida)} às ${cons.horarioSugerido}</span></div>`:''}
+            </div>
+            ${cons.observacoes?`<div class="obs-box">💬 <strong>Observação:</strong> ${cons.observacoes}</div>`:''}
+            ${cons.status==='pendente'?`
+            <div class="actions">
+                <button class="btn-aceitar" onclick="aceitar(${cons.id})">✅ Aceitar</button>
+                <button class="btn-recusar" onclick="recusar(${cons.id})">❌ Recusar</button>
+                <button class="btn-sugerir" onclick="toggleSugerir(${cons.id})">🔄 Sugerir Outro Horário</button>
+            </div>
+            <div class="sugerir-form" id="form_${cons.id}">
+                <label>Novo horário disponível:</label>
+                <div class="sugerir-row">
+                    <input type="date" id="novaData_${cons.id}">
+                    <input type="time" id="novoHorario_${cons.id}">
+                    <button class="btn-enviar" onclick="sugerirHorario(${cons.id})">Enviar Sugestão</button>
+                </div>
+            </div>`:''}
+            ${cons.status==='sugerido'?`
+            <div class="actions">
+                <button class="btn-aceitar" onclick="aceitar(${cons.id})">✅ Confirmar Horário Sugerido</button>
+                <button class="btn-recusar" onclick="recusar(${cons.id})">❌ Cancelar</button>
+            </div>`:''}
+        </div>`).join('');
     }
 
-    function aceitar(idx){
-        const arr = getConsultas();
-        arr[idx].status = 'aceita';
-        // Se tinha sugestão, atualiza data/hora
-        if(arr[idx].horarioSugerido){
-            arr[idx].data    = arr[idx].dataSugerida;
-            arr[idx].horario = arr[idx].horarioSugerido;
-        }
-        setConsultas(arr);
-        renderCards();
-        showToast('✅ Consulta aceita!');
-    }
+    async function aceitar(id) { await atualizar(id,{status:'aceita'}); showToast('✅ Consulta aceita!'); }
+    async function recusar(id) { await atualizar(id,{status:'recusada'}); showToast('❌ Consulta recusada.'); }
+    function toggleSugerir(id) { document.getElementById(`form_${id}`).classList.toggle('open'); }
 
-    function recusar(idx){
-        const arr = getConsultas();
-        arr[idx].status = 'recusada';
-        setConsultas(arr);
-        renderCards();
-        showToast('❌ Consulta recusada.');
-    }
-
-    function toggleSugerir(idx){
-        const f = document.getElementById(`form_${idx}`);
-        f.classList.toggle('open');
-    }
-
-    function sugerirHorario(idx){
-        const novaData    = document.getElementById(`novaData_${idx}`).value;
-        const novoHorario = document.getElementById(`novoHorario_${idx}`).value;
-        if(!novaData||!novoHorario){ showToast('⚠️ Informe data e horário'); return; }
-        const arr = getConsultas();
-        arr[idx].status = 'sugerido';
-        arr[idx].dataSugerida    = novaData;
-        arr[idx].horarioSugerido = novoHorario;
-        setConsultas(arr);
-        renderCards();
+    async function sugerirHorario(id) {
+        const novaData = document.getElementById(`novaData_${id}`).value;
+        const novoHorario = document.getElementById(`novoHorario_${id}`).value;
+        if (!novaData||!novoHorario) { showToast('⚠️ Informe data e horário'); return; }
+        await atualizar(id, { status:'sugerido', dataSugerida:novaData, horarioSugerido:novoHorario });
         showToast('🔄 Novo horário enviado ao paciente!');
     }
 
-    function showToast(msg){
-        const t=document.getElementById('toast');
-        t.textContent=msg;t.classList.add('show');
-        setTimeout(()=>t.classList.remove('show'),3000);
+    async function atualizar(id, corpo) {
+        await fetch(`/api/consultas/${id}/status`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(corpo) });
+        await carregarConsultas();
     }
 
-    // Demo: adiciona consultas de exemplo se vazio
-    if(!getConsultas().length){
-        setConsultas([
-            {paciente:'Maria Silva',data:'2026-06-05',horario:'14:00',obs:'Quero acompanhamento de perda de peso.',status:'pendente',solicitadoEm:'26/05/2026'},
-            {paciente:'João Costa',data:'2026-06-07',horario:'10:30',obs:'',status:'aceita',solicitadoEm:'25/05/2026'},
-        ]);
-    }
+    function fmt(iso) { if(!iso) return '—'; const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }
+    function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 
-    renderCards();
+    carregarConsultas();
 </script>
 </body>
 </html>

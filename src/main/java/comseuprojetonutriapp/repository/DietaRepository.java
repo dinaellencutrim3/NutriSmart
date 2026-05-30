@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface DietaRepository extends JpaRepository<Dieta, Long> {
     List<Dieta> findByPacienteId(Long pacienteId);
+    void deleteByPacienteId(Long pacienteId);
 }

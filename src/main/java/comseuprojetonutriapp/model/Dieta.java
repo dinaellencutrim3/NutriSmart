@@ -1,5 +1,6 @@
 package comseuprojetonutriapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -19,12 +20,12 @@ public class Dieta {
     private String objetivo;
     private LocalDate dataInicio;
 
-    // Campos que o Paciente vai ver na tela
     private String horario;
     private String refeicaoNome;
     private String descricao;
 
-    @ManyToOne
-    @JoinColumn(name = "paciente_id") // O Hibernate criará a coluna sozinho
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paciente_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Paciente paciente;
 }

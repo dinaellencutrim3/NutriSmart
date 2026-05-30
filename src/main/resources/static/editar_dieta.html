@@ -21,28 +21,19 @@
         .layout{display:grid;grid-template-columns:350px 1fr 300px;gap:2rem;}
         .card{background:#fff;border-radius:22px;padding:1.5rem;box-shadow:0 4px 18px rgba(45,106,79,0.08);}
         .card-title{font-size:1.1rem;font-weight:700;margin-bottom:1rem;color:#1a3a2a;}
-
-        /* BUSCA */
         .search-wrap{position:relative;margin-bottom:.6rem;}
         .search{width:100%;padding:.9rem 3rem .9rem 1rem;border-radius:12px;border:1px solid #d1d5db;outline:none;font-size:.95rem;font-family:'DM Sans',sans-serif;}
         .search:focus{border-color:#52B788;}
         .search-btn{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:linear-gradient(135deg,#52B788,#2D6A4F);border:none;border-radius:8px;padding:.5rem .8rem;cursor:pointer;color:#fff;font-weight:700;font-size:.85rem;}
         .search-hint{font-size:.78rem;color:#9ca3af;margin-bottom:.8rem;}
-
-        /* FILTROS CATEGORIA */
         .cat-filters{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.8rem;}
         .cat-btn{padding:.3rem .75rem;border-radius:20px;border:1px solid #d1d5db;background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;font-family:'DM Sans',sans-serif;}
         .cat-btn.active,.cat-btn:hover{background:#52B788;color:#fff;border-color:#52B788;}
-
-        /* LOADING */
         .loading{display:none;text-align:center;padding:1rem;color:#52B788;font-weight:600;}
         .loading.show{display:block;}
-
-        /* FOOD LIST */
         .food-list{display:flex;flex-direction:column;gap:.8rem;max-height:580px;overflow:auto;padding-right:4px;}
         .food-list::-webkit-scrollbar{width:4px;}
         .food-list::-webkit-scrollbar-thumb{background:#52B788;border-radius:4px;}
-
         .food-card{border:1px solid #dcfce7;border-radius:14px;padding:.9rem;transition:.2s;}
         .food-card:hover{border-color:#52B788;}
         .food-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;gap:.5rem;}
@@ -60,8 +51,6 @@
         .food-actions input{flex:1;}
         .add-btn{border:none;background:linear-gradient(135deg,#52B788,#2D6A4F);color:#fff;padding:.75rem;border-radius:9px;cursor:pointer;font-weight:700;font-size:.88rem;width:100%;}
         .add-btn:hover{opacity:.9;}
-
-        /* CADASTRO MANUAL */
         .divider{border:none;border-top:1px dashed #d1d5db;margin:1.2rem 0;}
         .manual-title{font-size:.92rem;font-weight:700;margin-bottom:.7rem;color:#1a3a2a;}
         .manual-fields{display:flex;flex-direction:column;gap:.55rem;}
@@ -69,8 +58,6 @@
         .manual-fields input:focus{border-color:#52B788;}
         .manual-btn{border:none;background:#1a3a2a;color:#fff;padding:.8rem;border-radius:9px;cursor:pointer;font-weight:700;width:100%;margin-top:.3rem;font-family:'DM Sans',sans-serif;}
         .manual-btn:hover{background:#2D6A4F;}
-
-        /* REFEIÇÕES */
         .meal-section{border:1px solid #dcfce7;border-radius:16px;padding:1.1rem;margin-bottom:1.1rem;}
         .meal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem;}
         .meal-title-wrap{display:flex;align-items:center;gap:.4rem;}
@@ -85,8 +72,6 @@
         .diet-food span{color:#6b7280;font-size:.78rem;display:block;margin-top:.1rem;}
         .remove-btn{border:none;background:#fee2e2;color:#dc2626;padding:.4rem .7rem;border-radius:7px;cursor:pointer;font-weight:700;font-size:.78rem;}
         .remove-btn:hover{background:#fca5a5;}
-
-        /* RESUMO */
         .summary-grid{display:grid;gap:.7rem;}
         .summary-box{background:#f0fdf4;padding:.9rem;border-radius:14px;text-align:center;}
         .summary-box.highlight{background:linear-gradient(135deg,#52B788,#2D6A4F);color:#fff;}
@@ -97,13 +82,9 @@
         .save-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(45,106,79,0.3);}
         .clear-btn{width:100%;margin-top:.5rem;border:2px solid #fee2e2;background:transparent;color:#dc2626;padding:.75rem;border-radius:13px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
         .clear-btn:hover{background:#fee2e2;}
-
-        /* TOAST */
         .toast{position:fixed;bottom:2rem;right:2rem;background:#1a3a2a;color:#fff;padding:1rem 1.5rem;border-radius:13px;font-weight:600;transform:translateY(100px);opacity:0;transition:.3s;z-index:999;}
         .toast.show{transform:translateY(0);opacity:1;}
-
         .no-results{text-align:center;padding:1.5rem;color:#9ca3af;}
-
         @media(max-width:1200px){.layout{grid-template-columns:1fr;}}
     </style>
 </head>
@@ -133,39 +114,29 @@
         <h1 class="page-title">Editar Plano Alimentar</h1>
         <p class="page-subtitle" id="subtituloPaciente">Pesquise alimentos — os dados nutricionais são carregados do banco de dados.</p>
     </div>
-
     <div class="layout">
 
-        <!-- COLUNA 1: ALIMENTOS -->
         <div class="card">
             <h2 class="card-title">🔍 Alimentos</h2>
-
-            <!-- Filtros por categoria -->
-            <div class="cat-filters" id="catFilters">
-                <button class="cat-btn active" onclick="filtrarCategoria('todos', this)">Todos</button>
-                <button class="cat-btn" onclick="filtrarCategoria('fruta', this)">🍎 Frutas</button>
-                <button class="cat-btn" onclick="filtrarCategoria('vegetal', this)">🥦 Vegetais</button>
-                <button class="cat-btn" onclick="filtrarCategoria('proteina', this)">🥩 Proteínas</button>
-                <button class="cat-btn" onclick="filtrarCategoria('carboidrato', this)">🍚 Carboidratos</button>
-                <button class="cat-btn" onclick="filtrarCategoria('laticinios', this)">🥛 Laticínios</button>
-                <button class="cat-btn" onclick="filtrarCategoria('liquido', this)">💧 Líquidos</button>
-                <button class="cat-btn" onclick="filtrarCategoria('gordura', this)">🫒 Gorduras</button>
+            <div class="cat-filters">
+                <button class="cat-btn active" onclick="filtrarCategoria('todos',this)">Todos</button>
+                <button class="cat-btn" onclick="filtrarCategoria('fruta',this)">🍎 Frutas</button>
+                <button class="cat-btn" onclick="filtrarCategoria('vegetal',this)">🥦 Vegetais</button>
+                <button class="cat-btn" onclick="filtrarCategoria('proteina',this)">🥩 Proteínas</button>
+                <button class="cat-btn" onclick="filtrarCategoria('carboidrato',this)">🍚 Carboidratos</button>
+                <button class="cat-btn" onclick="filtrarCategoria('laticinios',this)">🥛 Laticínios</button>
+                <button class="cat-btn" onclick="filtrarCategoria('liquido',this)">💧 Líquidos</button>
+                <button class="cat-btn" onclick="filtrarCategoria('gordura',this)">🫒 Gorduras</button>
             </div>
-
             <div class="search-wrap">
-                <input type="text" class="search" id="searchFood"
-                       placeholder="Ex: banana, frango, leite..."
-                       oninput="filtrarLocal()"
-                       onkeydown="if(event.key==='Enter') filtrarLocal()">
+                <input type="text" class="search" id="searchFood" placeholder="Ex: banana, frango, leite..."
+                       oninput="filtrarLocal()" onkeydown="if(event.key==='Enter') filtrarLocal()">
                 <button class="search-btn" onclick="filtrarLocal()">Buscar</button>
             </div>
             <p class="search-hint">Alimentos carregados do banco · <span id="totalAlimentos">0</span> disponíveis</p>
-
             <div class="loading" id="loading">⏳ Carregando alimentos...</div>
             <div class="food-list" id="foodList"></div>
-
             <hr class="divider">
-
             <div class="manual-title">✏️ Cadastrar Alimento Manual</div>
             <div class="manual-fields">
                 <input type="text"   id="mNome" placeholder="Nome do alimento *">
@@ -178,13 +149,11 @@
             </div>
         </div>
 
-        <!-- COLUNA 2: ESTRUTURA DA DIETA -->
         <div class="card">
             <h2 class="card-title">🥗 Estrutura da Dieta</h2>
             <div id="mealsContainer"></div>
         </div>
 
-        <!-- COLUNA 3: RESUMO -->
         <div class="card">
             <h2 class="card-title">📊 Resumo Nutricional</h2>
             <div class="summary-grid">
@@ -215,7 +184,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    // ─── CONFIG ──────────────────────────────────────────────
     const REFEICOES = [
         {id:'cafe',     nome:'Café da Manhã',   emoji:'☀️', hora:'07:00'},
         {id:'lanche_m', nome:'Lanche da Manhã', emoji:'🍎', hora:'10:00'},
@@ -226,24 +194,16 @@
     ];
 
     const pacienteId = localStorage.getItem("pacienteSelecionado");
-
-    // Banco em memória — preenchido pelo backend
-    let bancoDB = [];
-    let bancoDB_filtrado = [];
-    let categoriaAtiva = 'todos';
-
-    // Dieta em memória
+    let bancoDB = [], bancoDB_filtrado = [], categoriaAtiva = 'todos';
     let dieta = {};
     REFEICOES.forEach(r => { dieta[r.id] = []; });
 
-    // ─── INIT ─────────────────────────────────────────────────
     async function init() {
         renderMeals();
         await carregarAlimentosBackend();
         atualizarTela();
     }
 
-    // ─── CARREGAR ALIMENTOS DO BACKEND ───────────────────────
     async function carregarAlimentosBackend() {
         const loading = document.getElementById('loading');
         loading.classList.add('show');
@@ -251,31 +211,21 @@
             const res = await fetch('/alimentos');
             if (!res.ok) throw new Error();
             bancoDB = await res.json();
-
-            // Normaliza campos do model Alimento.java
             bancoDB = bancoDB.map(a => ({
-                id:        a.id,
-                nome:      a.nome || 'Alimento',
+                id: a.id, nome: a.nome || 'Alimento',
                 categoria: (a.grupoAlimentar || '').toLowerCase(),
-                kcal:      Number(a.calorias ?? 0),
-                proteina:  Number(a.proteinas ?? 0),
-                carbo:     Number(a.carboidratos ?? 0),
-                gordura:   Number(a.gorduras ?? 0),
+                kcal: Number(a.calorias ?? 0), proteina: Number(a.proteinas ?? 0),
+                carbo: Number(a.carboidratos ?? 0), gordura: Number(a.gorduras ?? 0),
             }));
-
             document.getElementById('totalAlimentos').innerText = bancoDB.length;
             bancoDB_filtrado = [...bancoDB];
             renderFoods(bancoDB_filtrado);
-
         } catch(e) {
             showToast('⚠️ Erro ao carregar alimentos do servidor.');
             renderFoods([]);
-        } finally {
-            loading.classList.remove('show');
-        }
+        } finally { loading.classList.remove('show'); }
     }
 
-    // ─── FILTRAR POR CATEGORIA ────────────────────────────────
     function filtrarCategoria(cat, btn) {
         categoriaAtiva = cat;
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
@@ -283,69 +233,39 @@
         aplicarFiltros();
     }
 
-    // ─── FILTRAR LOCAL (busca + categoria) ───────────────────
-    function filtrarLocal() {
-        aplicarFiltros();
-    }
+    function filtrarLocal() { aplicarFiltros(); }
 
     function aplicarFiltros() {
         const termo = document.getElementById('searchFood').value.toLowerCase().trim();
         let lista = [...bancoDB];
-
-        if (categoriaAtiva !== 'todos') {
-            lista = lista.filter(f =>
-                f.categoria.includes(categoriaAtiva) ||
-                f.nome.toLowerCase().includes(categoriaAtiva)
-            );
-        }
-
-        if (termo) {
-            lista = lista.filter(f => f.nome.toLowerCase().includes(termo));
-        }
-
+        if (categoriaAtiva !== 'todos') lista = lista.filter(f => f.categoria.includes(categoriaAtiva) || f.nome.toLowerCase().includes(categoriaAtiva));
+        if (termo) lista = lista.filter(f => f.nome.toLowerCase().includes(termo));
         bancoDB_filtrado = lista;
         renderFoods(lista);
     }
 
-    // ─── RENDER REFEIÇÕES ─────────────────────────────────────
     function renderMeals() {
-        const c = document.getElementById('mealsContainer');
-        c.innerHTML = REFEICOES.map(r => `
+        document.getElementById('mealsContainer').innerHTML = REFEICOES.map(r => `
             <div class="meal-section">
                 <div class="meal-header">
                     <div>
-                        <div class="meal-title-wrap">
-                            <span class="meal-emoji">${r.emoji}</span>
-                            <span class="meal-title">${r.nome}</span>
-                        </div>
+                        <div class="meal-title-wrap"><span class="meal-emoji">${r.emoji}</span><span class="meal-title">${r.nome}</span></div>
                         <div class="meal-kcal" id="kcal_${r.id}">0 kcal</div>
                     </div>
                     <input type="time" class="meal-time" value="${r.hora}" id="time_${r.id}">
                 </div>
-                <div class="diet-items" id="items_${r.id}">
-                    <div class="diet-empty">Nenhum alimento adicionado</div>
-                </div>
-            </div>
-        `).join('');
+                <div class="diet-items" id="items_${r.id}"><div class="diet-empty">Nenhum alimento adicionado</div></div>
+            </div>`).join('');
     }
 
-    // ─── RENDER ALIMENTOS ─────────────────────────────────────
     function renderFoods(lista) {
         const fl = document.getElementById('foodList');
-
-        if (!lista.length) {
-            fl.innerHTML = `<div class="no-results">🔍 Nenhum alimento encontrado.</div>`;
-            return;
-        }
-
+        if (!lista.length) { fl.innerHTML = `<div class="no-results">🔍 Nenhum alimento encontrado.</div>`; return; }
         fl.innerHTML = lista.map(f => {
             const idx = bancoDB.indexOf(f);
             return `
             <div class="food-card">
-                <div class="food-top">
-                    <span class="food-name">${f.nome}</span>
-                    <span class="food-kcal">${f.kcal.toFixed(0)} kcal/100g</span>
-                </div>
+                <div class="food-top"><span class="food-name">${f.nome}</span><span class="food-kcal">${f.kcal.toFixed(0)} kcal/100g</span></div>
                 <div class="food-cat">${f.categoria ? '📂 ' + f.categoria : '📋 Sem categoria'}</div>
                 <div class="food-macros">
                     <div class="macro"><strong>${f.proteina.toFixed(1)}g</strong><span>Proteína</span></div>
@@ -354,9 +274,7 @@
                 </div>
                 <div class="food-actions">
                     <div class="food-actions-row">
-                        <select id="meal_${idx}">
-                            ${REFEICOES.map(r=>`<option value="${r.id}">${r.nome}</option>`).join('')}
-                        </select>
+                        <select id="meal_${idx}">${REFEICOES.map(r=>`<option value="${r.id}">${r.nome}</option>`).join('')}</select>
                         <input type="number" id="qtd_${idx}" placeholder="g / ml" min="1">
                     </div>
                     <button class="add-btn" onclick="adicionarNaDieta(${idx})">+ Adicionar</button>
@@ -365,207 +283,102 @@
         }).join('');
     }
 
-    // ─── ADICIONAR NA DIETA ───────────────────────────────────
     function adicionarNaDieta(idx) {
         const food = bancoDB[idx];
         const refeicaoId = document.getElementById(`meal_${idx}`)?.value;
         const qtd = parseFloat(document.getElementById(`qtd_${idx}`)?.value);
-
         if (!qtd || qtd <= 0) { showToast('⚠️ Informe a quantidade em g/ml'); return; }
-        if (!refeicaoId)       { showToast('⚠️ Selecione a refeição'); return; }
-
+        if (!refeicaoId) { showToast('⚠️ Selecione a refeição'); return; }
         const fator = qtd / 100;
         dieta[refeicaoId].push({
-            nome:       food.nome,
-            quantidade: qtd,
-            kcal:  Number((food.kcal     * fator).toFixed(1)),
-            prot:  Number((food.proteina * fator).toFixed(1)),
-            carb:  Number((food.carbo    * fator).toFixed(1)),
-            gord:  Number((food.gordura  * fator).toFixed(1)),
+            nome: food.nome, quantidade: qtd,
+            kcal: Number((food.kcal * fator).toFixed(1)), prot: Number((food.proteina * fator).toFixed(1)),
+            carb: Number((food.carbo * fator).toFixed(1)), gord: Number((food.gordura * fator).toFixed(1)),
         });
-
         const qtdEl = document.getElementById(`qtd_${idx}`);
         if (qtdEl) qtdEl.value = '';
-
         atualizarTela();
         showToast(`✅ ${food.nome} adicionado!`);
     }
 
-    // ─── REMOVER ITEM ─────────────────────────────────────────
-    function removerItem(refeicaoId, index) {
-        dieta[refeicaoId].splice(index, 1);
-        atualizarTela();
-    }
+    function removerItem(refeicaoId, index) { dieta[refeicaoId].splice(index, 1); atualizarTela(); }
 
-    // ─── ATUALIZAR TELA ───────────────────────────────────────
     function atualizarTela() {
         let totalKcal=0, totalProt=0, totalCarb=0, totalGord=0;
-
         REFEICOES.forEach(r => {
             const container = document.getElementById(`items_${r.id}`);
-            const kcalEl    = document.getElementById(`kcal_${r.id}`);
+            const kcalEl = document.getElementById(`kcal_${r.id}`);
             if (!container) return;
-
             const itens = dieta[r.id] || [];
             let mKcal = 0;
-
             if (!itens.length) {
                 container.innerHTML = `<div class="diet-empty">Nenhum alimento adicionado</div>`;
             } else {
                 container.innerHTML = itens.map((item, i) => {
                     mKcal += item.kcal;
-                    return `
-                    <div class="diet-item">
-                        <div class="diet-food">
-                            <strong>${item.nome}</strong>
-                            <span>${item.quantidade}g/ml · ${item.kcal} kcal · P:${item.prot}g C:${item.carb}g G:${item.gord}g</span>
-                        </div>
+                    return `<div class="diet-item">
+                        <div class="diet-food"><strong>${item.nome}</strong><span>${item.quantidade}g/ml · ${item.kcal} kcal · P:${item.prot}g C:${item.carb}g G:${item.gord}g</span></div>
                         <button class="remove-btn" onclick="removerItem('${r.id}',${i})">✕</button>
                     </div>`;
                 }).join('');
             }
-
             if (kcalEl) kcalEl.textContent = mKcal.toFixed(0) + ' kcal';
-
-            itens.forEach(item => {
-                totalKcal += item.kcal;
-                totalProt += item.prot;
-                totalCarb += item.carb;
-                totalGord += item.gord;
-            });
+            itens.forEach(item => { totalKcal+=item.kcal; totalProt+=item.prot; totalCarb+=item.carb; totalGord+=item.gord; });
         });
-
         document.getElementById('totalKcal').textContent = totalKcal.toFixed(0);
         document.getElementById('totalProt').textContent = totalProt.toFixed(1) + 'g';
         document.getElementById('totalCarb').textContent = totalCarb.toFixed(1) + 'g';
         document.getElementById('totalGord').textContent = totalGord.toFixed(1) + 'g';
     }
 
-    // ─── CADASTRO MANUAL ──────────────────────────────────────
     async function cadastrarManual() {
-        const nome      = document.getElementById('mNome').value.trim();
+        const nome = document.getElementById('mNome').value.trim();
         const categoria = document.getElementById('mCategoria').value.trim();
-        const kcal      = parseFloat(document.getElementById('mKcal').value);
-        const prot      = parseFloat(document.getElementById('mProt').value) || 0;
-        const carb      = parseFloat(document.getElementById('mCarb').value) || 0;
-        const gord      = parseFloat(document.getElementById('mGord').value) || 0;
-
+        const kcal = parseFloat(document.getElementById('mKcal').value);
+        const prot = parseFloat(document.getElementById('mProt').value) || 0;
+        const carb = parseFloat(document.getElementById('mCarb').value) || 0;
+        const gord = parseFloat(document.getElementById('mGord').value) || 0;
         if (!nome || !kcal) { showToast('⚠️ Nome e calorias são obrigatórios'); return; }
-
         try {
-            const res = await fetch('/alimentos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nome, grupoAlimentar: categoria, calorias: kcal, proteinas: prot, carboidratos: carb, gorduras: gord })
-            });
-
-            if (res.ok) {
-                showToast(`✅ ${nome} salvo no banco!`);
-                ['mNome','mCategoria','mKcal','mProt','mCarb','mGord']
-                    .forEach(id => document.getElementById(id).value = '');
-                await carregarAlimentosBackend(); // recarrega lista
-            } else {
-                showToast('⚠️ Erro ao salvar alimento.');
-            }
-        } catch(e) {
-            showToast('⚠️ Erro de conexão.');
-        }
+            const res = await fetch('/alimentos', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nome, grupoAlimentar:categoria, calorias:kcal, proteinas:prot, carboidratos:carb, gorduras:gord}) });
+            if (res.ok) { showToast(`✅ ${nome} salvo no banco!`); ['mNome','mCategoria','mKcal','mProt','mCarb','mGord'].forEach(id=>document.getElementById(id).value=''); await carregarAlimentosBackend(); }
+            else { showToast('⚠️ Erro ao salvar alimento.'); }
+        } catch(e) { showToast('⚠️ Erro de conexão.'); }
     }
 
-    // ─── SALVAR DIETA NO BACKEND ──────────────────────────────
     async function salvarDieta() {
-        if (!pacienteId) {
-            showToast('⚠️ Nenhum paciente selecionado.');
-            return;
-        }
-
-        // Monta lista de itens para salvar
+        if (!pacienteId) { showToast('⚠️ Nenhum paciente selecionado.'); return; }
         const itens = [];
         REFEICOES.forEach(r => {
             const horario = document.getElementById(`time_${r.id}`)?.value || r.hora;
             (dieta[r.id] || []).forEach(item => {
-                itens.push({
-                    refeicaoNome: r.nome,
-                    horario,
-                    descricao: `${item.nome} — ${item.quantidade}g/ml · ${item.kcal}kcal · P:${item.prot}g C:${item.carb}g G:${item.gord}g`,
-                    objetivo: `${item.kcal} kcal`,
-                    paciente: { id: parseInt(pacienteId) }
-                });
+                itens.push({ refeicaoNome:r.nome, horario, descricao:`${item.nome} — ${item.quantidade}g/ml · ${item.kcal}kcal · P:${item.prot}g C:${item.carb}g G:${item.gord}g`, objetivo:`${item.kcal} kcal`, paciente:{id:parseInt(pacienteId)} });
             });
         });
-
-        if (!itens.length) {
-            showToast('⚠️ Adicione pelo menos um alimento antes de salvar.');
-            return;
-        }
-
+        if (!itens.length) { showToast('⚠️ Adicione pelo menos um alimento antes de salvar.'); return; }
         try {
+            await fetch(`/dietas/paciente/${pacienteId}`, { method:'DELETE' });
             let erroMsg = null;
             for (const item of itens) {
-                const res = await fetch('/dietas', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(item)
-                });
-                if (!res.ok) {
-                    let txt = '';
-                    try { const d = await res.json(); txt = d.erro || d.message || JSON.stringify(d); } catch(e2){}
-                    erroMsg = 'Erro ' + res.status + ': ' + txt;
-                    break;
-                }
+                const res = await fetch('/dietas', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(item) });
+                if (!res.ok) { let txt=''; try{const d=await res.json();txt=d.erro||d.message||JSON.stringify(d);}catch(e2){} erroMsg='Erro '+res.status+': '+txt; break; }
             }
-
             if (!erroMsg) {
-                await Swal.fire({
-                    icon: 'success',
-                    title: 'Dieta salva!',
-                    text: 'O plano alimentar foi enviado ao paciente.',
-                    confirmButtonColor: '#2D6A4F',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
+                await Swal.fire({ icon:'success', title:'Dieta salva!', text:'O plano alimentar foi enviado ao paciente.', confirmButtonColor:'#2D6A4F', timer:2000, showConfirmButton:false });
                 window.location.href = '/paciente_detalhes.html';
             } else {
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'Erro ao salvar',
-                    text: erroMsg,
-                    confirmButtonColor: '#dc2626'
-                });
+                await Swal.fire({ icon:'error', title:'Erro ao salvar', text:erroMsg, confirmButtonColor:'#dc2626' });
             }
-
-        } catch(e) {
-            Swal.fire({ icon: 'error', title: 'Erro de conexao', text: e.message });
-        }
+        } catch(e) { Swal.fire({ icon:'error', title:'Erro de conexão', text:e.message }); }
     }
 
     function limparDieta() {
-        Swal.fire({
-            title: 'Limpar toda a dieta?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sim, limpar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#dc2626'
-        }).then(r => {
-            if (r.isConfirmed) {
-                REFEICOES.forEach(r => { dieta[r.id] = []; });
-                atualizarTela();
-                showToast('🗑️ Dieta limpa');
-            }
-        });
+        Swal.fire({ title:'Limpar toda a dieta?', icon:'warning', showCancelButton:true, confirmButtonText:'Sim, limpar', cancelButtonText:'Cancelar', confirmButtonColor:'#dc2626' })
+            .then(r => { if(r.isConfirmed){ REFEICOES.forEach(r=>{dieta[r.id]=[];}); atualizarTela(); showToast('🗑️ Dieta limpa'); } });
     }
 
-    function voltar() {
-        window.location.href = '/paciente_detalhes.html';
-    }
-
-    function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
+    function voltar() { window.location.href = '/paciente_detalhes.html'; }
+    function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 
     init();
 </script>

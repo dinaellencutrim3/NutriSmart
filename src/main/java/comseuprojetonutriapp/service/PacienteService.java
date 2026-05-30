@@ -1,9 +1,12 @@
 package comseuprojetonutriapp.service;
 
 import comseuprojetonutriapp.model.Paciente;
+import comseuprojetonutriapp.repository.DietaRepository;
 import comseuprojetonutriapp.repository.PacienteRepository;
+import comseuprojetonutriapp.repository.SubstituicaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,6 +19,12 @@ public class PacienteService {
     @Autowired
     private PacienteRepository repository;
 
+    @Autowired
+    private DietaRepository dietaRepository;
+
+    @Autowired
+    private SubstituicaoRepository substituicaoRepository;
+
     public Paciente salvar(Paciente paciente) {
         String nomeNormalizado = paciente.getNome().trim();
         paciente.setNome(nomeNormalizado);
@@ -25,7 +34,6 @@ public class PacienteService {
             throw new IllegalArgumentException("Já existe um paciente cadastrado com esse nome.");
         }
 
-        // Valida email duplicado se informado
         if (paciente.getEmail() != null && !paciente.getEmail().isBlank()) {
             String emailNorm = paciente.getEmail().trim().toLowerCase();
             paciente.setEmail(emailNorm);
@@ -42,7 +50,6 @@ public class PacienteService {
         Paciente existente = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Paciente não encontrado."));
 
-        // Verifica nome duplicado apenas se mudou
         if (!existente.getNome().equalsIgnoreCase(dados.getNome().trim())) {
             boolean nomeExiste = repository.findByNomeIgnoreCase(dados.getNome().trim()).isPresent();
             if (nomeExiste) {
@@ -73,10 +80,14 @@ public class PacienteService {
         return repository.save(existente);
     }
 
+    @Transactional
     public void deletar(Long id) {
         if (!repository.existsById(id)) {
             throw new IllegalArgumentException("Paciente não encontrado.");
         }
+        // Remove dependências antes de deletar o paciente
+        substituicaoRepository.deleteByPacienteId(id);
+        dietaRepository.deleteByPacienteId(id);
         repository.deleteById(id);
     }
 

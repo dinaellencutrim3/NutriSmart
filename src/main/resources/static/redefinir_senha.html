@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha - NutriSmart</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        *{ margin:0; padding:0; box-sizing:border-box; font-family:'DM Sans',sans-serif; }
+
+        body{
+            min-height:100vh;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 45%, #bbf7d0 100%);
+            display:flex; align-items:center; justify-content:center; padding:2rem;
+        }
+
+        .card{
+            width:100%; max-width:440px; background:#fff; border-radius:26px; padding:2.7rem;
+            box-shadow: 0 20px 50px rgba(45,106,79,.10), 0 8px 20px rgba(0,0,0,.06);
+            border:1px solid rgba(82,183,136,.12);
+            animation:fadeUp .5s ease;
+        }
+
+        @keyframes fadeUp{
+            from{ opacity:0; transform:translateY(20px); }
+            to{   opacity:1; transform:translateY(0); }
+        }
+
+        .card-icon{
+            width:74px; height:74px; margin:0 auto 1.4rem; border-radius:20px;
+            background: linear-gradient(135deg, #52B788, #2D6A4F);
+            display:flex; align-items:center; justify-content:center;
+            color:#fff; font-size:2rem; box-shadow:0 10px 25px rgba(82,183,136,.25);
+        }
+
+        .title{
+            font-family:'Playfair Display',serif; font-size:1.9rem; font-weight:800;
+            color:#1a3a2a; text-align:center; margin-bottom:.4rem;
+        }
+
+        .subtitle{ text-align:center; color:#6b7280; font-size:.95rem; margin-bottom:2rem; }
+
+        .form-group{ margin-bottom:1.15rem; }
+
+        .form-label{
+            display:block; margin-bottom:.45rem; font-size:.78rem; font-weight:700;
+            color:#374151; text-transform:uppercase; letter-spacing:.06em;
+        }
+
+        .input-wrapper{ position:relative; }
+
+        .input-icon{
+            position:absolute; top:50%; left:1rem; transform:translateY(-50%);
+            color:#9ca3af; font-size:.9rem; pointer-events:none;
+        }
+
+        .form-input{
+            width:100%; padding:.9rem 2.8rem .9rem 2.8rem; border-radius:12px;
+            border:2px solid #e5e7eb; font-size:.95rem; outline:none; transition:.2s;
+        }
+        .form-input:focus{ border-color:#52B788; box-shadow:0 0 0 4px rgba(82,183,136,.12); }
+        .form-input.input-valid{ border-color:#22c55e; }
+        .form-input.input-invalid{ border-color:#ef4444; }
+
+        .input-status{
+            position:absolute; top:50%; right:1rem; transform:translateY(-50%);
+            font-size:.95rem;
+        }
+
+        .toggle-senha{
+            position:absolute; top:50%; right:1rem; transform:translateY(-50%);
+            background:none; border:none; cursor:pointer; color:#9ca3af; font-size:.9rem;
+            padding:0;
+        }
+        .toggle-senha:hover{ color:#52B788; }
+
+        .field-error{
+            display:none; margin-top:.38rem; font-size:.82rem;
+            color:#ef4444; font-weight:500;
+        }
+        .field-error.visible{ display:flex; align-items:center; gap:.3rem; }
+
+        /* barra de força da senha */
+        .strength-bar{
+            margin-top:.5rem; height:5px; border-radius:99px;
+            background:#e5e7eb; overflow:hidden;
+        }
+        .strength-fill{
+            height:100%; width:0; border-radius:99px; transition:.3s;
+        }
+        .strength-label{
+            font-size:.78rem; margin-top:.3rem; font-weight:600; min-height:1rem;
+        }
+
+        .btn-submit{
+            width:100%; border:none; margin-top:.6rem; padding:1rem; border-radius:12px;
+            background: linear-gradient(135deg, #52B788, #2D6A4F);
+            color:#fff; font-size:1rem; font-weight:700; cursor:pointer; transition:.2s;
+            display:flex; align-items:center; justify-content:center; gap:.5rem;
+        }
+        .btn-submit:hover{ transform:translateY(-2px); opacity:.95; }
+        .btn-submit:disabled{ opacity:.6; cursor:not-allowed; transform:none; }
+
+        .msg{
+            display:none; margin-top:1rem; padding:.9rem 1rem; border-radius:12px;
+            font-size:.9rem; font-weight:700; text-align:center;
+        }
+        .success{ background:#d1fae5; color:#065f46; }
+        .error{   background:#fee2e2; color:#991b1b; }
+
+        .link-login{
+            display:block; text-align:center; margin-top:1.4rem;
+            color:#2D6A4F; font-weight:700; text-decoration:none; font-size:.92rem;
+        }
+        .link-login:hover{ text-decoration:underline; }
+
+        /* token inválido */
+        .invalid-token{
+            display:none; text-align:center; padding:1rem 0;
+        }
+        .invalid-token i{ font-size:2.5rem; color:#ef4444; margin-bottom:1rem; display:block; }
+        .invalid-token p{ color:#374151; font-size:.95rem; }
+
+        @media(max-width:600px){
+            .card{ padding:2rem 1.4rem; }
+            .title{ font-size:1.6rem; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="card">
+
+    <div class="card-icon">
+        <i class="fa-solid fa-key"></i>
+    </div>
+
+    <!-- conteúdo normal -->
+    <div id="formArea">
+        <h1 class="title">Nova senha</h1>
+        <p class="subtitle">Escolha uma senha segura para sua conta.</p>
+
+        <form id="formRedefinir" novalidate>
+
+            <!-- NOVA SENHA -->
+            <div class="form-group">
+                <label class="form-label">Nova senha</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input id="novaSenha" type="password" class="form-input" placeholder="Mínimo 6 caracteres">
+                    <button type="button" class="toggle-senha" onclick="toggleSenha('novaSenha', this)">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+                <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                <p class="strength-label" id="strengthLabel"></p>
+                <p id="novaSenhaError" class="field-error"></p>
+            </div>
+
+            <!-- CONFIRMAR SENHA -->
+            <div class="form-group">
+                <label class="form-label">Confirmar senha</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input id="confirmarSenha" type="password" class="form-input" placeholder="Repita a senha">
+                    <button type="button" class="toggle-senha" onclick="toggleSenha('confirmarSenha', this)">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+                <p id="confirmarSenhaError" class="field-error"></p>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSalvar">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Salvar nova senha
+            </button>
+
+        </form>
+
+        <div id="mensagem" class="msg"></div>
+        <a href="/login.html" class="link-login" id="linkLogin" style="display:none;">
+            <i class="fa-solid fa-right-to-bracket"></i> Ir para o login
+        </a>
+    </div>
+
+    <!-- token inválido -->
+    <div class="invalid-token" id="invalidArea">
+        <i class="fa-solid fa-circle-xmark"></i>
+        <p><strong>Link inválido ou expirado.</strong></p>
+        <p style="margin-top:.5rem;color:#6b7280;">Solicite um novo link na página de login.</p>
+        <a href="/login.html" class="link-login" style="margin-top:1.2rem;">
+            <i class="fa-solid fa-right-to-bracket"></i> Voltar ao login
+        </a>
+    </div>
+
+</div>
+
+<script>
+    /* =========================================================
+       TOKEN DA URL
+    ========================================================= */
+    const params = new URLSearchParams(window.location.search);
+    const token  = params.get('token');
+
+    if (!token) {
+        document.getElementById('formArea').style.display    = 'none';
+        document.getElementById('invalidArea').style.display = 'block';
+    }
+
+    /* =========================================================
+       MOSTRAR / OCULTAR SENHA
+    ========================================================= */
+    function toggleSenha(id, btn) {
+        const input = document.getElementById(id);
+        const icon  = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    /* =========================================================
+       FORÇA DA SENHA
+    ========================================================= */
+    const strengthFill  = document.getElementById('strengthFill');
+    const strengthLabel = document.getElementById('strengthLabel');
+
+    document.getElementById('novaSenha').addEventListener('input', function () {
+        const v = this.value;
+        let score = 0;
+        if (v.length >= 6)  score++;
+        if (v.length >= 10) score++;
+        if (/[A-Z]/.test(v)) score++;
+        if (/[0-9]/.test(v)) score++;
+        if (/[^A-Za-z0-9]/.test(v)) score++;
+
+        const pct    = ['0%','25%','50%','75%','100%'][score] || '0%';
+        const colors = ['#ef4444','#f97316','#eab308','#22c55e','#16a34a'];
+        const labels = ['','Muito fraca','Fraca','Média','Forte','Muito forte'];
+
+        strengthFill.style.width      = pct;
+        strengthFill.style.background = colors[score - 1] || '#e5e7eb';
+        strengthLabel.textContent     = labels[score] || '';
+        strengthLabel.style.color     = colors[score - 1] || '#9ca3af';
+
+        // revalida confirmação em tempo real
+        if (confirmarTouched) validarConfirmar();
+    });
+
+    /* =========================================================
+       VALIDAÇÕES
+    ========================================================= */
+    let novaTouched      = false;
+    let confirmarTouched = false;
+
+    const novaSenhaInput      = document.getElementById('novaSenha');
+    const confirmarSenhaInput = document.getElementById('confirmarSenha');
+    const novaSenhaError      = document.getElementById('novaSenhaError');
+    const confirmarSenhaError = document.getElementById('confirmarSenhaError');
+
+    function setError(input, errorEl, msg) {
+        input.classList.add('input-invalid');
+        input.classList.remove('input-valid');
+        errorEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + msg;
+        errorEl.classList.add('visible');
+    }
+    function setValid(input, errorEl) {
+        input.classList.add('input-valid');
+        input.classList.remove('input-invalid');
+        errorEl.classList.remove('visible');
+    }
+    function clearState(input, errorEl) {
+        input.classList.remove('input-valid','input-invalid');
+        errorEl.classList.remove('visible');
+    }
+
+    function validarNova() {
+        const v = novaSenhaInput.value;
+        if (!v)          { setError(novaSenhaInput, novaSenhaError, 'Digite a nova senha.'); return false; }
+        if (v.length < 6){ setError(novaSenhaInput, novaSenhaError, 'A senha deve ter pelo menos 6 caracteres.'); return false; }
+        setValid(novaSenhaInput, novaSenhaError);
+        return true;
+    }
+    function validarConfirmar() {
+        const v = confirmarSenhaInput.value;
+        if (!v) { setError(confirmarSenhaInput, confirmarSenhaError, 'Confirme sua senha.'); return false; }
+        if (v !== novaSenhaInput.value) { setError(confirmarSenhaInput, confirmarSenhaError, 'As senhas não coincidem.'); return false; }
+        setValid(confirmarSenhaInput, confirmarSenhaError);
+        return true;
+    }
+
+    novaSenhaInput.addEventListener('blur',  () => { novaTouched = true; validarNova(); });
+    novaSenhaInput.addEventListener('input', () => { if (novaTouched) validarNova(); });
+
+    confirmarSenhaInput.addEventListener('blur',  () => { confirmarTouched = true; validarConfirmar(); });
+    confirmarSenhaInput.addEventListener('input', () => { if (confirmarTouched) validarConfirmar(); });
+
+    /* =========================================================
+       SUBMIT
+    ========================================================= */
+    document.getElementById('formRedefinir').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        novaTouched = confirmarTouched = true;
+        const okNova      = validarNova();
+        const okConfirmar = validarConfirmar();
+        if (!okNova || !okConfirmar) return;
+
+        const btn = document.getElementById('btnSalvar');
+        const msg = document.getElementById('mensagem');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Salvando…';
+        msg.style.display = 'none';
+
+        try {
+            const res  = await fetch('/api/usuarios/redefinir-senha', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, novaSenha: novaSenhaInput.value })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                msg.className     = 'msg success';
+                msg.style.display = 'block';
+                msg.innerHTML     = '<i class="fa-solid fa-circle-check"></i> ' + data.mensagem;
+                document.getElementById('formRedefinir').style.display = 'none';
+                document.getElementById('linkLogin').style.display     = 'block';
+            } else {
+                msg.className     = 'msg error';
+                msg.style.display = 'block';
+                msg.innerHTML     = '<i class="fa-solid fa-triangle-exclamation"></i> ' + data.erro;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar nova senha';
+
+                // Se token inválido/expirado, mostra a área de erro
+                if (data.erro.includes('inválido') || data.erro.includes('expirou')) {
+                    setTimeout(() => {
+                        document.getElementById('formArea').style.display    = 'none';
+                        document.getElementById('invalidArea').style.display = 'block';
+                    }, 2000);
+                }
+            }
+
+        } catch (err) {
+            msg.className     = 'msg error';
+            msg.style.display = 'block';
+            msg.innerHTML     = '<i class="fa-solid fa-wifi"></i> Erro de conexão.';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar nova senha';
+        }
+    });
+</script>
+</body>
+</html>

@@ -6,6 +6,7 @@
     <title>Minha Área - NutriSmart</title>
     <link rel="stylesheet" href="/css/style_nutrismart.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .tab-content { display:none; }
         .tab-content.active { display:block; }
@@ -63,6 +64,31 @@
         .chat-send { background:linear-gradient(135deg,#2D6A4F,#52B788); color:#fff; border:none; border-radius:10px; padding:.7rem 1rem; cursor:pointer; font-weight:700; }
         @keyframes spin { to{transform:rotate(360deg)} }
         .spinner { display:inline-block; width:16px; height:16px; border:2px solid rgba(82,183,136,0.3); border-top-color:#52B788; border-radius:50%; animation:spin .8s linear infinite; vertical-align:middle; margin-right:.4rem; }
+
+        /* EVOLUÇÃO */
+        .evolucao-card { background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(45,106,79,.08); padding:1.8rem; margin-bottom:1.5rem; border:1px solid rgba(82,183,136,.12); }
+        .evolucao-titulo { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; color:#1a3a2a; margin-bottom:1.4rem; display:flex; align-items:center; gap:.5rem; }
+        .evolucao-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:.75rem; margin-bottom:1.5rem; }
+        .estat-box { background:#f7fdf9; border:1px solid #dcfce7; border-radius:12px; padding:1rem; text-align:center; }
+        .estat-label { font-size:.72rem; color:#6b7280; text-transform:uppercase; font-weight:700; letter-spacing:.04em; margin-bottom:.3rem; }
+        .estat-valor { font-size:1.4rem; font-weight:800; color:#2D6A4F; }
+        .estat-sub { font-size:.75rem; color:#9ca3af; margin-top:.15rem; }
+        .imc-badge { display:inline-block; padding:.2rem .6rem; border-radius:6px; font-size:.7rem; font-weight:700; margin-left:.3rem; }
+        .imc-normal    { background:#d1fae5; color:#065f46; }
+        .imc-sobrepeso { background:#fef3c7; color:#d97706; }
+        .imc-obesidade { background:#fee2e2; color:#dc2626; }
+        .imc-baixo     { background:#dbeafe; color:#1e40af; }
+        .chart-wrap { position:relative; height:260px; margin-bottom:1.5rem; }
+        .evolucao-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+        .evolucao-table th { padding:.6rem 1rem; text-align:left; font-size:.72rem; font-weight:700; text-transform:uppercase; color:#2D6A4F; border-bottom:2px solid #dcfce7; background:#f0fdf4; }
+        .evolucao-table td { padding:.7rem 1rem; border-bottom:1px solid #f0fdf4; color:#374151; }
+        .evolucao-table tbody tr:last-child td { border-bottom:none; }
+        .evolucao-table tbody tr:hover { background:#f9fefb; }
+        .diff-pos { color:#16a34a; font-weight:700; }
+        .diff-neg { color:#dc2626; font-weight:700; }
+        .diff-neu { color:#9ca3af; }
+        .empty-evolucao { text-align:center; padding:2.5rem; color:#9ca3af; }
+        .empty-evolucao i { font-size:2.5rem; color:#d1fae5; display:block; margin-bottom:.75rem; }
     </style>
 </head>
 <body>
@@ -91,15 +117,17 @@
 
 <div class="banner" style="border-radius:0;margin:0;padding-bottom:0">
     <h1 id="boasVindas">Olá, Paciente 👋</h1>
-    <p>Acompanhe sua alimentação e consultas.</p>
+    <p>Acompanhe sua alimentação e evolução.</p>
     <div class="tabs" style="border-bottom:none;margin-bottom:0;padding-top:1.5rem">
         <button class="tab active" onclick="switchTab('dieta',this)">🥗 Minha Dieta</button>
+        <button class="tab" onclick="switchTab('evolucao',this)">📈 Minha Evolução</button>
         <button class="tab" onclick="switchTab('consultas',this)">📅 Consultas</button>
     </div>
 </div>
 
 <div class="container" style="padding-top:2rem">
 
+    <!-- ABA DIETA -->
     <div id="tab-dieta" class="tab-content active">
         <div id="dietaContainer">
             <div style="text-align:center;padding:3rem;color:#6b7280">
@@ -108,6 +136,48 @@
         </div>
     </div>
 
+    <!-- ABA EVOLUÇÃO -->
+    <div id="tab-evolucao" class="tab-content">
+        <div class="evolucao-card">
+            <div class="evolucao-titulo">
+                <i class="fa-solid fa-chart-line" style="color:#52B788"></i> Minha Evolução
+            </div>
+
+            <!-- Cards de resumo -->
+            <div class="evolucao-stats" id="evolucaoStats">
+                <div style="text-align:center;padding:1rem;color:#6b7280"><span class="spinner"></span></div>
+            </div>
+
+            <!-- Gráfico -->
+            <div class="chart-wrap">
+                <canvas id="chartEvolucao"></canvas>
+            </div>
+
+            <!-- Tabela histórico -->
+            <div style="overflow-x:auto">
+                <table class="evolucao-table">
+                    <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Peso (kg)</th>
+                        <th>IMC</th>
+                        <th>% Gordura</th>
+                        <th>Variação</th>
+                        <th>Obs.</th>
+                    </tr>
+                    </thead>
+                    <tbody id="evolucaoTabela"></tbody>
+                </table>
+            </div>
+            <div id="evolucaoVazia" class="empty-evolucao" style="display:none">
+                <i class="fa-solid fa-chart-line"></i>
+                <p>Nenhum registro de evolução ainda.</p>
+                <p style="font-size:.85rem;margin-top:.4rem">Seu nutricionista registrará sua evolução a cada atualização.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA CONSULTAS -->
     <div id="tab-consultas" class="tab-content">
         <div class="card" style="margin-bottom:2rem">
             <h2 style="color:var(--verde-escuro);margin-bottom:1.5rem">📅 Solicitar Consulta</h2>
@@ -145,6 +215,7 @@
 
 </div>
 
+<!-- CHAT NUTRIBOT -->
 <div class="chat-overlay" id="chatOverlay" onclick="fecharChatFora(event)">
     <div class="chat-box">
         <div class="chat-head">
@@ -173,6 +244,7 @@
     const pacienteId   = (localStorage.getItem("usuarioId") || "").split(':')[0];
     const emailLogin   = localStorage.getItem("emailUsuario") || "";
     let chatCtx = null, chatHist = [];
+    let chartInstance = null;
 
     document.getElementById("nomeExibido").innerText = pacienteNome;
     document.getElementById("boasVindas").innerText  = `Olá, ${pacienteNome} 👋`;
@@ -188,8 +260,151 @@
         document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
         document.getElementById('tab-' + nome).classList.add('active');
         btn.classList.add('active');
+        if (nome === 'evolucao') carregarEvolucao();
     }
 
+    /* =========================================================
+       EVOLUÇÃO — somente leitura
+    ========================================================= */
+    function classificarIMC(imc) {
+        if (imc < 18.5) return { label:'Abaixo do peso', cls:'imc-baixo' };
+        if (imc < 25)   return { label:'Peso normal',    cls:'imc-normal' };
+        if (imc < 30)   return { label:'Sobrepeso',      cls:'imc-sobrepeso' };
+        return              { label:'Obesidade',          cls:'imc-obesidade' };
+    }
+
+    async function carregarEvolucao() {
+        const statsEl  = document.getElementById('evolucaoStats');
+        const tabelaEl = document.getElementById('evolucaoTabela');
+        const vaziaEl  = document.getElementById('evolucaoVazia');
+
+        // Busca paciente pelo e-mail para pegar o id real
+        let idReal = pacienteId;
+        try {
+            const rp = await fetch(`/pacientes/por-email?email=${encodeURIComponent(emailLogin)}`);
+            if (rp.ok) { const p = await rp.json(); idReal = p.id; }
+        } catch(e) {}
+
+        try {
+            const res  = await fetch(`/evolucao/${idReal}`);
+            const lista = await res.json();
+
+            if (!lista.length) {
+                statsEl.innerHTML = '';
+                tabelaEl.innerHTML = '';
+                vaziaEl.style.display = 'block';
+                if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+                return;
+            }
+            vaziaEl.style.display = 'none';
+
+            const primeiro = lista[0];
+            const ultimo   = lista[lista.length - 1];
+            const diff     = (ultimo.peso - primeiro.peso).toFixed(1);
+            const diffSinal = diff > 0 ? `+${diff}` : diff;
+            const imcInfo  = ultimo.imc ? classificarIMC(ultimo.imc) : null;
+
+            statsEl.innerHTML = `
+                <div class="estat-box">
+                    <div class="estat-label">Peso Atual</div>
+                    <div class="estat-valor">${ultimo.peso} <small style="font-size:.9rem;font-weight:500">kg</small></div>
+                    <div class="estat-sub">${fmt(ultimo.data)}</div>
+                </div>
+                <div class="estat-box">
+                    <div class="estat-label">IMC Atual</div>
+                    <div class="estat-valor">${ultimo.imc ? Number(ultimo.imc).toFixed(1) : '—'}</div>
+                    <div class="estat-sub">${imcInfo ? `<span class="imc-badge ${imcInfo.cls}">${imcInfo.label}</span>` : ''}</div>
+                </div>
+                <div class="estat-box">
+                    <div class="estat-label">Variação Total</div>
+                    <div class="estat-valor" style="color:${diff < 0 ? '#16a34a' : diff > 0 ? '#dc2626' : '#6b7280'}">${diffSinal} kg</div>
+                    <div class="estat-sub">desde o início</div>
+                </div>
+                <div class="estat-box">
+                    <div class="estat-label">Registros</div>
+                    <div class="estat-valor">${lista.length}</div>
+                    <div class="estat-sub">atualizações</div>
+                </div>`;
+
+            // Gráfico só com 2+ pontos
+            if (lista.length >= 2) {
+                const labels = lista.map(e => fmt(e.data));
+                const pesos  = lista.map(e => e.peso);
+                const imcs   = lista.map(e => e.imc || null);
+
+                if (chartInstance) chartInstance.destroy();
+                chartInstance = new Chart(document.getElementById('chartEvolucao'), {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Peso (kg)',
+                                data: pesos,
+                                borderColor: '#2D6A4F',
+                                backgroundColor: 'rgba(45,106,79,0.08)',
+                                borderWidth: 2.5,
+                                pointBackgroundColor: '#2D6A4F',
+                                pointRadius: 5,
+                                tension: 0.35,
+                                fill: true,
+                                yAxisID: 'yPeso'
+                            },
+                            {
+                                label: 'IMC',
+                                data: imcs,
+                                borderColor: '#52B788',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                borderDash: [5,4],
+                                pointBackgroundColor: '#52B788',
+                                pointRadius: 4,
+                                tension: 0.35,
+                                yAxisID: 'yImc'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode:'index', intersect:false },
+                        plugins: {
+                            legend: { position:'top', labels:{ font:{ size:12 } } }
+                        },
+                        scales: {
+                            yPeso: { type:'linear', position:'left',  title:{ display:true, text:'Peso (kg)' }, grid:{ color:'rgba(0,0,0,0.05)' } },
+                            yImc:  { type:'linear', position:'right', title:{ display:true, text:'IMC' },       grid:{ drawOnChartArea:false } }
+                        }
+                    }
+                });
+            } // fim if lista.length >= 2
+
+            // Tabela
+            tabelaEl.innerHTML = [...lista].reverse().map((e, i, arr) => {
+                const prev = arr[i + 1];
+                const d    = prev ? (e.peso - prev.peso).toFixed(1) : null;
+                const diffStr = d === null ? '—'
+                    : d > 0  ? `<span class="diff-neg">+${d} kg</span>`
+                        : d < 0  ? `<span class="diff-pos">${d} kg</span>`
+                            : `<span class="diff-neu">= kg</span>`;
+                const imcI = e.imc ? classificarIMC(e.imc) : null;
+                return `<tr>
+                    <td>${fmt(e.data)}</td>
+                    <td><strong>${e.peso} kg</strong></td>
+                    <td>${e.imc ? Number(e.imc).toFixed(1) : '—'} ${imcI ? `<span class="imc-badge ${imcI.cls}">${imcI.label}</span>` : ''}</td>
+                    <td>${diffStr}</td>
+                    <td style="color:#6b7280;font-size:.82rem">${e.observacao || '—'}</td>
+                </tr>`;
+            }).join('');
+
+        } catch(err) {
+            statsEl.innerHTML = '<p style="color:#dc2626;text-align:center">Erro ao carregar evolução.</p>';
+        }
+    }
+
+    /* =========================================================
+       DIETA
+    ========================================================= */
     async function carregarDieta() {
         const c = document.getElementById("dietaContainer");
         let lista = [];

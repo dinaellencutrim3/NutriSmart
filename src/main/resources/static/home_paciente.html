@@ -367,6 +367,11 @@
                     <div class="estat-sub">${imcInfo ? `<span class="imc-badge ${imcInfo.cls}">${imcInfo.label}</span>` : ''}</div>
                 </div>
                 <div class="estat-box">
+                    <div class="estat-label">% Gordura</div>
+                    <div class="estat-valor" style="color:#f59e0b">${ultimo.percentualGordura ? Number(ultimo.percentualGordura).toFixed(1) + '%' : '—'}</div>
+                    <div class="estat-sub">última medição</div>
+                </div>
+                <div class="estat-box">
                     <div class="estat-label">Variação Total</div>
                     <div class="estat-valor" style="color:${diff < 0 ? '#16a34a' : diff > 0 ? '#dc2626' : '#6b7280'}">${diffSinal} kg</div>
                     <div class="estat-sub">desde o início</div>
@@ -379,9 +384,10 @@
 
             // Gráfico só com 2+ pontos
             if (lista.length >= 2) {
-                const labels = lista.map(e => fmt(e.data));
-                const pesos  = lista.map(e => e.peso);
-                const imcs   = lista.map(e => e.imc || null);
+                const labels  = lista.map(e => fmt(e.data));
+                const pesos   = lista.map(e => e.peso);
+                const imcs    = lista.map(e => e.imc || null);
+                const gorduras = lista.map(e => e.percentualGordura || null);
 
                 if (chartInstance) chartInstance.destroy();
                 chartInstance = new Chart(document.getElementById('chartEvolucao'), {
@@ -412,6 +418,19 @@
                                 pointRadius: 4,
                                 tension: 0.35,
                                 yAxisID: 'yImc'
+                            },
+                            {
+                                label: '% Gordura',
+                                data: gorduras,
+                                borderColor: '#f59e0b',
+                                backgroundColor: 'rgba(245,158,11,0.07)',
+                                borderWidth: 2,
+                                borderDash: [3,3],
+                                pointBackgroundColor: '#f59e0b',
+                                pointRadius: 4,
+                                tension: 0.35,
+                                fill: false,
+                                yAxisID: 'yGordura'
                             }
                         ]
                     },
@@ -423,8 +442,9 @@
                             legend: { position:'top', labels:{ font:{ size:12 } } }
                         },
                         scales: {
-                            yPeso: { type:'linear', position:'left',  title:{ display:true, text:'Peso (kg)' }, grid:{ color:'rgba(0,0,0,0.05)' } },
-                            yImc:  { type:'linear', position:'right', title:{ display:true, text:'IMC' },       grid:{ drawOnChartArea:false } }
+                            yPeso:    { type:'linear', position:'left',  title:{ display:true, text:'Peso (kg)' },  grid:{ color:'rgba(0,0,0,0.05)' } },
+                            yImc:     { type:'linear', position:'right', title:{ display:true, text:'IMC' },        grid:{ drawOnChartArea:false } },
+                            yGordura: { type:'linear', position:'right', title:{ display:true, text:'% Gordura' }, grid:{ drawOnChartArea:false }, offset:true }
                         }
                     }
                 });
@@ -439,10 +459,12 @@
                         : d < 0  ? `<span class="diff-pos">${d} kg</span>`
                             : `<span class="diff-neu">= kg</span>`;
                 const imcI = e.imc ? classificarIMC(e.imc) : null;
+                const gordura = e.percentualGordura ? `${Number(e.percentualGordura).toFixed(1)}%` : '—';
                 return `<tr>
                     <td>${fmt(e.data)}</td>
                     <td><strong>${e.peso} kg</strong></td>
                     <td>${e.imc ? Number(e.imc).toFixed(1) : '—'} ${imcI ? `<span class="imc-badge ${imcI.cls}">${imcI.label}</span>` : ''}</td>
+                    <td>${gordura}</td>
                     <td>${diffStr}</td>
                     <td style="color:#6b7280;font-size:.82rem">${e.observacao || '—'}</td>
                 </tr>`;
@@ -458,11 +480,34 @@
     ========================================================= */
     async function carregarDieta() {
         const c = document.getElementById("dietaContainer");
+        c.innerHTML = `<div style="text-align:center;padding:3rem;color:#6b7280"><span class="spinner"></span> Carregando sua dieta...</div>`;
         let lista = [];
         try {
-            if (emailLogin) {
+            // 1. Usa o pacienteRealId salvo no login (caminho mais direto e confiável)
+            const pacienteRealId = localStorage.getItem('pacienteRealId');
+            if (pacienteRealId) {
+                const r0 = await fetch(`/dietas/paciente/${pacienteRealId}`);
+                if (r0.ok) lista = await r0.json();
+            }
+            // 2. Fallback: busca pelo e-mail
+            if (!lista.length && emailLogin) {
                 const r1 = await fetch(`/dietas/paciente/email/${encodeURIComponent(emailLogin)}`);
                 if (r1.ok) lista = await r1.json();
+            }
+            // 3. Último fallback: resolve ID via /pacientes/por-email
+            if (!lista.length && emailLogin) {
+                try {
+                    const rp = await fetch(`/pacientes/por-email?email=${encodeURIComponent(emailLogin)}`);
+                    if (rp.ok) {
+                        const pac = await rp.json();
+                        if (pac && pac.id) {
+                            // Salva para próximas visitas
+                            localStorage.setItem('pacienteRealId', String(pac.id));
+                            const r2 = await fetch(`/dietas/paciente/${pac.id}`);
+                            if (r2.ok) lista = await r2.json();
+                        }
+                    }
+                } catch(e2) {}
             }
         } catch(e) {
             c.innerHTML = `<div style="text-align:center;padding:2rem;color:#dc2626">⚠️ Erro ao carregar dieta.</div>`; return;

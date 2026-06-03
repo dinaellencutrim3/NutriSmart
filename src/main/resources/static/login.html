@@ -206,10 +206,14 @@
                 const data = await res.json();
                 // tipo vem do backend: "NUTRICIONISTA" ou "PACIENTE"
                 const tipo = (data.tipo || tipoAtual || '').toUpperCase();
-                localStorage.setItem('usuarioId',    data.id   || '');
-                localStorage.setItem('nomeUsuario',  data.nome || '');
+                localStorage.setItem('usuarioId',    data.id        || '');
+                localStorage.setItem('nomeUsuario',  data.nome      || '');
                 localStorage.setItem('emailUsuario', email);
                 localStorage.setItem('tipoUsuario',  tipo);
+                // Se for paciente, salva o ID real da tabela pacientes
+                if (data.pacienteId) {
+                    localStorage.setItem('pacienteRealId', String(data.pacienteId));
+                }
 
                 if (tipo === 'PACIENTE') {
                     window.location.href = '/home_paciente.html';

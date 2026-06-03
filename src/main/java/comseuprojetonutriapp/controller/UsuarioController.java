@@ -1,6 +1,8 @@
 package comseuprojetonutriapp.controller;
 
+import comseuprojetonutriapp.model.Paciente;
 import comseuprojetonutriapp.model.Usuario;
+import comseuprojetonutriapp.repository.PacienteRepository;
 import comseuprojetonutriapp.repository.UsuarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioRepository repository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -56,6 +61,13 @@ public class UsuarioController {
             resposta.put("tipo",   user.getTipo());
             resposta.put("nome",   user.getNome());
             resposta.put("id",     user.getId());
+
+            // Se for PACIENTE, resolve o ID real da tabela 'pacientes' pelo e-mail
+            if ("PACIENTE".equalsIgnoreCase(user.getTipo())) {
+                pacienteRepository.findByEmailIgnoreCase(user.getEmail())
+                        .ifPresent(p -> resposta.put("pacienteId", p.getId()));
+            }
+
             return ResponseEntity.ok(resposta);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -74,7 +86,6 @@ public class UsuarioController {
         email = email.toLowerCase().trim();
         Optional<Usuario> usuarioOpt = repository.findByEmail(email);
 
-        // Sempre retorna sucesso — não revela se o e-mail existe
         if (usuarioOpt.isEmpty()) {
             return ResponseEntity.ok(Map.of(
                     "mensagem", "Se este e-mail estiver cadastrado, você receberá o link em breve."
@@ -83,13 +94,11 @@ public class UsuarioController {
 
         Usuario usuario = usuarioOpt.get();
 
-        // Gera token único com validade de 30 minutos
         String token = UUID.randomUUID().toString();
         usuario.setResetToken(token);
         usuario.setResetTokenExpiry(LocalDateTime.now().plusMinutes(30));
         repository.save(usuario);
 
-        // Monta o link de redefinição
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String link = baseUrl + "/redefinir_senha.html?token=" + token;
 
@@ -142,7 +151,7 @@ public class UsuarioController {
     // REDEFINIR SENHA — valida token e salva nova senha
     @PostMapping("/redefinir-senha")
     public ResponseEntity<?> redefinirSenha(@RequestBody Map<String, String> body) {
-        String token    = body.get("token");
+        String token     = body.get("token");
         String novaSenha = body.get("novaSenha");
 
         if (token == null || token.isBlank() || novaSenha == null || novaSenha.isBlank()) {
@@ -166,7 +175,6 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(Map.of("erro", "Este link expirou. Solicite um novo."));
         }
 
-        // Salva nova senha e invalida o token
         usuario.setSenha(novaSenha);
         usuario.setResetToken(null);
         usuario.setResetTokenExpiry(null);

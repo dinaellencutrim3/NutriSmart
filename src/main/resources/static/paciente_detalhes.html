@@ -385,6 +385,32 @@
 
         <!-- ABA EVOLUÇÃO -->
         <div id="tab-evolucao" class="tab-content">
+            <!-- Formulário de registro de evolução -->
+            <div style="background:#fff;border-radius:16px;padding:1.2rem 1.5rem;margin-bottom:1.4rem;border:1px solid #dcfce7;box-shadow:0 2px 10px rgba(45,106,79,0.06)">
+                <div style="font-weight:700;color:#1a3a2a;margin-bottom:.9rem;font-size:1rem">📋 Registrar Nova Evolução</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.7rem;margin-bottom:.8rem">
+                    <div>
+                        <label style="font-size:.78rem;font-weight:600;color:#6b7280;display:block;margin-bottom:.3rem">Peso (kg) *</label>
+                        <input type="number" id="evoInputPeso" step="0.1" placeholder="Ex: 72.5" style="width:100%;padding:.6rem .8rem;border-radius:9px;border:1px solid #d1d5db;outline:none;font-size:.88rem;font-family:inherit">
+                    </div>
+                    <div>
+                        <label style="font-size:.78rem;font-weight:600;color:#6b7280;display:block;margin-bottom:.3rem">% Gordura</label>
+                        <input type="number" id="evoInputGordura" step="0.1" placeholder="Ex: 28.5" style="width:100%;padding:.6rem .8rem;border-radius:9px;border:1px solid #d1d5db;outline:none;font-size:.88rem;font-family:inherit">
+                    </div>
+                    <div>
+                        <label style="font-size:.78rem;font-weight:600;color:#6b7280;display:block;margin-bottom:.3rem">Massa Muscular (kg)</label>
+                        <input type="number" id="evoInputMuscular" step="0.1" placeholder="Ex: 35.0" style="width:100%;padding:.6rem .8rem;border-radius:9px;border:1px solid #d1d5db;outline:none;font-size:.88rem;font-family:inherit">
+                    </div>
+                    <div>
+                        <label style="font-size:.78rem;font-weight:600;color:#6b7280;display:block;margin-bottom:.3rem">Observação</label>
+                        <input type="text" id="evoInputObs" placeholder="Ex: Boa semana..." style="width:100%;padding:.6rem .8rem;border-radius:9px;border:1px solid #d1d5db;outline:none;font-size:.88rem;font-family:inherit">
+                    </div>
+                </div>
+                <button onclick="registrarEvolucao()" style="background:linear-gradient(135deg,#2D6A4F,#52B788);color:#fff;border:none;border-radius:10px;padding:.65rem 1.4rem;font-weight:700;font-size:.88rem;cursor:pointer;font-family:inherit">
+                    ✚ Registrar Evolução
+                </button>
+            </div>
+
             <div class="evolucao-stats" id="evolucaoStats">
                 <div class="empty" style="grid-column:1/-1"><span class="empty-icon">📈</span>Nenhum registro ainda.</div>
             </div>
@@ -732,7 +758,9 @@
                 c.innerHTML = `<div class="empty"><span class="empty-icon">📋</span>Nenhuma avaliação registrada ainda.</div>`;
                 return;
             }
-            c.innerHTML = lista.map(a => {
+            // Guarda lista globalmente para acesso no modal
+            window._avaliacoesCache = lista;
+            c.innerHTML = lista.map((a, idx) => {
                 const peso  = a.peso  ? `<span style="background:#dcfce7;color:#16a34a;padding:3px 12px;border-radius:999px;font-size:13px;font-weight:600">${a.peso} kg · IMC ${a.imc ? Number(a.imc).toFixed(1) : "—"}</span>` : "";
                 const cintura  = a.circunferenciaCintura  ? `<div><span style="color:#6b7280">Cintura:</span> ${a.circunferenciaCintura} cm</div>` : "";
                 const quadril  = a.circunferenciaQuadril  ? `<div><span style="color:#6b7280">Quadril:</span> ${a.circunferenciaQuadril} cm</div>` : "";
@@ -744,7 +772,10 @@
                 return `<div style="background:#f9fafb;border-radius:14px;padding:18px 22px;margin-bottom:14px;border:1px solid #e5e7eb">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
                         <span style="font-weight:700;color:#1a3a2a;font-size:15px">📅 ${fmt(a.data)}</span>
-                        ${peso}
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                            ${peso}
+                            <button onclick="abrirDetalhesAvaliacao(${idx})" style="background:#2D6A4F;color:#fff;border:none;border-radius:8px;padding:4px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🔍 Ver detalhes</button>
+                        </div>
                     </div>
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;font-size:13px;color:#374151">
                         ${cintura}${quadril}${gord}${magra}${glicemia}${colest}
@@ -757,6 +788,27 @@
     }
 
     /* ── EVOLUÇÃO ── */
+    async function registrarEvolucao() {
+        const peso = parseFloat(document.getElementById('evoInputPeso').value);
+        if (!peso || peso <= 0) { Swal.fire({ icon:'warning', title:'Informe o peso', confirmButtonColor:'#2D6A4F' }); return; }
+        const gordura   = parseFloat(document.getElementById('evoInputGordura').value) || null;
+        const muscular  = parseFloat(document.getElementById('evoInputMuscular').value) || null;
+        const obs       = document.getElementById('evoInputObs').value.trim();
+        try {
+            const res = await fetch(`/evolucao/${pacienteId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ peso, percentualGordura: gordura, massaMuscular: muscular, observacao: obs })
+            });
+            if (!res.ok) throw new Error();
+            ['evoInputPeso','evoInputGordura','evoInputMuscular','evoInputObs'].forEach(id => document.getElementById(id).value = '');
+            await Swal.fire({ icon:'success', title:'Evolução registrada!', timer:1500, showConfirmButton:false });
+            carregarEvolucao();
+        } catch(e) {
+            Swal.fire({ icon:'error', title:'Erro ao registrar', confirmButtonColor:'#2D6A4F' });
+        }
+    }
+
     async function carregarEvolucao() {
         const statsEl  = document.getElementById('evolucaoStats');
         const tabelaEl = document.getElementById('evolucaoTabela');
@@ -773,47 +825,68 @@
 
             statsEl.innerHTML = `
                 <div class="estat-box"><div class="estat-label">Peso Atual</div><div class="estat-valor">${ultimo.peso} kg</div></div>
-                <div class="estat-box"><div class="estat-label">IMC Atual</div><div class="estat-valor">${ultimo.imc?Number(ultimo.imc).toFixed(1):'—'}</div>
+                <div class="estat-box"><div class="estat-label">IMC Atual</div><div class="estat-valor">${ultimo.imc?Number(ultimo.imc).toFixed(1):'\u2014'}</div>
                     ${imcI?`<div><span class="imc-badge ${imcI.cls}">${imcI.label}</span></div>`:''}</div>
+                <div class="estat-box"><div class="estat-label">% Gordura</div>
+                    <div class="estat-valor" style="color:#f59e0b">${ultimo.percentualGordura?Number(ultimo.percentualGordura).toFixed(1)+'%':'\u2014'}</div></div>
                 <div class="estat-box"><div class="estat-label">Variação Total</div>
                     <div class="estat-valor" style="color:${diff<0?'#16a34a':diff>0?'#dc2626':'#6b7280'}">${diffSinal} kg</div></div>
                 <div class="estat-box"><div class="estat-label">Registros</div><div class="estat-valor">${lista.length}</div></div>`;
 
             if (lista.length >= 2) {
+                const gorduras = lista.map(e => e.percentualGordura || null);
+                const temGordura = gorduras.some(v => v !== null);
                 if (chartInstance) chartInstance.destroy();
+                const datasets = [
+                    {
+                        label:'Peso (kg)', data: lista.map(e=>e.peso),
+                        borderColor:'#2D6A4F', backgroundColor:'rgba(45,106,79,0.07)',
+                        borderWidth:2.5, pointRadius:5, tension:0.35, fill:true,
+                        yAxisID:'yPeso'
+                    }
+                ];
+                if (temGordura) {
+                    datasets.push({
+                        label:'% Gordura', data: gorduras,
+                        borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,0.07)',
+                        borderWidth:2, borderDash:[3,3],
+                        pointBackgroundColor:'#f59e0b', pointRadius:4, tension:0.35, fill:false,
+                        yAxisID:'yGordura'
+                    });
+                }
+                const scales = {
+                    yPeso: { type:'linear', position:'left', title:{display:true,text:'Peso (kg)'}, grid:{color:'rgba(0,0,0,0.05)'} }
+                };
+                if (temGordura) {
+                    scales.yGordura = { type:'linear', position:'right', title:{display:true,text:'% Gordura'}, grid:{drawOnChartArea:false}, offset:true };
+                }
                 chartInstance = new Chart(document.getElementById('chartEvolucao'), {
                     type:'line',
-                    data:{
-                        labels: lista.map(e => fmt(e.data)),
-                        datasets:[{
-                            label:'Peso (kg)', data: lista.map(e=>e.peso),
-                            borderColor:'#2D6A4F', backgroundColor:'rgba(45,106,79,0.07)',
-                            borderWidth:2.5, pointRadius:5, tension:0.35, fill:true
-                        }]
-                    },
+                    data:{ labels: lista.map(e => fmt(e.data)), datasets },
                     options:{responsive:true,maintainAspectRatio:false,
+                        interaction:{mode:'index',intersect:false},
                         plugins:{legend:{position:'top'}},
-                        scales:{y:{title:{display:true,text:'Peso (kg)'},grid:{color:'rgba(0,0,0,0.05)'}}}}
+                        scales}
                 });
             }
 
             tabelaEl.innerHTML = [...lista].reverse().map((e,i,arr)=>{
                 const prev = arr[i+1];
                 const d = prev?(e.peso-prev.peso).toFixed(1):null;
-                const diffStr = d===null?'—':d>0?`<span class="diff-neg">+${d} kg</span>`:d<0?`<span class="diff-pos">${d} kg</span>`:'=';
+                const diffStr = d===null?'\u2014':d>0?`<span class="diff-neg">+${d} kg</span>`:d<0?`<span class="diff-pos">${d} kg</span>`:'=';
                 const im = e.imc?imcInfo(Number(e.imc)):null;
+                const gorduraStr = e.percentualGordura ? Number(e.percentualGordura).toFixed(1)+'%' : '\u2014';
                 return `<tr>
                     <td>${fmt(e.data)}</td>
                     <td><strong>${e.peso} kg</strong></td>
-                    <td>${e.imc?Number(e.imc).toFixed(1):'—'} ${im?`<span class="imc-badge ${im.cls}">${im.label}</span>`:''}</td>
-                    <td>${e.percentualGordura||'—'}</td>
+                    <td>${e.imc?Number(e.imc).toFixed(1):'\u2014'} ${im?`<span class="imc-badge ${im.cls}">${im.label}</span>`:''}</td>
+                    <td>${gorduraStr}</td>
                     <td>${diffStr}</td>
-                    <td style="color:#6b7280;font-size:12px">${e.observacao||'—'}</td>
+                    <td style="color:#6b7280;font-size:12px">${e.observacao||'\u2014'}</td>
                 </tr>`;
             }).join('');
         } catch(e) {}
     }
-
     /* ── CONSULTAS ── */
     async function carregarConsultas() {
         const c = document.getElementById('consultasContainer');
@@ -1019,6 +1092,91 @@
     /* ── UTILS ── */
     function fmt(iso) { if(!iso) return '—'; const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }
     function logout() { localStorage.clear(); window.location.href='/login.html'; }
+
+    /* ── MODAL DETALHES AVALIAÇÃO ── */
+    function abrirDetalhesAvaliacao(idx) {
+        const a = (window._avaliacoesCache || [])[idx];
+        if (!a) return;
+        document.getElementById('modalDetDataLabel').textContent = 'Avaliação de ' + fmt(a.data);
+        const row = (label, val, unit) => val ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;white-space:nowrap;width:40%">${label}</td><td style="padding:7px 14px;font-weight:600;font-size:13px">${val}${unit||''}</td></tr>` : '';
+        const section = (title, rows) => rows.trim() ? `<div style="margin-bottom:1.2rem"><div style="font-weight:700;color:#2D6A4F;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.45rem;padding:0 2px">${title}</div><table style="width:100%;border-collapse:collapse;background:#f9fafb;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb">${rows}</table></div>` : '';
+
+        const antropo = [
+            row('Peso', a.peso, ' kg'),
+            row('Altura', a.altura, ' m'),
+            row('IMC', a.imc ? Number(a.imc).toFixed(1) : null, ''),
+            row('Cintura', a.circunferenciaCintura, ' cm'),
+            row('Abdômen', a.circunferenciaAbdomen, ' cm'),
+            row('Quadril', a.circunferenciaQuadril, ' cm'),
+            row('Braço', a.circunferenciaBraco, ' cm'),
+            row('Relação C/Q', a.relacaoCinturaQuadril, ''),
+        ].join('');
+
+        const compos = [
+            row('% Gordura', a.percentualGordura, '%'),
+            row('Massa magra', a.massaMagra, ' kg'),
+            row('Massa gorda', a.massaGorda, ' kg'),
+            row('Água corporal', a.aguaCorporal, '%'),
+            row('TMB', a.taxaMetabolismoBasal, ' kcal'),
+        ].join('');
+
+        const exames = [
+            row('Glicemia', a.glicemia, ''),
+            row('Colesterol total', a.colesterolTotal, ''),
+            row('HDL', a.hdl, ''),
+            row('LDL', a.ldl, ''),
+            row('Triglicerídeos', a.triglicerideos, ''),
+            row('Hemoglobina', a.hemoglobina, ''),
+            a.outrosExames ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Outros exames</td><td style="padding:7px 14px;font-size:13px">${a.outrosExames}</td></tr>` : '',
+        ].join('');
+
+        const clinico = [
+            a.sintomasAtuais       ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Sintomas</td><td style="padding:7px 14px;font-size:13px">${a.sintomasAtuais}</td></tr>` : '',
+            a.historicoFamiliar    ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Histórico familiar</td><td style="padding:7px 14px;font-size:13px">${a.historicoFamiliar}</td></tr>` : '',
+            a.medicamentosSupl     ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Medicamentos/Supl.</td><td style="padding:7px 14px;font-size:13px">${a.medicamentosSupl}</td></tr>` : '',
+            a.alergias             ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Alergias</td><td style="padding:7px 14px;font-size:13px">${a.alergias}</td></tr>` : '',
+            a.intolerancias        ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Intolerâncias</td><td style="padding:7px 14px;font-size:13px">${a.intolerancias}</td></tr>` : '',
+            a.nivelAtividadeFisica ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px">Atividade física</td><td style="padding:7px 14px;font-size:13px">${a.nivelAtividadeFisica}</td></tr>` : '',
+            a.rotinaSono           ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Sono</td><td style="padding:7px 14px;font-size:13px">${a.rotinaSono}</td></tr>` : '',
+            a.saudePeleUnhasCabelo ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Pele/Unhas/Cabelo</td><td style="padding:7px 14px;font-size:13px">${a.saudePeleUnhasCabelo}</td></tr>` : '',
+        ].join('');
+
+        const aliment = [
+            a.preferenciasAlimentares ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Preferências</td><td style="padding:7px 14px;font-size:13px">${a.preferenciasAlimentares}</td></tr>` : '',
+            a.registroAlimentar       ? `<tr><td style="padding:7px 14px;color:#6b7280;font-size:13px;vertical-align:top">Registro alimentar</td><td style="padding:7px 14px;font-size:13px">${a.registroAlimentar}</td></tr>` : '',
+        ].join('');
+
+        document.getElementById('modalDetBody').innerHTML =
+            section('📏 Antropometria', antropo) +
+            section('🔬 Composição Corporal', compos) +
+            section('🩸 Exames Laboratoriais', exames) +
+            section('🏥 Histórico Clínico', clinico) +
+            section('🥗 Alimentação', aliment) +
+            (a.observacoes ? `<div style="background:#fffbeb;border-radius:10px;padding:.9rem 1rem;border:1px solid #fde68a"><div style="font-weight:700;color:#92400e;font-size:.78rem;text-transform:uppercase;margin-bottom:.35rem">💬 Observações</div><p style="font-size:13px;color:#374151;margin:0">${a.observacoes}</p></div>` : '');
+
+        const m = document.getElementById('modalDetalhesAvaliacao');
+        m.style.display = 'flex';
+    }
+
+    function fecharDetalhesAvaliacao() {
+        document.getElementById('modalDetalhesAvaliacao').style.display = 'none';
+    }
+
 </script>
+
+<!-- MODAL VER DETALHES AVALIAÇÃO -->
+<div class="modal-overlay" id="modalDetalhesAvaliacao" onclick="if(event.target.id==='modalDetalhesAvaliacao')fecharDetalhesAvaliacao()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:1rem">
+    <div style="background:#fff;border-radius:22px;max-width:720px;width:100%;max-height:90vh;overflow-y:auto;padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.2)">
+        <div style="background:linear-gradient(135deg,#1B4332,#2D6A4F);color:#fff;padding:1.3rem 1.6rem;border-radius:22px 22px 0 0;display:flex;justify-content:space-between;align-items:center">
+            <div>
+                <div style="font-weight:700;font-size:1.15rem">📋 Detalhes da Avaliação</div>
+                <div style="font-size:.82rem;opacity:.85" id="modalDetDataLabel"></div>
+            </div>
+            <button onclick="fecharDetalhesAvaliacao()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+        </div>
+        <div id="modalDetBody" style="padding:1.4rem 1.6rem"></div>
+    </div>
+</div>
+
 </body>
 </html>

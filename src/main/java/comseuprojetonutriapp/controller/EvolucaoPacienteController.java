@@ -51,13 +51,23 @@ public class EvolucaoPacienteController {
         double imc = 0;
         if (p.getAltura() != null && p.getAltura() > 0) {
             imc = peso / (p.getAltura() * p.getAltura());
-            // Arredonda para 1 casa
             imc = Math.round(imc * 10.0) / 10.0;
         }
 
         String obs = body.getOrDefault("observacao", "").toString();
 
         EvolucaoPaciente ev = new EvolucaoPaciente(pacienteId, peso, imc, LocalDate.now(), obs);
+
+        // % Gordura e Massa Muscular (opcionais)
+        Object gordObj = body.get("percentualGordura");
+        if (gordObj != null && !gordObj.toString().isBlank()) {
+            try { ev.setPercentualGordura(Double.parseDouble(gordObj.toString())); } catch (NumberFormatException ignored) {}
+        }
+        Object muscObj = body.get("massaMuscular");
+        if (muscObj != null && !muscObj.toString().isBlank()) {
+            try { ev.setMassaMuscular(Double.parseDouble(muscObj.toString())); } catch (NumberFormatException ignored) {}
+        }
+
         evolucaoRepository.save(ev);
 
         // Atualiza o peso atual do paciente também

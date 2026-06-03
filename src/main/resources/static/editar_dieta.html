@@ -248,7 +248,120 @@
     async function init() {
         renderMeals();
         await carregarAlimentosBackend();
+        await carregarDietaExistente();
         atualizarTotais();
+    }
+
+    /* ──────────────── CARREGAR DIETA EXISTENTE DO BACKEND ──────────────── */
+    async function carregarDietaExistente() {
+        if (!pacienteId) return;
+        try {
+            const res = await fetch(`/dietas/paciente/${pacienteId}`);
+            if (!res.ok) return;
+            const lista = await res.json();
+            if (!lista || !lista.length) return;
+
+            // Função para decodificar a descrição salva
+            const parseDescBack = desc => {
+                if (!desc) return null;
+                const segmentos = desc.split('||');
+                const principal = segmentos.find(s => !s.startsWith('[SUBS]') && !s.startsWith('[OBS]')) || '';
+                const subsRaw   = (segmentos.find(s => s.startsWith('[SUBS]')) || '').replace('[SUBS]','');
+                const obsRaw    = (segmentos.find(s => s.startsWith('[OBS]'))  || '').replace('[OBS]','');
+                if (!principal.trim()) return { obs: obsRaw, somente_obs: true };
+
+                const partes = principal.split(' — ');
+                const nome   = partes[0] || '';
+                const resto  = partes[1] || '';
+                const campos = resto.split(' · ');
+
+                // qtd + unidade: "100 g" ou "2 colher sopa"
+                const qtdUni = (campos[0] || '').trim();
+                const lastSpace = qtdUni.lastIndexOf(' ');
+                const quantidade = lastSpace !== -1 ? qtdUni.substring(0, lastSpace) : qtdUni;
+                const unidade    = lastSpace !== -1 ? qtdUni.substring(lastSpace + 1) : 'g';
+
+                // kcal: "230kcal" → 230
+                const kcalStr = (campos[1] || '').replace('kcal','').trim();
+                const kcal = parseFloat(kcalStr) || 0;
+
+                // macros: "P:25g C:30g G:8g"
+                const macrosStr = campos[2] || '';
+                const protM = macrosStr.match(/P:([\d.]+)g/);
+                const carbM = macrosStr.match(/C:([\d.]+)g/);
+                const gordM = macrosStr.match(/G:([\d.]+)g/);
+                const prot  = protM ? parseFloat(protM[1]) : 0;
+                const carb  = carbM ? parseFloat(carbM[1]) : 0;
+                const gord  = gordM ? parseFloat(gordM[1]) : 0;
+
+                // substituições
+                const substituicoes = subsRaw ? subsRaw.split('|').map(s => {
+                    const lastDash = s.lastIndexOf(' - ');
+                    if (lastDash === -1) return { nome: s.trim(), quantidade: '', unidade: '' };
+                    const qtdUniSub = s.substring(lastDash + 3).trim();
+                    const ls2 = qtdUniSub.lastIndexOf(' ');
+                    return {
+                        nome: s.substring(0, lastDash).trim(),
+                        quantidade: ls2 !== -1 ? qtdUniSub.substring(0, ls2) : qtdUniSub,
+                        unidade:    ls2 !== -1 ? qtdUniSub.substring(ls2 + 1) : ''
+                    };
+                }).filter(s => s.nome) : [];
+
+                return { nome, quantidade, unidade, kcal, prot, carb, gord, substituicoes, obs: obsRaw };
+            };
+
+            // Mapeia nome da refeição para o id do REFEICOES
+            const nomePraId = nome => {
+                const n = nome.toLowerCase();
+                if (n.includes('café') || n.includes('cafe') || n.includes('manhã') && n.includes('café')) return 'cafe';
+                if (n.includes('lanche') && (n.includes('manhã') || n.includes('manha'))) return 'lanche_m';
+                if (n.includes('lanche') && (n.includes('tarde'))) return 'lanche_t';
+                if (n.includes('almoço') || n.includes('almoco')) return 'almoco';
+                if (n.includes('jantar')) return 'jantar';
+                if (n.includes('ceia')) return 'ceia';
+                // fallback: procura pelo nome exato
+                const r = REFEICOES.find(r => r.nome.toLowerCase() === n);
+                return r ? r.id : null;
+            };
+
+            // Preenche o objeto dieta com os dados do backend
+            lista.forEach(item => {
+                const rId = nomePraId(item.refeicaoNome || '');
+                if (!rId || !dieta[rId]) return;
+
+                // Atualiza horário no input
+                const timeEl = document.getElementById(`time_${rId}`);
+                if (timeEl && item.horario) timeEl.value = item.horario;
+
+                const parsed = parseDescBack(item.descricao || '');
+                if (!parsed) return;
+
+                if (parsed.somente_obs) {
+                    if (parsed.obs) dieta[rId].observacoes = parsed.obs;
+                    return;
+                }
+
+                if (parsed.obs && !dieta[rId].observacoes) {
+                    dieta[rId].observacoes = parsed.obs;
+                }
+
+                dieta[rId].itens.push({
+                    nome:          parsed.nome,
+                    quantidade:    parsed.quantidade,
+                    unidade:       parsed.unidade,
+                    kcal:          parsed.kcal,
+                    prot:          parsed.prot,
+                    carb:          parsed.carb,
+                    gord:          parsed.gord,
+                    substituicoes: parsed.substituicoes
+                });
+            });
+
+            renderMeals();
+            showToast('✅ Dieta carregada para edição!');
+        } catch(e) {
+            console.error('Erro ao carregar dieta existente:', e);
+        }
     }
 
     /* ──────────────── BACKEND ALIMENTOS ──────────────── */

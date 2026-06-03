@@ -14,13 +14,17 @@
         .logo-text{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#2D6A4F;}
         .btn-back{text-decoration:none;color:#2D6A4F;border:2px solid #52B788;padding:.7rem 1rem;border-radius:12px;font-weight:700;transition:.2s;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;}
         .btn-back:hover{background:#52B788;color:#fff;}
-        .container{max-width:1500px;margin:auto;padding:2rem;}
+        .container{max-width:1600px;margin:auto;padding:2rem;}
         .page-header{margin-bottom:2rem;}
         .page-title{font-family:'Playfair Display',serif;font-size:2.2rem;margin-bottom:.5rem;}
         .page-subtitle{color:#6b7280;}
-        .layout{display:grid;grid-template-columns:350px 1fr 300px;gap:2rem;}
+        .layout{display:grid;grid-template-columns:330px 1fr 290px;gap:1.5rem;}
+
+        /* ── CARD ── */
         .card{background:#fff;border-radius:22px;padding:1.5rem;box-shadow:0 4px 18px rgba(45,106,79,0.08);}
         .card-title{font-size:1.1rem;font-weight:700;margin-bottom:1rem;color:#1a3a2a;}
+
+        /* ── PAINEL ALIMENTOS ── */
         .search-wrap{position:relative;margin-bottom:.6rem;}
         .search{width:100%;padding:.9rem 3rem .9rem 1rem;border-radius:12px;border:1px solid #d1d5db;outline:none;font-size:.95rem;font-family:'DM Sans',sans-serif;}
         .search:focus{border-color:#52B788;}
@@ -31,7 +35,7 @@
         .cat-btn.active,.cat-btn:hover{background:#52B788;color:#fff;border-color:#52B788;}
         .loading{display:none;text-align:center;padding:1rem;color:#52B788;font-weight:600;}
         .loading.show{display:block;}
-        .food-list{display:flex;flex-direction:column;gap:.8rem;max-height:580px;overflow:auto;padding-right:4px;}
+        .food-list{display:flex;flex-direction:column;gap:.8rem;max-height:520px;overflow:auto;padding-right:4px;}
         .food-list::-webkit-scrollbar{width:4px;}
         .food-list::-webkit-scrollbar-thumb{background:#52B788;border-radius:4px;}
         .food-card{border:1px solid #dcfce7;border-radius:14px;padding:.9rem;transition:.2s;}
@@ -45,10 +49,12 @@
         .macro strong{display:block;color:#2D6A4F;font-size:.82rem;}
         .macro span{font-size:.68rem;color:#6b7280;}
         .food-actions{display:flex;flex-direction:column;gap:.4rem;}
-        .food-actions-row{display:flex;gap:.4rem;}
-        .food-actions select,.food-actions input{padding:.65rem;border-radius:9px;border:1px solid #d1d5db;outline:none;font-family:'DM Sans',sans-serif;font-size:.88rem;}
-        .food-actions select{flex:1.2;}
-        .food-actions input{flex:1;}
+        .food-actions-row{display:flex;gap:.4rem;align-items:center;}
+        .food-actions select,.food-actions input[type=number]{padding:.65rem;border-radius:9px;border:1px solid #d1d5db;outline:none;font-family:'DM Sans',sans-serif;font-size:.88rem;}
+        .food-actions select{flex:1.3;}
+        .food-actions input[type=number]{flex:1;}
+        .unit-select{padding:.65rem .5rem!important;border-radius:9px;border:1px solid #d1d5db;outline:none;font-family:'DM Sans',sans-serif;font-size:.82rem;background:#f9fafb;min-width:70px;cursor:pointer;}
+        .unit-select:focus{border-color:#52B788;}
         .add-btn{border:none;background:linear-gradient(135deg,#52B788,#2D6A4F);color:#fff;padding:.75rem;border-radius:9px;cursor:pointer;font-weight:700;font-size:.88rem;width:100%;}
         .add-btn:hover{opacity:.9;}
         .divider{border:none;border-top:1px dashed #d1d5db;margin:1.2rem 0;}
@@ -58,20 +64,48 @@
         .manual-fields input:focus{border-color:#52B788;}
         .manual-btn{border:none;background:#1a3a2a;color:#fff;padding:.8rem;border-radius:9px;cursor:pointer;font-weight:700;width:100%;margin-top:.3rem;font-family:'DM Sans',sans-serif;}
         .manual-btn:hover{background:#2D6A4F;}
-        .meal-section{border:1px solid #dcfce7;border-radius:16px;padding:1.1rem;margin-bottom:1.1rem;}
-        .meal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem;}
-        .meal-title-wrap{display:flex;align-items:center;gap:.4rem;}
-        .meal-emoji{font-size:1.1rem;}
-        .meal-title{font-weight:700;font-size:.92rem;}
-        .meal-time{padding:.45rem .65rem;border-radius:9px;border:1px solid #d1d5db;outline:none;font-family:'DM Sans',sans-serif;font-size:.82rem;}
-        .meal-kcal{font-size:.78rem;color:#52B788;font-weight:600;margin-top:.15rem;}
-        .diet-items{display:flex;flex-direction:column;gap:.5rem;}
+
+        /* ── REFEIÇÕES ── */
+        .meal-section{border:1px solid #dcfce7;border-radius:18px;overflow:hidden;margin-bottom:1.1rem;}
+        .meal-header{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1.1rem;background:linear-gradient(135deg,#1B4332,#2D6A4F);color:#fff;gap:.5rem;flex-wrap:wrap;}
+        .meal-header-left{display:flex;align-items:center;gap:.6rem;}
+        .meal-emoji{font-size:1.2rem;}
+        .meal-title-text{font-weight:700;font-size:.95rem;}
+        .meal-kcal-badge{background:rgba(255,255,255,0.18);padding:.2rem .7rem;border-radius:999px;font-size:.75rem;font-weight:600;}
+        .meal-time-wrap{display:flex;align-items:center;gap:.4rem;}
+        .meal-time-label{font-size:.75rem;opacity:.8;}
+        .meal-time{padding:.4rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,0.4);outline:none;font-family:'DM Sans',sans-serif;font-size:.85rem;background:rgba(255,255,255,0.15);color:#fff;cursor:pointer;}
+        .meal-time:focus{border-color:#fff;}
+        .meal-time::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.8;}
+        .meal-body{padding:1rem 1.1rem;}
+        .diet-items{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.8rem;}
         .diet-empty{color:#9ca3af;font-size:.82rem;text-align:center;padding:.7rem;font-style:italic;}
-        .diet-item{background:#f9fafb;border-radius:10px;padding:.7rem .9rem;display:flex;justify-content:space-between;align-items:center;gap:.4rem;}
-        .diet-food strong{color:#1a3a2a;font-size:.88rem;}
-        .diet-food span{color:#6b7280;font-size:.78rem;display:block;margin-top:.1rem;}
-        .remove-btn{border:none;background:#fee2e2;color:#dc2626;padding:.4rem .7rem;border-radius:7px;cursor:pointer;font-weight:700;font-size:.78rem;}
+        .diet-item{background:#f9fafb;border-radius:10px;padding:.7rem .9rem;}
+        .diet-item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.4rem;margin-bottom:.4rem;}
+        .diet-food-name{font-weight:700;color:#1a3a2a;font-size:.88rem;}
+        .diet-food-info{color:#6b7280;font-size:.78rem;}
+        .diet-item-subs{margin-top:.5rem;}
+        .diet-item-subs-label{font-size:.72rem;font-weight:700;color:#2D6A4F;margin-bottom:.3rem;display:flex;align-items:center;gap:.3rem;}
+        .sub-item-row{display:flex;gap:.4rem;align-items:center;margin-bottom:.3rem;}
+        .sub-item-row input[type=text]{flex:1.5;padding:.45rem .6rem;border-radius:7px;border:1px solid #e5e7eb;font-size:.78rem;font-family:'DM Sans',sans-serif;outline:none;}
+        .sub-item-row input[type=number]{width:70px;padding:.45rem .5rem;border-radius:7px;border:1px solid #e5e7eb;font-size:.78rem;font-family:'DM Sans',sans-serif;outline:none;}
+        .sub-item-row input:focus{border-color:#52B788;}
+        .sub-unit-sel{padding:.45rem .4rem;border-radius:7px;border:1px solid #e5e7eb;font-size:.75rem;font-family:'DM Sans',sans-serif;background:#fff;outline:none;min-width:62px;}
+        .sub-item-row button{background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:.4rem .6rem;font-size:.75rem;cursor:pointer;font-weight:700;white-space:nowrap;}
+        .sub-item-row button:hover{background:#fca5a5;}
+        .add-sub-btn{background:#f0fdf4;color:#2D6A4F;border:1px dashed #52B788;border-radius:7px;padding:.38rem .75rem;font-size:.75rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:.15rem;}
+        .add-sub-btn:hover{background:#dcfce7;}
+        .remove-btn{border:none;background:#fee2e2;color:#dc2626;padding:.35rem .65rem;border-radius:7px;cursor:pointer;font-weight:700;font-size:.75rem;white-space:nowrap;}
         .remove-btn:hover{background:#fca5a5;}
+
+        /* ── OBSERVAÇÕES / MODO DE PREPARO ── */
+        .meal-obs-wrap{margin-top:.6rem;border-top:1px dashed #dcfce7;padding-top:.7rem;}
+        .meal-obs-label{font-size:.78rem;font-weight:700;color:#2D6A4F;margin-bottom:.35rem;display:flex;align-items:center;gap:.35rem;}
+        .meal-obs-textarea{width:100%;padding:.65rem .8rem;border-radius:9px;border:1px solid #d1d5db;font-family:'DM Sans',sans-serif;font-size:.83rem;resize:vertical;min-height:64px;outline:none;color:#374151;background:#fafafa;line-height:1.5;}
+        .meal-obs-textarea:focus{border-color:#52B788;background:#fff;}
+        .meal-obs-textarea::placeholder{color:#b0b8c1;}
+
+        /* ── RESUMO ── */
         .summary-grid{display:grid;gap:.7rem;}
         .summary-box{background:#f0fdf4;padding:.9rem;border-radius:14px;text-align:center;}
         .summary-box.highlight{background:linear-gradient(135deg,#52B788,#2D6A4F);color:#fff;}
@@ -112,10 +146,11 @@
 <div class="container">
     <div class="page-header">
         <h1 class="page-title">Editar Plano Alimentar</h1>
-        <p class="page-subtitle" id="subtituloPaciente">Pesquise alimentos — os dados nutricionais são carregados do banco de dados.</p>
+        <p class="page-subtitle" id="subtituloPaciente">Pesquise alimentos e monte o plano — seguindo o modelo da prescrição.</p>
     </div>
     <div class="layout">
 
+        <!-- ══════════════════════ PAINEL ESQUERDO ══════════════════════ -->
         <div class="card">
             <h2 class="card-title">🔍 Alimentos</h2>
             <div class="cat-filters">
@@ -123,7 +158,7 @@
                 <button class="cat-btn" onclick="filtrarCategoria('fruta',this)">🍎 Frutas</button>
                 <button class="cat-btn" onclick="filtrarCategoria('vegetal',this)">🥦 Vegetais</button>
                 <button class="cat-btn" onclick="filtrarCategoria('proteina',this)">🥩 Proteínas</button>
-                <button class="cat-btn" onclick="filtrarCategoria('carboidrato',this)">🍚 Carboidratos</button>
+                <button class="cat-btn" onclick="filtrarCategoria('carboidrato',this)">🍚 Carbo</button>
                 <button class="cat-btn" onclick="filtrarCategoria('laticinios',this)">🥛 Laticínios</button>
                 <button class="cat-btn" onclick="filtrarCategoria('liquido',this)">💧 Líquidos</button>
                 <button class="cat-btn" onclick="filtrarCategoria('gordura',this)">🫒 Gorduras</button>
@@ -133,27 +168,31 @@
                        oninput="filtrarLocal()" onkeydown="if(event.key==='Enter') filtrarLocal()">
                 <button class="search-btn" onclick="filtrarLocal()">Buscar</button>
             </div>
-            <p class="search-hint">Alimentos carregados do banco · <span id="totalAlimentos">0</span> disponíveis</p>
+            <p class="search-hint">Alimentos no banco · <span id="totalAlimentos">0</span> disponíveis</p>
             <div class="loading" id="loading">⏳ Carregando alimentos...</div>
             <div class="food-list" id="foodList"></div>
             <hr class="divider">
             <div class="manual-title">✏️ Cadastrar Alimento Manual</div>
             <div class="manual-fields">
-                <input type="text"   id="mNome" placeholder="Nome do alimento *">
-                <input type="text"   id="mCategoria" placeholder="Grupo alimentar (fruta, proteina, liquido...)">
-                <input type="number" id="mKcal" placeholder="Calorias por 100g *">
-                <input type="number" id="mProt" placeholder="Proteína por 100g (g)">
-                <input type="number" id="mCarb" placeholder="Carboidrato por 100g (g)">
-                <input type="number" id="mGord" placeholder="Gordura por 100g (g)">
+                <input type="text"   id="mNome"      placeholder="Nome do alimento *">
+                <input type="text"   id="mCategoria" placeholder="Grupo alimentar (fruta, proteina...)">
+                <input type="number" id="mKcal"      placeholder="Calorias por 100g *">
+                <input type="number" id="mProt"      placeholder="Proteína por 100g (g)">
+                <input type="number" id="mCarb"      placeholder="Carboidrato por 100g (g)">
+                <input type="number" id="mGord"      placeholder="Gordura por 100g (g)">
                 <button class="manual-btn" onclick="cadastrarManual()">💾 Salvar no Banco</button>
             </div>
         </div>
 
+        <!-- ══════════════════════ PAINEL CENTRAL ══════════════════════ -->
         <div class="card">
-            <h2 class="card-title">🥗 Estrutura da Dieta</h2>
+            <h2 class="card-title">🥗 Estrutura da Dieta
+                <span style="font-size:.78rem;font-weight:500;color:#6b7280;margin-left:.5rem;">— edite horários, adicione substituições e observações por refeição</span>
+            </h2>
             <div id="mealsContainer"></div>
         </div>
 
+        <!-- ══════════════════════ PAINEL DIREITO ══════════════════════ -->
         <div class="card">
             <h2 class="card-title">📊 Resumo Nutricional</h2>
             <div class="summary-grid">
@@ -174,7 +213,7 @@
                     <div class="summary-label">Gorduras</div>
                 </div>
             </div>
-            <button class="save-btn" onclick="salvarDieta()">✅ Salvar Dieta</button>
+            <button class="save-btn"  onclick="salvarDieta()">✅ Salvar Dieta</button>
             <button class="clear-btn" onclick="limparDieta()">🗑️ Limpar Tudo</button>
         </div>
 
@@ -184,26 +223,35 @@
 <div class="toast" id="toast"></div>
 
 <script>
+    /* ═══════════════════════════════════════════════════════════════
+       ESTRUTURA DAS REFEIÇÕES — igual ao PDF (horários configuráveis)
+    ═══════════════════════════════════════════════════════════════ */
     const REFEICOES = [
-        {id:'cafe',     nome:'Café da Manhã',   emoji:'☀️', hora:'07:00'},
-        {id:'lanche_m', nome:'Lanche da Manhã', emoji:'🍎', hora:'10:00'},
-        {id:'almoco',   nome:'Almoço',          emoji:'🍽️', hora:'12:00'},
-        {id:'lanche_t', nome:'Lanche da Tarde', emoji:'🫐', hora:'16:00'},
-        {id:'jantar',   nome:'Jantar',          emoji:'🌙', hora:'19:00'},
-        {id:'ceia',     nome:'Ceia',            emoji:'🌃', hora:'21:00'},
+        {id:'cafe',     nome:'Café da Manhã',   emoji:'☀️',  hora:'06:45'},
+        {id:'lanche_m', nome:'Lanche da Manhã', emoji:'🍎',  hora:'09:45'},
+        {id:'almoco',   nome:'Almoço',          emoji:'🍛',  hora:'11:45'},
+        {id:'lanche_t', nome:'Lanche da Tarde', emoji:'🫐',  hora:'15:00'},
+        {id:'jantar',   nome:'Jantar',          emoji:'🌙',  hora:'18:30'},
+        {id:'ceia',     nome:'Ceia',            emoji:'🌃',  hora:'21:00'},
     ];
+
+    const UNIDADES = ['g','ml','unidade','porção','colher sopa','colher chá','xícara','fatia','filé','bife'];
 
     const pacienteId = localStorage.getItem("pacienteSelecionado");
     let bancoDB = [], bancoDB_filtrado = [], categoriaAtiva = 'todos';
-    let dieta = {};
-    REFEICOES.forEach(r => { dieta[r.id] = []; });
 
+    // dieta[refeicaoId] = { itens:[], observacoes:'' }
+    let dieta = {};
+    REFEICOES.forEach(r => { dieta[r.id] = { itens: [], observacoes: '' }; });
+
+    /* ──────────────── INIT ──────────────── */
     async function init() {
         renderMeals();
         await carregarAlimentosBackend();
-        atualizarTela();
+        atualizarTotais();
     }
 
+    /* ──────────────── BACKEND ALIMENTOS ──────────────── */
     async function carregarAlimentosBackend() {
         const loading = document.getElementById('loading');
         loading.classList.add('show');
@@ -226,15 +274,14 @@
         } finally { loading.classList.remove('show'); }
     }
 
+    /* ──────────────── FILTROS ──────────────── */
     function filtrarCategoria(cat, btn) {
         categoriaAtiva = cat;
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         aplicarFiltros();
     }
-
     function filtrarLocal() { aplicarFiltros(); }
-
     function aplicarFiltros() {
         const termo = document.getElementById('searchFood').value.toLowerCase().trim();
         let lista = [...bancoDB];
@@ -244,93 +291,182 @@
         renderFoods(lista);
     }
 
-    function renderMeals() {
-        document.getElementById('mealsContainer').innerHTML = REFEICOES.map(r => `
-            <div class="meal-section">
-                <div class="meal-header">
-                    <div>
-                        <div class="meal-title-wrap"><span class="meal-emoji">${r.emoji}</span><span class="meal-title">${r.nome}</span></div>
-                        <div class="meal-kcal" id="kcal_${r.id}">0 kcal</div>
-                    </div>
-                    <input type="time" class="meal-time" value="${r.hora}" id="time_${r.id}">
-                </div>
-                <div class="diet-items" id="items_${r.id}"><div class="diet-empty">Nenhum alimento adicionado</div></div>
-            </div>`).join('');
-    }
-
+    /* ──────────────── RENDER CARDS DE ALIMENTOS ──────────────── */
     function renderFoods(lista) {
         const fl = document.getElementById('foodList');
         if (!lista.length) { fl.innerHTML = `<div class="no-results">🔍 Nenhum alimento encontrado.</div>`; return; }
         fl.innerHTML = lista.map(f => {
             const idx = bancoDB.indexOf(f);
+            const unitOpts = UNIDADES.map(u => `<option value="${u}">${u}</option>`).join('');
             return `
-            <div class="food-card">
-                <div class="food-top"><span class="food-name">${f.nome}</span><span class="food-kcal">${f.kcal.toFixed(0)} kcal/100g</span></div>
-                <div class="food-cat">${f.categoria ? '📂 ' + f.categoria : '📋 Sem categoria'}</div>
-                <div class="food-macros">
-                    <div class="macro"><strong>${f.proteina.toFixed(1)}g</strong><span>Proteína</span></div>
-                    <div class="macro"><strong>${f.carbo.toFixed(1)}g</strong><span>Carbo</span></div>
-                    <div class="macro"><strong>${f.gordura.toFixed(1)}g</strong><span>Gordura</span></div>
+        <div class="food-card">
+            <div class="food-top"><span class="food-name">${f.nome}</span><span class="food-kcal">${f.kcal.toFixed(0)} kcal/100g</span></div>
+            <div class="food-cat">${f.categoria ? '📂 ' + f.categoria : '📋 Sem categoria'}</div>
+            <div class="food-macros">
+                <div class="macro"><strong>${f.proteina.toFixed(1)}g</strong><span>Proteína</span></div>
+                <div class="macro"><strong>${f.carbo.toFixed(1)}g</strong><span>Carbo</span></div>
+                <div class="macro"><strong>${f.gordura.toFixed(1)}g</strong><span>Gordura</span></div>
+            </div>
+            <div class="food-actions">
+                <select id="meal_${idx}">${REFEICOES.map(r=>`<option value="${r.id}">${r.nome}</option>`).join('')}</select>
+                <div class="food-actions-row">
+                    <input type="number" id="qtd_${idx}" placeholder="Qtd." min="0.1" step="0.1" style="flex:1">
+                    <select class="unit-select" id="unit_${idx}">${unitOpts}</select>
                 </div>
-                <div class="food-actions">
-                    <div class="food-actions-row">
-                        <select id="meal_${idx}">${REFEICOES.map(r=>`<option value="${r.id}">${r.nome}</option>`).join('')}</select>
-                        <input type="number" id="qtd_${idx}" placeholder="g / ml" min="1">
-                    </div>
-                    <button class="add-btn" onclick="adicionarNaDieta(${idx})">+ Adicionar</button>
-                </div>
-            </div>`;
+                <button class="add-btn" onclick="adicionarNaDieta(${idx})">+ Adicionar à Refeição</button>
+            </div>
+        </div>`;
         }).join('');
     }
 
+    /* ──────────────── RENDER ESTRUTURA DE REFEIÇÕES ──────────────── */
+    function renderMeals() {
+        document.getElementById('mealsContainer').innerHTML = REFEICOES.map(r => `
+        <div class="meal-section" id="meal_section_${r.id}">
+            <div class="meal-header">
+                <div class="meal-header-left">
+                    <span class="meal-emoji">${r.emoji}</span>
+                    <span class="meal-title-text">${r.nome}</span>
+                    <span class="meal-kcal-badge" id="kcal_${r.id}">0 kcal</span>
+                </div>
+                <div class="meal-time-wrap">
+                    <span class="meal-time-label">🕐 Horário:</span>
+                    <input type="time" class="meal-time" value="${r.hora}" id="time_${r.id}"
+                           onchange="onHorarioChange('${r.id}')">
+                </div>
+            </div>
+            <div class="meal-body">
+                <div class="diet-items" id="items_${r.id}">
+                    <div class="diet-empty">Nenhum alimento adicionado</div>
+                </div>
+                <div class="meal-obs-wrap">
+                    <div class="meal-obs-label">📝 Modo de preparo, dicas e observações para esta refeição:</div>
+                    <textarea class="meal-obs-textarea" id="obs_${r.id}"
+                        placeholder="Ex: quantidade de adoçante recomendada da embalagem; cozinhar o frango grelhado sem óleo; evitar sal em excesso..."
+                        oninput="dieta['${r.id}'].observacoes = this.value"></textarea>
+                </div>
+            </div>
+        </div>`).join('');
+    }
+
+    function onHorarioChange(refeicaoId) {
+        // nada extra necessário — o valor é lido no salvar
+    }
+
+    /* ──────────────── ADICIONAR ALIMENTO ──────────────── */
     function adicionarNaDieta(idx) {
         const food = bancoDB[idx];
         const refeicaoId = document.getElementById(`meal_${idx}`)?.value;
-        const qtd = parseFloat(document.getElementById(`qtd_${idx}`)?.value);
-        if (!qtd || qtd <= 0) { showToast('⚠️ Informe a quantidade em g/ml'); return; }
-        if (!refeicaoId) { showToast('⚠️ Selecione a refeição'); return; }
-        const fator = qtd / 100;
-        dieta[refeicaoId].push({
-            nome: food.nome, quantidade: qtd,
-            kcal: Number((food.kcal * fator).toFixed(1)), prot: Number((food.proteina * fator).toFixed(1)),
-            carb: Number((food.carbo * fator).toFixed(1)), gord: Number((food.gordura * fator).toFixed(1)),
+        const qtd  = parseFloat(document.getElementById(`qtd_${idx}`)?.value);
+        const unit = document.getElementById(`unit_${idx}`)?.value || 'g';
+
+        if (!qtd || qtd <= 0) { showToast('⚠️ Informe a quantidade'); return; }
+        if (!refeicaoId)      { showToast('⚠️ Selecione a refeição'); return; }
+
+        // Calcula nutrientes pelo peso em gramas (quando unidade não é g/ml, usa valor direto como "porção")
+        const fatorG = (unit === 'g' || unit === 'ml') ? qtd / 100 : qtd * 0.5; // porção ~50g estimada p/ cálculo
+        dieta[refeicaoId].itens.push({
+            nome: food.nome,
+            quantidade: qtd,
+            unidade: unit,
+            kcal:     Number((food.kcal     * fatorG).toFixed(1)),
+            prot:     Number((food.proteina * fatorG).toFixed(1)),
+            carb:     Number((food.carbo    * fatorG).toFixed(1)),
+            gord:     Number((food.gordura  * fatorG).toFixed(1)),
+            substituicoes: [], // lista de {nome, quantidade, unidade}
         });
+
         const qtdEl = document.getElementById(`qtd_${idx}`);
         if (qtdEl) qtdEl.value = '';
-        atualizarTela();
+        atualizarRefeicao(refeicaoId);
+        atualizarTotais();
         showToast(`✅ ${food.nome} adicionado!`);
     }
 
-    function removerItem(refeicaoId, index) { dieta[refeicaoId].splice(index, 1); atualizarTela(); }
+    /* ──────────────── RENDER ITENS DE UMA REFEIÇÃO ──────────────── */
+    function atualizarRefeicao(refeicaoId) {
+        const container = document.getElementById(`items_${refeicaoId}`);
+        const kcalEl    = document.getElementById(`kcal_${refeicaoId}`);
+        const itens = dieta[refeicaoId].itens;
 
-    function atualizarTela() {
-        let totalKcal=0, totalProt=0, totalCarb=0, totalGord=0;
-        REFEICOES.forEach(r => {
-            const container = document.getElementById(`items_${r.id}`);
-            const kcalEl = document.getElementById(`kcal_${r.id}`);
-            if (!container) return;
-            const itens = dieta[r.id] || [];
-            let mKcal = 0;
-            if (!itens.length) {
-                container.innerHTML = `<div class="diet-empty">Nenhum alimento adicionado</div>`;
-            } else {
-                container.innerHTML = itens.map((item, i) => {
-                    mKcal += item.kcal;
-                    return `<div class="diet-item">
-                        <div class="diet-food"><strong>${item.nome}</strong><span>${item.quantidade}g/ml · ${item.kcal} kcal · P:${item.prot}g C:${item.carb}g G:${item.gord}g</span></div>
-                        <button class="remove-btn" onclick="removerItem('${r.id}',${i})">✕</button>
-                    </div>`;
-                }).join('');
-            }
-            if (kcalEl) kcalEl.textContent = mKcal.toFixed(0) + ' kcal';
-            itens.forEach(item => { totalKcal+=item.kcal; totalProt+=item.prot; totalCarb+=item.carb; totalGord+=item.gord; });
-        });
-        document.getElementById('totalKcal').textContent = totalKcal.toFixed(0);
-        document.getElementById('totalProt').textContent = totalProt.toFixed(1) + 'g';
-        document.getElementById('totalCarb').textContent = totalCarb.toFixed(1) + 'g';
-        document.getElementById('totalGord').textContent = totalGord.toFixed(1) + 'g';
+        if (!itens.length) {
+            container.innerHTML = `<div class="diet-empty">Nenhum alimento adicionado</div>`;
+            if (kcalEl) kcalEl.textContent = '0 kcal';
+            return;
+        }
+
+        let mKcal = 0;
+        container.innerHTML = itens.map((item, i) => {
+            mKcal += item.kcal;
+            const subsHTML = renderSubstituicoes(refeicaoId, i, item.substituicoes);
+            return `
+        <div class="diet-item" id="diet_item_${refeicaoId}_${i}">
+            <div class="diet-item-top">
+                <div>
+                    <div class="diet-food-name">${item.nome}</div>
+                    <div class="diet-food-info">${item.quantidade} ${item.unidade} · ${item.kcal} kcal · P:${item.prot}g C:${item.carb}g G:${item.gord}g</div>
+                </div>
+                <button class="remove-btn" onclick="removerItem('${refeicaoId}',${i})">✕ Remover</button>
+            </div>
+            <div class="diet-item-subs">
+                <div class="diet-item-subs-label">🔄 Opções de substituição para <em>${item.nome}</em>:</div>
+                <div id="subs_${refeicaoId}_${i}">${subsHTML}</div>
+                <button class="add-sub-btn" onclick="adicionarSub('${refeicaoId}',${i})">+ Adicionar substituição</button>
+            </div>
+        </div>`;
+        }).join('');
+
+        if (kcalEl) kcalEl.textContent = mKcal.toFixed(0) + ' kcal';
     }
 
+    /* ──────────────── SUBSTITUIÇÕES ──────────────── */
+    function renderSubstituicoes(refeicaoId, itemIdx, subs) {
+        if (!subs || !subs.length) return '';
+        return subs.map((s, si) => `
+        <div class="sub-item-row" id="sub_${refeicaoId}_${itemIdx}_${si}">
+            <input type="text"   value="${s.nome}"      placeholder="Nome do substituto"
+                   oninput="updateSub('${refeicaoId}',${itemIdx},${si},'nome',this.value)" style="flex:1.5">
+            <input type="number" value="${s.quantidade}" placeholder="Qtd" min="0.1" step="0.1"
+                   oninput="updateSub('${refeicaoId}',${itemIdx},${si},'quantidade',this.value)" style="width:64px">
+            <select class="sub-unit-sel" onchange="updateSub('${refeicaoId}',${itemIdx},${si},'unidade',this.value)">
+                ${UNIDADES.map(u=>`<option value="${u}" ${u===s.unidade?'selected':''}>${u}</option>`).join('')}
+            </select>
+            <button onclick="removerSub('${refeicaoId}',${itemIdx},${si})">✕</button>
+        </div>`).join('');
+    }
+
+    function adicionarSub(refeicaoId, itemIdx) {
+        dieta[refeicaoId].itens[itemIdx].substituicoes.push({ nome: '', quantidade: '', unidade: 'g' });
+        atualizarRefeicao(refeicaoId);
+    }
+    function removerSub(refeicaoId, itemIdx, subIdx) {
+        dieta[refeicaoId].itens[itemIdx].substituicoes.splice(subIdx, 1);
+        atualizarRefeicao(refeicaoId);
+    }
+    function updateSub(refeicaoId, itemIdx, subIdx, campo, valor) {
+        if (dieta[refeicaoId]?.itens[itemIdx]?.substituicoes[subIdx]) {
+            dieta[refeicaoId].itens[itemIdx].substituicoes[subIdx][campo] = valor;
+        }
+    }
+    function removerItem(refeicaoId, index) {
+        dieta[refeicaoId].itens.splice(index, 1);
+        atualizarRefeicao(refeicaoId);
+        atualizarTotais();
+    }
+
+    /* ──────────────── TOTAIS ──────────────── */
+    function atualizarTotais() {
+        let tk=0, tp=0, tc=0, tg=0;
+        REFEICOES.forEach(r => {
+            (dieta[r.id].itens || []).forEach(item => { tk+=item.kcal; tp+=item.prot; tc+=item.carb; tg+=item.gord; });
+        });
+        document.getElementById('totalKcal').textContent = tk.toFixed(0);
+        document.getElementById('totalProt').textContent = tp.toFixed(1)+'g';
+        document.getElementById('totalCarb').textContent = tc.toFixed(1)+'g';
+        document.getElementById('totalGord').textContent = tg.toFixed(1)+'g';
+    }
+
+    /* ──────────────── CADASTRAR MANUAL ──────────────── */
     async function cadastrarManual() {
         const nome = document.getElementById('mNome').value.trim();
         const categoria = document.getElementById('mCategoria').value.trim();
@@ -340,28 +476,72 @@
         const gord = parseFloat(document.getElementById('mGord').value) || 0;
         if (!nome || !kcal) { showToast('⚠️ Nome e calorias são obrigatórios'); return; }
         try {
-            const res = await fetch('/alimentos', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({nome, grupoAlimentar:categoria, calorias:kcal, proteinas:prot, carboidratos:carb, gorduras:gord}) });
-            if (res.ok) { showToast(`✅ ${nome} salvo no banco!`); ['mNome','mCategoria','mKcal','mProt','mCarb','mGord'].forEach(id=>document.getElementById(id).value=''); await carregarAlimentosBackend(); }
-            else { showToast('⚠️ Erro ao salvar alimento.'); }
+            const res = await fetch('/alimentos', { method:'POST', headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({nome, grupoAlimentar:categoria, calorias:kcal, proteinas:prot, carboidratos:carb, gorduras:gord}) });
+            if (res.ok) {
+                showToast(`✅ ${nome} salvo no banco!`);
+                ['mNome','mCategoria','mKcal','mProt','mCarb','mGord'].forEach(id=>document.getElementById(id).value='');
+                await carregarAlimentosBackend();
+            } else { showToast('⚠️ Erro ao salvar alimento.'); }
         } catch(e) { showToast('⚠️ Erro de conexão.'); }
     }
 
+    /* ──────────────── SALVAR DIETA ──────────────── */
     async function salvarDieta() {
         if (!pacienteId) { showToast('⚠️ Nenhum paciente selecionado.'); return; }
+
         const itens = [];
         REFEICOES.forEach(r => {
             const horario = document.getElementById(`time_${r.id}`)?.value || r.hora;
-            (dieta[r.id] || []).forEach(item => {
-                itens.push({ refeicaoNome:r.nome, horario, descricao:`${item.nome} — ${item.quantidade}g/ml · ${item.kcal}kcal · P:${item.prot}g C:${item.carb}g G:${item.gord}g`, objetivo:`${item.kcal} kcal`, paciente:{id:parseInt(pacienteId)} });
+            const obs     = dieta[r.id].observacoes || '';
+
+            (dieta[r.id].itens || []).forEach(item => {
+                // Monta texto de substituições no formato do PDF
+                const subsTexto = item.substituicoes
+                    .filter(s => s.nome && s.nome.trim())
+                    .map(s => `${s.nome} - ${s.quantidade} ${s.unidade}`)
+                    .join(' | ');
+
+                // Descrição principal carrega: nome, qtd+unidade, nutrientes, subs e observações
+                const descricao = [
+                    `${item.nome} — ${item.quantidade} ${item.unidade} · ${item.kcal}kcal · P:${item.prot}g C:${item.carb}g G:${item.gord}g`,
+                    subsTexto ? `[SUBS]${subsTexto}` : '',
+                    obs        ? `[OBS]${obs}`         : '',
+                ].filter(Boolean).join('||');
+
+                itens.push({
+                    refeicaoNome: r.nome,
+                    horario,
+                    descricao,
+                    objetivo: `${item.kcal} kcal`,
+                    paciente: { id: parseInt(pacienteId) }
+                });
             });
+
+            // Se a refeição só tem observações mas nenhum alimento, salva um item de obs
+            if (!dieta[r.id].itens.length && obs.trim()) {
+                itens.push({
+                    refeicaoNome: r.nome,
+                    horario,
+                    descricao: `[OBS]${obs}`,
+                    objetivo: '0 kcal',
+                    paciente: { id: parseInt(pacienteId) }
+                });
+            }
         });
+
         if (!itens.length) { showToast('⚠️ Adicione pelo menos um alimento antes de salvar.'); return; }
+
         try {
             await fetch(`/dietas/paciente/${pacienteId}`, { method:'DELETE' });
             let erroMsg = null;
             for (const item of itens) {
                 const res = await fetch('/dietas', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(item) });
-                if (!res.ok) { let txt=''; try{const d=await res.json();txt=d.erro||d.message||JSON.stringify(d);}catch(e2){} erroMsg='Erro '+res.status+': '+txt; break; }
+                if (!res.ok) {
+                    let txt='';
+                    try{ const d=await res.json(); txt=d.erro||d.message||JSON.stringify(d); }catch(e2){}
+                    erroMsg='Erro '+res.status+': '+txt; break;
+                }
             }
             if (!erroMsg) {
                 await Swal.fire({ icon:'success', title:'Dieta salva!', text:'O plano alimentar foi enviado ao paciente.', confirmButtonColor:'#2D6A4F', timer:2000, showConfirmButton:false });
@@ -372,13 +552,26 @@
         } catch(e) { Swal.fire({ icon:'error', title:'Erro de conexão', text:e.message }); }
     }
 
+    /* ──────────────── LIMPAR ──────────────── */
     function limparDieta() {
-        Swal.fire({ title:'Limpar toda a dieta?', icon:'warning', showCancelButton:true, confirmButtonText:'Sim, limpar', cancelButtonText:'Cancelar', confirmButtonColor:'#dc2626' })
-            .then(r => { if(r.isConfirmed){ REFEICOES.forEach(r=>{dieta[r.id]=[];}); atualizarTela(); showToast('🗑️ Dieta limpa'); } });
+        Swal.fire({ title:'Limpar toda a dieta?', icon:'warning', showCancelButton:true,
+            confirmButtonText:'Sim, limpar', cancelButtonText:'Cancelar', confirmButtonColor:'#dc2626' })
+            .then(r => {
+                if(r.isConfirmed){
+                    REFEICOES.forEach(r => { dieta[r.id] = { itens: [], observacoes: '' }; });
+                    renderMeals();
+                    atualizarTotais();
+                    showToast('🗑️ Dieta limpa');
+                }
+            });
     }
 
-    function voltar() { window.location.href = '/paciente_detalhes.html'; }
-    function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+    function voltar()    { window.location.href = '/paciente_detalhes.html'; }
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
 
     init();
 </script>

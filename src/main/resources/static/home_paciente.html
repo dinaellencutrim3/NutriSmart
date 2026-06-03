@@ -10,6 +10,43 @@
     <style>
         .tab-content { display:none; }
         .tab-content.active { display:block; }
+
+        /* ABAS — visíveis sobre o banner verde */
+        .tabs {
+            display:flex;
+            gap:.5rem;
+            border-bottom:none !important;
+            margin-bottom:0 !important;
+            padding-top:1.5rem;
+            flex-wrap:wrap;
+        }
+        .tab {
+            padding:.75rem 1.6rem;
+            background:rgba(255,255,255,0.15);
+            border:2px solid rgba(255,255,255,0.35) !important;
+            border-bottom:none !important;
+            border-radius:12px 12px 0 0;
+            font-family:'DM Sans',sans-serif;
+            font-size:.95rem;
+            font-weight:600;
+            cursor:pointer;
+            color:rgba(255,255,255,0.85) !important;
+            transition:all .2s ease;
+            margin-bottom:0 !important;
+            backdrop-filter:blur(4px);
+        }
+        .tab:hover {
+            background:rgba(255,255,255,0.28);
+            color:#fff !important;
+            transform:translateY(-2px);
+        }
+        .tab.active {
+            background:#fff !important;
+            color:#1B4332 !important;
+            border-color:#fff !important;
+            font-weight:700;
+            box-shadow:0 -2px 12px rgba(0,0,0,0.08);
+        }
         .meal-section { background:#fff; border-radius:18px; box-shadow:0 4px 18px rgba(27,67,50,0.07); margin-bottom:1.5rem; overflow:hidden; border:1px solid rgba(82,183,136,0.15); }
         .meal-section-header { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.4rem; background:linear-gradient(135deg,#1B4332 0%,#2D6A4F 100%); color:#fff; flex-wrap:wrap; gap:.5rem; }
         .meal-section-title { display:flex; align-items:center; gap:.6rem; font-weight:700; font-size:1.05rem; }
@@ -28,6 +65,19 @@
         .td-center { text-align:center; }
         .td-macros { color:#6b7280; font-size:.82rem; }
         .meal-section-footer { padding:.9rem 1.2rem; background:#f9fefb; border-top:1px solid #dcfce7; }
+
+        /* Substituições e Observações — visão paciente */
+        .meal-subs-block { padding:.85rem 1.2rem; background:#f9fefb; border-top:1px dashed #dcfce7; }
+        .meal-subs-item { margin-bottom:.85rem; }
+        .meal-subs-item:last-child { margin-bottom:0; }
+        .meal-subs-title { font-size:.76rem; font-weight:700; color:#2D6A4F; text-transform:uppercase; letter-spacing:.04em; margin-bottom:.35rem; display:flex; align-items:center; gap:.35rem; }
+        .meal-subs-pills { display:flex; flex-wrap:wrap; gap:.4rem; }
+        .sub-pill { background:#dcfce7; color:#1a3a2a; border-radius:999px; padding:.28rem .8rem; font-size:.78rem; font-weight:600; border:1px solid rgba(82,183,136,0.35); }
+        .sub-pill span { color:#6b7280; font-weight:400; margin-left:.2rem; }
+        .meal-obs-block { padding:.85rem 1.2rem; background:#fffbeb; border-top:1px dashed #fde68a; display:flex; gap:.6rem; align-items:flex-start; }
+        .meal-obs-icon { font-size:1.1rem; margin-top:.05rem; flex-shrink:0; }
+        .meal-obs-content { font-size:.84rem; color:#374151; line-height:1.6; white-space:pre-wrap; }
+        .meal-obs-label-inline { font-size:.72rem; font-weight:700; color:#b45309; text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:.2rem; }
         .btn-nutribot { display:flex; align-items:center; gap:.5rem; background:linear-gradient(135deg,#2D6A4F,#52B788); color:#fff; border:none; border-radius:10px; padding:.65rem 1.3rem; font-weight:700; font-size:.86rem; cursor:pointer; transition:opacity .2s,transform .1s; }
         .btn-nutribot:hover { opacity:.9; transform:translateY(-1px); }
         .hist-card { background:#fff; border-radius:14px; padding:1rem 1.2rem; border-left:4px solid #e5e7eb; box-shadow:0 2px 8px rgba(27,67,50,0.05); margin-bottom:.75rem; }
@@ -110,8 +160,9 @@
         NutriSmart
     </div>
     <div class="navbar-menu">
-        <div class="navbar-user" id="nomeExibido"></div>
-        <button onclick="logout()" class="btn btn-danger" style="padding:.5rem 1rem;font-size:.85rem">&#x2192; Sair</button>
+        <button onclick="logout()" class="btn btn-danger" style="padding:.5rem 1rem;font-size:.85rem">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </button>
     </div>
 </nav>
 
@@ -439,31 +490,96 @@
             return '🍽️';
         };
 
+        /* Desmonta o formato: "Nome — qtd unidade · kcalkcal · P:Xg C:Xg G:Xg||[SUBS]sub1 - qtd un | sub2 - qtd un||[OBS]texto" */
         const parseDesc = desc => {
-            if (!desc) return { nome: '—', qtd: '', kcal: '', macros: '' };
-            const partes = desc.split(' — ');
-            const nome = partes[0] || desc;
+            if (!desc) return { nome: '—', qtd: '', kcal: '', macros: '', subs: [], obs: '' };
+            const segmentos = desc.split('||');
+            const principal = segmentos.find(s => !s.startsWith('[SUBS]') && !s.startsWith('[OBS]')) || '';
+            const subsRaw   = (segmentos.find(s => s.startsWith('[SUBS]')) || '').replace('[SUBS]','');
+            const obsRaw    = (segmentos.find(s => s.startsWith('[OBS]'))  || '').replace('[OBS]','');
+
+            const partes = principal.split(' — ');
+            const nome = partes[0] || principal || '—';
             const resto = partes[1] || '';
             const campos = resto.split(' · ');
-            return { nome, qtd: campos[0] || '', kcal: campos[1] || '', macros: campos[2] || '' };
+
+            // Parse substituições: "Ovo cozido - 1 unidade | Frango - 2 colher sopa"
+            const subs = subsRaw ? subsRaw.split('|').map(s => s.trim()).filter(Boolean).map(s => {
+                const lastDash = s.lastIndexOf(' - ');
+                if (lastDash === -1) return { nome: s, qtdUnidade: '' };
+                return { nome: s.substring(0, lastDash).trim(), qtdUnidade: s.substring(lastDash + 3).trim() };
+            }) : [];
+
+            return { nome, qtd: campos[0] || '', kcal: campos[1] || '', macros: campos[2] || '', subs, obs: obsRaw };
         };
 
         let html = '';
         grupos.forEach((grupo, nomeRefeicao) => {
-            const emoji = emojiRefeicao(nomeRefeicao);
+            const emoji   = emojiRefeicao(nomeRefeicao);
             const horario = grupo.horario || '—';
             let totalKcal = 0;
-            grupo.itens.forEach(it => {
+
+            // Coleta itens reais (ignora entradas só com [OBS])
+            const itensReais = grupo.itens.filter(it => {
+                const d = it.descricao || '';
+                return !d.startsWith('[OBS]') && d.split('||')[0].trim() !== '';
+            });
+            const obsGlobal = grupo.itens.reduce((acc, it) => {
+                const seg = (it.descricao || '').split('||');
+                const o = (seg.find(s => s.startsWith('[OBS]')) || '').replace('[OBS]','').trim();
+                return o ? o : acc;
+            }, '');
+
+            itensReais.forEach(it => {
                 const n = parseFloat((it.objetivo || '').replace(/[^\d.]/g, ''));
                 if (!isNaN(n)) totalKcal += n;
             });
             totalKcal = Math.round(totalKcal);
-            const descChat = grupo.itens.map(it => parseDesc(it.descricao).nome).join(', ');
+
+            const descChat    = itensReais.map(it => parseDesc(it.descricao).nome).join(', ');
             const idsPrimeiro = grupo.itens[0]?.id || '';
-            const linhas = grupo.itens.map(it => {
+
+            // Linhas da tabela principal
+            const linhas = itensReais.map(it => {
                 const p = parseDesc(it.descricao);
-                return `<tr><td>${p.nome}</td><td class="td-center">${p.qtd}</td><td class="td-center">${p.kcal}</td><td class="td-macros">${p.macros}</td></tr>`;
+                return `<tr>
+                    <td style="font-weight:600">${p.nome}</td>
+                    <td class="td-center">${p.qtd}</td>
+                    <td class="td-center">${p.kcal}</td>
+                    <td class="td-macros">${p.macros}</td>
+                </tr>`;
             }).join('');
+
+            // Bloco de substituições — uma por alimento, como no PDF
+            let subsHTML = '';
+            const itensComSub = itensReais.filter(it => parseDesc(it.descricao).subs.length > 0);
+            if (itensComSub.length) {
+                subsHTML = `<div class="meal-subs-block">`;
+                itensComSub.forEach(it => {
+                    const p = parseDesc(it.descricao);
+                    subsHTML += `
+                    <div class="meal-subs-item">
+                        <div class="meal-subs-title">🔄 Opções de substituição para <em>${p.nome}</em></div>
+                        <div class="meal-subs-pills">
+                            ${p.subs.map(s => `<span class="sub-pill">${s.nome}${s.qtdUnidade ? `<span>${s.qtdUnidade}</span>` : ''}</span>`).join('')}
+                        </div>
+                    </div>`;
+                });
+                subsHTML += `</div>`;
+            }
+
+            // Bloco de observações / modo de preparo
+            let obsHTML = '';
+            if (obsGlobal) {
+                obsHTML = `
+                <div class="meal-obs-block">
+                    <span class="meal-obs-icon">📋</span>
+                    <div class="meal-obs-content">
+                        <span class="meal-obs-label-inline">Observações do nutricionista</span>${obsGlobal}
+                    </div>
+                </div>`;
+            }
+
             html += `
             <div class="meal-section">
                 <div class="meal-section-header">
@@ -474,12 +590,20 @@
                     </div>
                     ${totalKcal > 0 ? `<span class="meal-kcal-total">${totalKcal} kcal total</span>` : ''}
                 </div>
+                ${itensReais.length ? `
                 <div class="meal-table-wrap">
                     <table class="meal-table">
-                        <thead><tr><th>Alimento</th><th class="td-center">Quantidade</th><th class="td-center">Calorias</th><th class="td-macros">Macros</th></tr></thead>
+                        <thead><tr>
+                            <th>Alimento</th>
+                            <th class="td-center">Quantidade</th>
+                            <th class="td-center">Calorias</th>
+                            <th class="td-macros">Macros</th>
+                        </tr></thead>
                         <tbody>${linhas}</tbody>
                     </table>
-                </div>
+                </div>` : ''}
+                ${subsHTML}
+                ${obsHTML}
                 <div class="meal-section-footer">
                     <button class="btn-nutribot"
                         data-id="${idsPrimeiro}"

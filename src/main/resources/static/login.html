@@ -1,538 +1,235 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - NutriSmart</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        *{ margin:0; padding:0; box-sizing:border-box; font-family:'DM Sans',sans-serif; }
+        *{ margin:0; padding:0; box-sizing:border-box; }
+        body{ font-family:'DM Sans',sans-serif; background:#f0fdf4; }
 
-        body{
-            min-height:100vh;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 45%, #bbf7d0 100%);
-            overflow-x:hidden;
+        .wrapper{ display:flex; min-height:100vh; }
+
+        /* PAINEL ESQUERDO */
+        .left{
+            flex:1; background:#1B4332; color:#fff;
+            padding:60px; display:flex; flex-direction:column; justify-content:center;
+        }
+        .left-logo{
+            font-family:'Playfair Display',serif; font-size:48px; font-weight:700;
+            background:linear-gradient(135deg,#52B788,#95D5B2);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            background-clip:text; margin-bottom:16px;
+        }
+        .left-tag{ font-size:22px; font-weight:300; color:#D8F3DC; margin-bottom:48px; }
+        .left ul{ list-style:none; }
+        .left ul li{
+            font-size:17px; margin-bottom:20px;
+            display:flex; align-items:center; color:#D8F3DC;
+        }
+        .check{
+            display:inline-flex; align-items:center; justify-content:center;
+            width:32px; height:32px; min-width:32px;
+            background:rgba(82,183,136,0.2); border-radius:50%;
+            margin-right:16px; color:#52B788; font-weight:700;
         }
 
-        .top-nav{
-            width:100%; display:flex; align-items:center; justify-content:space-between;
-            padding:1rem 2rem;
-            background:rgba(255,255,255,0.88); backdrop-filter:blur(14px);
-            border-bottom:1px solid rgba(82,183,136,0.18);
-            position:sticky; top:0; z-index:999;
+        /* PAINEL DIREITO */
+        .right{
+            flex:1; background:#fff;
+            display:flex; align-items:center; justify-content:center; padding:60px;
+        }
+        .form-box{ width:100%; max-width:420px; }
+        .form-title{
+            font-family:'Playfair Display',serif; font-size:36px;
+            color:#1B4332; margin-bottom:8px;
+        }
+        .form-sub{ font-size:15px; color:#6B7280; margin-bottom:32px; }
+
+        /* TOGGLE PILLS */
+        .toggle-wrap{
+            display:flex; background:#f0fdf4; border-radius:100px;
+            padding:4px; margin-bottom:32px;
+        }
+        .toggle-btn{
+            flex:1; padding:12px 24px; border:none; border-radius:100px;
+            font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
+            color:#2D6A4F; cursor:pointer; transition:all .3s ease; background:transparent;
+        }
+        .toggle-btn.active{
+            background:#fff; box-shadow:0 2px 8px rgba(45,106,79,0.18);
+            font-weight:600;
         }
 
-        .nav-logo{
-            display:flex; align-items:center; gap:.7rem; text-decoration:none;
-            font-family:'Playfair Display',serif; font-weight:800; font-size:1.35rem; color:#2D6A4F;
-        }
-
-        .btn-voltar-home{
-            display:flex; align-items:center; gap:.45rem; text-decoration:none;
-            padding:.65rem 1.1rem; border-radius:10px; border:2px solid #52B788;
-            color:#2D6A4F; font-size:.9rem; font-weight:700; transition:.2s;
-        }
-        .btn-voltar-home:hover{ background:#52B788; color:#fff; transform:translateY(-1px); }
-
-        .page{
-            min-height:calc(100vh - 80px);
-            display:flex; align-items:center; justify-content:center; padding:2rem;
-        }
-
-        .card{
-            width:100%; max-width:440px; background:#fff; border-radius:26px; padding:2.7rem;
-            box-shadow: 0 20px 50px rgba(45,106,79,.10), 0 8px 20px rgba(0,0,0,.06);
-            border:1px solid rgba(82,183,136,.12);
-            animation:fadeUp .5s ease;
-        }
-
-        @keyframes fadeUp{
-            from{ opacity:0; transform:translateY(20px); }
-            to{   opacity:1; transform:translateY(0); }
-        }
-
-        .card-icon{
-            width:74px; height:74px; margin:0 auto 1.4rem; border-radius:20px;
-            background: linear-gradient(135deg, #52B788, #2D6A4F);
-            display:flex; align-items:center; justify-content:center;
-            color:#fff; font-size:2rem; box-shadow:0 10px 25px rgba(82,183,136,.25);
-        }
-
-        .title{
-            font-family:'Playfair Display',serif; font-size:2rem; font-weight:800;
-            color:#1a3a2a; text-align:center; margin-bottom:.4rem;
-        }
-
-        .subtitle{ text-align:center; color:#6b7280; font-size:.95rem; margin-bottom:2rem; }
-
-        .form-group{ margin-bottom:1.15rem; }
-
-        .form-label{
-            display:block; margin-bottom:.45rem; font-size:.78rem; font-weight:700;
-            color:#374151; text-transform:uppercase; letter-spacing:.06em;
-        }
-
-        .input-wrapper{ position:relative; }
-
+        /* INPUTS */
+        .input-wrap{ position:relative; margin-bottom:20px; }
         .input-icon{
-            position:absolute; top:50%; left:1rem; transform:translateY(-50%);
-            color:#9ca3af; font-size:.9rem; pointer-events:none;
+            position:absolute; left:16px; top:50%; transform:translateY(-50%);
+            color:#74C69D; font-size:18px; pointer-events:none;
+        }
+        .field{
+            width:100%; padding:15px 16px 15px 46px;
+            border:2px solid #e0e0e0; border-radius:12px;
+            font-family:'DM Sans',sans-serif; font-size:15px;
+            outline:none; transition:all .25s ease; color:#1a3a2a;
+        }
+        .field:focus{ border-color:#52B788; box-shadow:0 0 0 4px rgba(82,183,136,0.1); }
+        .field-pass{ padding-right:48px; }
+        .eye-btn{
+            position:absolute; right:14px; top:50%; transform:translateY(-50%);
+            background:none; border:none; cursor:pointer; font-size:18px;
+            color:#74C69D; padding:4px; line-height:1;
         }
 
-        .form-input{
-            width:100%; padding:.9rem 2.8rem .9rem 2.8rem; border-radius:12px;
-            border:2px solid #e5e7eb; font-size:.95rem; outline:none; transition:.2s;
-        }
-        .form-input:focus{ border-color:#52B788; box-shadow:0 0 0 4px rgba(82,183,136,.12); }
-        .form-input.input-valid{ border-color:#22c55e; }
-        .form-input.input-invalid{ border-color:#ef4444; }
+        /* LINKS */
+        .links{ display:flex; justify-content:space-between; margin-bottom:20px; }
+        .links a{ color:#2D6A4F; font-size:13px; text-decoration:none; }
+        .links a:hover{ text-decoration:underline; }
 
-        /* ícone de status à direita do input */
-        .input-status{
-            position:absolute; top:50%; right:1rem; transform:translateY(-50%);
-            font-size:.95rem; display:none;
-        }
-        .input-status.ok  { display:block; color:#22c55e; }
-        .input-status.err { display:block; color:#ef4444; }
-
-        /* mensagem de erro inline (estilo Google) */
-        .field-error{
-            display:none; margin-top:.38rem; font-size:.82rem;
-            color:#ef4444; font-weight:500;
-        }
-        .field-error.visible{ display:flex; align-items:center; gap:.3rem; }
-
-        /* link esqueceu senha */
-        .forgot-row{
-            display:flex; justify-content:flex-end; margin-top:-.45rem; margin-bottom:.9rem;
-        }
-        .link-forgot{
-            font-size:.85rem; color:#2D6A4F; font-weight:700;
-            text-decoration:none; background:none; border:none; cursor:pointer; padding:0;
-        }
-        .link-forgot:hover{ text-decoration:underline; }
-
-        .btn-submit{
-            width:100%; border:none; margin-top:.6rem; padding:1rem; border-radius:12px;
-            background: linear-gradient(135deg, #52B788, #2D6A4F);
-            color:#fff; font-size:1rem; font-weight:700; cursor:pointer; transition:.2s;
-            display:flex; align-items:center; justify-content:center; gap:.5rem;
-        }
-        .btn-submit:hover{ transform:translateY(-2px); opacity:.95; }
-
-        .msg{
-            display:none; margin-top:1rem; padding:.9rem 1rem; border-radius:12px;
-            font-size:.9rem; font-weight:700; text-align:center;
-        }
-        .success{ background:#d1fae5; color:#065f46; }
-        .error{   background:#fee2e2; color:#991b1b; }
-
-        .divider{ margin-top:1.5rem; text-align:center; color:#6b7280; font-size:.92rem; }
-
-        .link-cadastro{ color:#2D6A4F; font-weight:700; text-decoration:none; }
-        .link-cadastro:hover{ text-decoration:underline; }
-
-        /* ===== MODAL ESQUECEU A SENHA ===== */
-        .modal-overlay{
-            display:none; position:fixed; inset:0; z-index:1000;
-            background:rgba(0,0,0,.45); backdrop-filter:blur(4px);
-            align-items:center; justify-content:center; padding:1.5rem;
-        }
-        .modal-overlay.open{ display:flex; }
-
-        .modal{
-            background:#fff; border-radius:22px; padding:2.4rem;
-            width:100%; max-width:400px;
-            box-shadow:0 24px 60px rgba(0,0,0,.18);
-            animation:fadeUp .3s ease;
-        }
-
-        .modal-icon{
-            width:60px; height:60px; margin:0 auto 1.2rem; border-radius:16px;
+        /* BOTÃO ENTRAR */
+        .btn-entrar{
+            width:100%; padding:15px;
             background:linear-gradient(135deg,#52B788,#2D6A4F);
-            display:flex; align-items:center; justify-content:center;
-            color:#fff; font-size:1.6rem;
+            color:#fff; border:none; border-radius:12px;
+            font-family:'DM Sans',sans-serif; font-size:16px; font-weight:600;
+            cursor:pointer; transition:transform .2s ease, box-shadow .2s ease;
         }
+        .btn-entrar:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(45,106,79,0.25); }
+        .btn-entrar:active{ transform:translateY(0); }
 
-        .modal-title{
-            font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:800;
-            color:#1a3a2a; text-align:center; margin-bottom:.35rem;
-        }
-        .modal-sub{ text-align:center; color:#6b7280; font-size:.9rem; margin-bottom:1.6rem; }
+        .criar{ text-align:center; margin-top:20px; font-size:14px; color:#6B7280; }
+        .criar a{ color:#2D6A4F; font-weight:600; text-decoration:none; }
+        .criar a:hover{ text-decoration:underline; }
 
-        .modal-input{
-            width:100%; padding:.9rem 1rem .9rem 2.8rem; border-radius:12px;
-            border:2px solid #e5e7eb; font-size:.95rem; outline:none; transition:.2s;
-        }
-        .modal-input:focus{ border-color:#52B788; box-shadow:0 0 0 4px rgba(82,183,136,.12); }
-        .modal-input.input-invalid{ border-color:#ef4444; }
-
-        .modal-actions{ display:flex; gap:.8rem; margin-top:1.2rem; }
-
-        .btn-modal-cancel{
-            flex:1; padding:.9rem; border-radius:12px;
-            border:2px solid #e5e7eb; background:#fff;
-            color:#374151; font-size:.95rem; font-weight:700; cursor:pointer; transition:.2s;
-        }
-        .btn-modal-cancel:hover{ background:#f9fafb; }
-
-        .btn-modal-send{
-            flex:2; padding:.9rem; border-radius:12px; border:none;
-            background:linear-gradient(135deg,#52B788,#2D6A4F);
-            color:#fff; font-size:.95rem; font-weight:700; cursor:pointer; transition:.2s;
-            display:flex; align-items:center; justify-content:center; gap:.5rem;
-        }
-        .btn-modal-send:hover{ opacity:.92; transform:translateY(-1px); }
-
-        .modal-msg{
-            display:none; margin-top:.9rem; padding:.85rem 1rem; border-radius:12px;
-            font-size:.88rem; font-weight:700; text-align:center;
-        }
-
-        @media(max-width:600px){
-            .top-nav{ padding:1rem; }
-            .btn-voltar-home span{ display:none; }
-            .card{ padding:2rem 1.4rem; }
-            .title{ font-size:1.7rem; }
+        /* MOBILE */
+        @media(max-width:768px){
+            .left{ display:none; }
+            .right{ padding:40px 24px; }
         }
     </style>
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-<nav class="top-nav">
-    <a href="/index.html" class="nav-logo">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <path d="M16 2C16 2 8 6 8 16C8 20 10 24 16 28C22 24 24 20 24 16C24 6 16 2 16 2Z" fill="#52B788"/>
-            <path d="M16 8C13 10 12 13 12 16C12 18 13 20 16 22C19 20 20 18 20 16C20 13 19 10 16 8Z" fill="#2D6A4F"/>
-        </svg>
-        NutriSmart
-    </a>
-    <a href="/index.html" class="btn-voltar-home">
-        <i class="fa-solid fa-house"></i>
-        <span>Página Principal</span>
-    </a>
-</nav>
+<div class="wrapper">
+    <!-- Painel esquerdo -->
+    <div class="left">
+        <div class="left-logo">NutriSmart</div>
+        <div class="left-tag">Cuide da sua saúde com inteligência</div>
+        <ul>
+            <li><span class="check">✓</span> Plano alimentar personalizado</li>
+            <li><span class="check">✓</span> Acompanhamento nutricional</li>
+            <li><span class="check">✓</span> Suporte com IA</li>
+        </ul>
+    </div>
 
-<!-- PAGE -->
-<div class="page">
-    <div class="card">
+    <!-- Painel direito -->
+    <div class="right">
+        <div class="form-box">
+            <h1 class="form-title">Bem-vindo de volta</h1>
+            <p class="form-sub">Acesse sua conta para continuar</p>
 
-        <div class="card-icon">
-            <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M85 15 C85 15 95 50 70 75 C55 90 25 92 10 88 C10 88 18 60 35 45 C52 30 85 15 85 15 Z"
-                      fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="5"
-                      stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M85 15 C60 35 30 60 10 88" stroke="white" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-                <path d="M72 28 C58 38 42 52 28 68" stroke="white" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.85"/>
-                <path d="M58 22 C46 34 34 50 22 72" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.65"/>
-            </svg>
+            <!-- Toggle Paciente / Nutricionista -->
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" id="btnPaciente" onclick="setTipo('PACIENTE')">
+                    Sou Paciente
+                </button>
+                <button class="toggle-btn" id="btnNutri" onclick="setTipo('NUTRICIONISTA')">
+                    Sou Nutricionista
+                </button>
+            </div>
+
+            <!-- Formulário -->
+            <div class="input-wrap">
+                <span class="input-icon">✉</span>
+                <input class="field" type="email" id="email" placeholder="Seu e-mail" required>
+            </div>
+
+            <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input class="field field-pass" type="password" id="senha" placeholder="Sua senha" required>
+                <button class="eye-btn" type="button" onclick="toggleSenha()" id="eyeBtn">👁</button>
+            </div>
+
+            <div class="links">
+                <a href="/redefinir_senha.html">Esqueci minha senha</a>
+            </div>
+
+            <button class="btn-entrar" onclick="fazerLogin()">Entrar</button>
+
+            <div class="criar">
+                Primeira vez aqui? <a href="/cadastro.html">Criar conta</a>
+            </div>
         </div>
-
-        <h1 class="title">Bem-vindo de volta</h1>
-        <p class="subtitle">Entre na sua conta e continue cuidando da sua saúde.</p>
-
-        <form id="formLogin" novalidate>
-
-            <!-- CAMPO E-MAIL -->
-            <div class="form-group">
-                <label class="form-label">E-mail</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-envelope input-icon"></i>
-                    <input id="email" type="email" class="form-input" placeholder="Digite seu e-mail" autocomplete="email">
-                    <i id="emailStatus" class="input-status"></i>
-                </div>
-                <p id="emailError" class="field-error"></p>
-            </div>
-
-            <!-- CAMPO SENHA -->
-            <div class="form-group">
-                <label class="form-label">Senha</label>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-lock input-icon"></i>
-                    <input id="senha" type="password" class="form-input" placeholder="Digite sua senha" autocomplete="current-password">
-                    <i id="senhaStatus" class="input-status"></i>
-                </div>
-                <p id="senhaError" class="field-error"></p>
-            </div>
-
-            <!-- ESQUECEU A SENHA -->
-            <div class="forgot-row">
-                <button type="button" class="link-forgot" id="btnEsqueceu">Esqueceu a senha?</button>
-            </div>
-
-            <button type="submit" class="btn-submit">
-                <i class="fa-solid fa-right-to-bracket"></i>
-                Entrar
-            </button>
-
-        </form>
-
-        <div id="mensagem" class="msg"></div>
-
-        <p class="divider">
-            Não possui uma conta?
-            <a href="/cadastro.html" class="link-cadastro">Cadastre-se gratuitamente</a>
-        </p>
-
     </div>
 </div>
-
-
-<!-- ===== MODAL ESQUECEU A SENHA ===== -->
-<div class="modal-overlay" id="modalEsqueceu">
-    <div class="modal">
-        <div class="modal-icon">
-            <i class="fa-solid fa-key"></i>
-        </div>
-        <h2 class="modal-title">Recuperar senha</h2>
-        <p class="modal-sub">Informe o e-mail cadastrado. Enviaremos um link para você criar uma nova senha.</p>
-
-        <div class="input-wrapper">
-            <i class="fa-solid fa-envelope input-icon"></i>
-            <input id="emailRecupera" type="email" class="modal-input" placeholder="seu@email.com" autocomplete="email">
-        </div>
-        <p id="emailRecuperaError" class="field-error"></p>
-
-        <div class="modal-actions">
-            <button type="button" class="btn-modal-cancel" id="btnCancelarModal">Cancelar</button>
-            <button type="button" class="btn-modal-send" id="btnEnviarRecupera">
-                <i class="fa-solid fa-paper-plane"></i>
-                Enviar link
-            </button>
-        </div>
-
-        <div id="modalMsg" class="modal-msg"></div>
-    </div>
-</div>
-
 
 <script>
-    /* =========================================================
-       UTILITÁRIOS DE VALIDAÇÃO
-    ========================================================= */
-    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    let tipoAtual = 'PACIENTE';
 
-    function setFieldState(inputEl, statusEl, errorEl, state, msg) {
-        // state: 'idle' | 'valid' | 'invalid'
-        inputEl.classList.remove('input-valid','input-invalid');
-        statusEl.classList.remove('ok','err');
-        statusEl.className = 'input-status';
-        errorEl.classList.remove('visible');
-        errorEl.innerHTML = '';
+    function setTipo(tipo) {
+        tipoAtual = tipo;
+        document.getElementById('btnPaciente').classList.toggle('active', tipo === 'PACIENTE');
+        document.getElementById('btnNutri').classList.toggle('active', tipo === 'NUTRICIONISTA');
+    }
 
-        if (state === 'valid') {
-            inputEl.classList.add('input-valid');
-            statusEl.classList.add('ok');
-            statusEl.className = 'input-status ok';
-            statusEl.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-        } else if (state === 'invalid') {
-            inputEl.classList.add('input-invalid');
-            statusEl.className = 'input-status err';
-            statusEl.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
-            errorEl.innerHTML  = '<i class="fa-solid fa-triangle-exclamation"></i> ' + msg;
-            errorEl.classList.add('visible');
+    function toggleSenha() {
+        const campo = document.getElementById('senha');
+        const btn   = document.getElementById('eyeBtn');
+        if (campo.type === 'password') {
+            campo.type = 'text';
+            btn.textContent = '👁‍🗨';
+        } else {
+            campo.type = 'password';
+            btn.textContent = '👁';
         }
     }
 
-    function validateEmail(value) {
-        if (!value) return { ok: false, msg: 'Digite seu e-mail.' };
-        if (!EMAIL_RE.test(value)) return { ok: false, msg: 'Insira um endereço de e-mail válido.' };
-        return { ok: true };
-    }
+    async function fazerLogin() {
+        const email = document.getElementById('email').value.trim();
+        const senha = document.getElementById('senha').value;
 
-    function validateSenha(value) {
-        if (!value) return { ok: false, msg: 'Digite sua senha.' };
-        if (value.length < 4) return { ok: false, msg: 'Senha muito curta.' };
-        return { ok: true };
-    }
-
-    /* =========================================================
-       ELEMENTOS DO FORMULÁRIO
-    ========================================================= */
-    const emailInput  = document.getElementById('email');
-    const emailStatus = document.getElementById('emailStatus');
-    const emailError  = document.getElementById('emailError');
-
-    const senhaInput  = document.getElementById('senha');
-    const senhaStatus = document.getElementById('senhaStatus');
-    const senhaError  = document.getElementById('senhaError');
-
-    /* Validação ao sair do campo (blur) */
-    emailInput.addEventListener('blur', () => {
-        const v = validateEmail(emailInput.value.trim());
-        setFieldState(emailInput, emailStatus, emailError, v.ok ? 'valid' : 'invalid', v.msg);
-    });
-
-    /* Validação enquanto digita (após primeiro blur) */
-    let emailTouched = false;
-    emailInput.addEventListener('blur', () => { emailTouched = true; });
-    emailInput.addEventListener('input', () => {
-        if (!emailTouched) return;
-        const v = validateEmail(emailInput.value.trim());
-        setFieldState(emailInput, emailStatus, emailError, v.ok ? 'valid' : 'invalid', v.msg);
-    });
-
-    let senhaTouched = false;
-    senhaInput.addEventListener('blur', () => {
-        senhaTouched = true;
-        const v = validateSenha(senhaInput.value);
-        setFieldState(senhaInput, senhaStatus, senhaError, v.ok ? 'valid' : 'invalid', v.msg);
-    });
-    senhaInput.addEventListener('input', () => {
-        if (!senhaTouched) return;
-        const v = validateSenha(senhaInput.value);
-        setFieldState(senhaInput, senhaStatus, senhaError, v.ok ? 'valid' : 'invalid', v.msg);
-    });
-
-    /* =========================================================
-       SUBMIT DO LOGIN
-    ========================================================= */
-    document.getElementById('formLogin').addEventListener('submit', async function(e) {
-        e.preventDefault();
-
-        const email = emailInput.value.trim().toLowerCase();
-        const senha = senhaInput.value;
-
-        /* Força validação visual antes de enviar */
-        const ve = validateEmail(email);
-        const vs = validateSenha(senha);
-        setFieldState(emailInput, emailStatus, emailError, ve.ok ? 'valid' : 'invalid', ve.msg);
-        setFieldState(senhaInput, senhaStatus, senhaError, vs.ok ? 'valid' : 'invalid', vs.msg);
-
-        if (!ve.ok || !vs.ok) return;
-
-        const msg = document.getElementById('mensagem');
-        msg.style.display = 'none';
+        if (!email || !senha) {
+            Swal.fire({ icon:'warning', title:'Preencha os campos', confirmButtonColor:'#2D6A4F' });
+            return;
+        }
 
         try {
-            const response = await fetch('/api/usuarios/login', {
+            const res = await fetch('/api/usuarios/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, senha })
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                localStorage.setItem('nomeUsuario',  data.nome);
-                localStorage.setItem('tipoUsuario',  data.tipo);
-                localStorage.setItem('usuarioId',    data.id);
+            if (res.ok) {
+                const data = await res.json();
+                // tipo vem do backend: "NUTRICIONISTA" ou "PACIENTE"
+                const tipo = (data.tipo || tipoAtual || '').toUpperCase();
+                localStorage.setItem('usuarioId',    data.id   || '');
+                localStorage.setItem('nomeUsuario',  data.nome || '');
                 localStorage.setItem('emailUsuario', email);
+                localStorage.setItem('tipoUsuario',  tipo);
 
-                msg.className     = 'msg success';
-                msg.style.display = 'block';
-                msg.innerHTML     = `<i class="fa-solid fa-circle-check"></i> Bem-vindo, ${data.nome}!`;
-
-                setTimeout(() => {
-                    window.location.href = data.tipo === 'NUTRICIONISTA'
-                        ? '/dashboard.html'
-                        : '/home_paciente.html';
-                }, 1200);
-
+                if (tipo === 'PACIENTE') {
+                    window.location.href = '/home_paciente.html';
+                } else {
+                    window.location.href = '/dashboard.html';
+                }
             } else {
-                msg.className     = 'msg error';
-                msg.style.display = 'block';
-                msg.innerHTML     = `<i class="fa-solid fa-triangle-exclamation"></i> ${data.erro || 'E-mail ou senha incorretos.'}`;
-
-                /* Marca os dois campos como inválidos no erro do servidor */
-                setFieldState(emailInput, emailStatus, emailError, 'invalid', '');
-                setFieldState(senhaInput, senhaStatus, senhaError, 'invalid', '');
+                Swal.fire({ icon:'error', title:'E-mail ou senha incorretos', confirmButtonColor:'#2D6A4F' });
             }
-
-        } catch(err) {
-            console.error(err);
-            msg.className     = 'msg error';
-            msg.style.display = 'block';
-            msg.innerHTML     = `<i class="fa-solid fa-wifi"></i> Erro de conexão com o servidor.`;
+        } catch (e) {
+            Swal.fire({ icon:'error', title:'Erro de conexão', text:'Verifique o servidor.', confirmButtonColor:'#2D6A4F' });
         }
-    });
-
-    /* =========================================================
-       MODAL — ESQUECEU A SENHA
-    ========================================================= */
-    const modal           = document.getElementById('modalEsqueceu');
-    const emailRecupera   = document.getElementById('emailRecupera');
-    const emailRecuperaErr= document.getElementById('emailRecuperaError');
-    const modalMsg        = document.getElementById('modalMsg');
-
-    document.getElementById('btnEsqueceu').addEventListener('click', () => {
-        emailRecupera.value = emailInput.value; /* pré-preenche com o que já foi digitado */
-        emailRecupera.classList.remove('input-invalid');
-        emailRecuperaErr.classList.remove('visible');
-        modalMsg.style.display = 'none';
-        modal.classList.add('open');
-        emailRecupera.focus();
-    });
-
-    document.getElementById('btnCancelarModal').addEventListener('click', fecharModal);
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) fecharModal();
-    });
-
-    function fecharModal() {
-        modal.classList.remove('open');
     }
 
-    document.getElementById('btnEnviarRecupera').addEventListener('click', async () => {
-        const email = emailRecupera.value.trim().toLowerCase();
-        const v = validateEmail(email);
-
-        emailRecupera.classList.remove('input-invalid');
-        emailRecuperaErr.classList.remove('visible');
-        modalMsg.style.display = 'none';
-
-        if (!v.ok) {
-            emailRecupera.classList.add('input-invalid');
-            emailRecuperaErr.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ' + v.msg;
-            emailRecuperaErr.classList.add('visible');
-            return;
-        }
-
-        const btn = document.getElementById('btnEnviarRecupera');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando…';
-
-        try {
-            const res = await fetch('/api/usuarios/esqueci-senha', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
-            });
-
-            const data = await res.json();
-
-            modalMsg.style.display = 'block';
-            if (res.ok) {
-                modalMsg.className = 'modal-msg success';
-                modalMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${data.mensagem}`;
-                emailRecupera.disabled = true;
-                btn.style.display = 'none';
-            } else {
-                modalMsg.className = 'modal-msg error';
-                modalMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${data.erro}`;
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar link';
-            }
-
-        } catch(err) {
-            modalMsg.style.display = 'block';
-            modalMsg.className = 'modal-msg error';
-            modalMsg.innerHTML = '<i class="fa-solid fa-wifi"></i> Erro de conexão.';
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar link';
-        }
+    // Enter no campo senha faz login
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('senha').addEventListener('keydown', e => {
+            if (e.key === 'Enter') fazerLogin();
+        });
     });
 </script>
-
 </body>
 </html>

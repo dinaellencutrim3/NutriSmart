@@ -50,8 +50,10 @@
     </div>
     <div class="navbar-menu">
         <a href="/consultas_nutricionista.html" class="navbar-btn"><i class="fa-solid fa-calendar-days"></i> Consultas</a>
-        <a href="/dietas.html" class="navbar-btn"><i class="fa-solid fa-utensils"></i> Dietas</a>
-        <div class="navbar-user" id="nomeNutri"></div>
+        <div class="navbar-user" id="nomeNutri" style="display:flex;align-items:center;gap:.4rem">
+            <i class="fa-solid fa-user-nurse" style="color:#52B788"></i>
+            <span id="nomeNutriTexto"></span>
+        </div>
         <button onclick="logout()" class="btn btn-danger" style="padding:.5rem 1rem;font-size:.85rem">
             <i class="fa-solid fa-right-from-bracket"></i> Sair
         </button>
@@ -65,17 +67,7 @@
 
 <div class="container" style="padding-top:2rem">
 
-    <!-- MÉTRICAS -->
-    <div class="grid grid-2" style="margin-bottom:2rem">
-        <div class="metrica-card">
-            <div class="metrica-valor" id="totalPacientes">0</div>
-            <div class="metrica-label">Total de Pacientes</div>
-        </div>
-        <div class="metrica-card">
-            <div class="metrica-valor" id="pacientesAtivos">0</div>
-            <div class="metrica-label">Pacientes Ativos</div>
-        </div>
-    </div>
+
 
     <!-- FORM CADASTRO -->
     <div class="card" style="margin-bottom:2rem">
@@ -181,7 +173,7 @@
 
 <script>
     const nomeUsuario = localStorage.getItem("nomeUsuario") || "Nutricionista";
-    document.getElementById("nomeNutri").innerText = nomeUsuario;
+    document.getElementById("nomeNutriTexto").innerText = nomeUsuario;
     document.getElementById("boasVindas").innerText = `Olá, ${nomeUsuario} 👋`;
 
     let todosPacientes = [];
@@ -193,8 +185,7 @@
             const mapa = new Map();
             pacientes.forEach(p => mapa.set(p.id, p));
             todosPacientes = Array.from(mapa.values());
-            document.getElementById("totalPacientes").innerText = todosPacientes.length;
-            document.getElementById("pacientesAtivos").innerText = todosPacientes.length;
+
             document.getElementById("countPacientes").innerText =
                 `${todosPacientes.length} paciente${todosPacientes.length !== 1 ? 's' : ''}`;
             renderizarPacientes(todosPacientes);
